@@ -1,0 +1,1388 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chiltepin Plaza Real | Durango</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Anton&family=Lora:ital,wght@0,400;0,600;1,400&family=Oswald:wght@400;600&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            /* NUEVA PALETA DE COLORES NEGRO Y ROJO */
+            --bg-color: #1a1a1a; /* Fondo Negro Oscuro */
+            --accent-color: #d32f2f; /* Rojo Profundo y Vibrante */
+            --text-color: #ffffff; /* Blanco */
+            
+            --font-logo: 'Anton', sans-serif;
+            --font-headings: 'Oswald', sans-serif;
+            --font-body: 'Lora', serif;
+            --font-nav: 'Oswald', sans-serif;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            font-family: var(--font-body);
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 12px;
+        }
+
+        /* --- CABECERA Y LOGO --- */
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 28px;
+            padding: 10px 0 8px;
+            background-color: transparent;
+            border-bottom: 2px solid var(--accent-color);
+            opacity: 0;
+            transform: translateY(-100%);
+            transition: opacity 0.7s ease, transform 0.7s ease;
+        }
+
+        body.page-loaded header {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .logo-link {
+            display: block;
+            max-width: 220px; /* Ajusta el tamaño del contenedor del logo */
+            height: auto;
+        }
+
+        .logo-img {
+            width: 100%;
+            height: auto;
+            object-fit: contain; /* Asegura que el logo no se distorsione */
+        }
+
+        /* --- NAVEGACIÓN --- */
+        nav {
+            display: flex;
+            align-items: center;
+            gap: 24px;
+            font-family: var(--font-nav);
+            font-size: 1rem;
+            letter-spacing: 1.5px;
+        }
+
+        nav a {
+            text-decoration: none;
+            color: var(--text-color); /* Blanco sobre negro */
+            text-transform: uppercase;
+            transition: color 0.3s ease;
+        }
+
+        nav a:hover {
+            color: var(--accent-color); /* Rojo al pasar el cursor */
+        }
+
+        .btn-reservations {
+            background-color: var(--accent-color); /* Rojo de acento */
+            color: #fff;
+            padding: 11px 18px;
+            text-transform: uppercase;
+            border: none;
+            cursor: pointer;
+            font-family: var(--font-nav);
+            font-size: 1rem;
+            letter-spacing: 1px;
+            transition: background-color 0.3s;
+        }
+
+        .btn-reservations:hover {
+            background-color: #903020; /* Rojo más oscuro al pasar el cursor */
+        }
+
+        .btn-location {
+            display: inline-block;
+            margin-top: 20px;
+            background-color: transparent;
+            color: var(--accent-color);
+            border: 2px solid var(--accent-color);
+            padding: 10px 18px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-family: var(--font-nav);
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: background-color 0.3s, color 0.3s;
+        }
+
+        .btn-location:hover {
+            background-color: var(--accent-color);
+            color: #fff;
+        }
+
+        /* --- DROPDOWN --- */
+        .dropdown {
+            position: relative;
+            display: inline-block;
+        }
+
+        .dropbtn {
+            background-color: transparent;
+            color: var(--text-color);
+            padding: 0;
+            font-family: var(--font-nav);
+            font-size: 1rem;
+            letter-spacing: 1.5px;
+            text-transform: uppercase;
+            border: none;
+            cursor: pointer;
+            transition: color 0.3s ease;
+        }
+
+        .dropbtn:hover {
+            color: var(--accent-color);
+        }
+
+        .dropbtn::after {
+            content: " ▼";
+            font-size: 0.8em;
+            margin-left: 5px;
+            display: inline-block;
+            transition: transform 0.3s ease;
+        }
+
+        .dropdown-content {
+            display: none;
+            position: absolute;
+            background-color: var(--bg-color);
+            min-width: 200px;
+            box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+            z-index: 10;
+            top: 100%;
+            left: 0;
+            border: 1px solid var(--accent-color);
+        }
+
+        .dropdown-content a {
+            color: var(--text-color);
+            padding: 12px 16px;
+            text-decoration: none;
+            display: block;
+            text-transform: uppercase;
+            font-family: var(--font-nav);
+            font-size: 0.9rem;
+            transition: background-color 0.3s;
+        }
+
+        .dropdown-content a:hover {
+            background-color: var(--accent-color);
+            color: #fff;
+        }
+
+        .dropdown:hover .dropdown-content {
+            display: block;
+        }
+
+        .dropdown:hover .dropbtn::after,
+        .dropdown:focus-within .dropbtn::after {
+            transform: rotate(180deg);
+        }
+
+        .sub-dropdown {
+            position: relative;
+        }
+
+        .sub-dropbtn {
+            background-color: transparent;
+            color: var(--text-color);
+            padding: 12px 16px;
+            text-decoration: none;
+            display: block;
+            text-transform: uppercase;
+            font-family: var(--font-nav);
+            font-size: 0.9rem;
+            border: none;
+            cursor: pointer;
+            width: 100%;
+            text-align: left;
+            transition: background-color 0.3s;
+        }
+
+        .sub-dropbtn:hover {
+            background-color: var(--accent-color);
+            color: #fff;
+        }
+
+        .sub-dropdown-content {
+            display: none;
+            position: absolute;
+            background-color: var(--bg-color);
+            min-width: 200px;
+            box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.5);
+            z-index: 21;
+            left: 100%;
+            top: 0;
+            border: 1px solid var(--accent-color);
+        }
+
+        .sub-dropdown-content a {
+            color: var(--text-color);
+            padding: 12px 16px;
+            text-decoration: none;
+            display: block;
+            text-transform: uppercase;
+            font-family: var(--font-nav);
+            font-size: 0.8rem;
+            transition: background-color 0.3s;
+        }
+
+        .sub-dropdown-content a:hover {
+            background-color: var(--accent-color);
+            color: #fff;
+        }
+
+        .sub-dropdown:hover .sub-dropdown-content {
+            display: block;
+        }
+
+        /* --- BARRA LATERAL DE RESERVACIONES (MULTI-STEP) --- */
+        .res-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.7); backdrop-filter: blur(4px);
+            z-index: 999; display: none;
+        }
+        .res-overlay.active { display: block; }
+
+        .res-sidebar {
+            position: fixed; top: 0; right: -480px; width: 100%; max-width: 480px;
+            height: 100%; background-color: #1a1a1a; z-index: 1000;
+            box-shadow: -5px 0 25px rgba(0,0,0,0.8);
+            transition: right 0.4s cubic-bezier(0.77, 0, 0.175, 1);
+            display: flex; flex-direction: column;
+        }
+        .res-sidebar.active { right: 0; }
+
+        .res-header {
+            padding: 30px 40px 20px; display: flex; justify-content: space-between; align-items: center;
+            border-bottom: 1px solid #333;
+        }
+        .res-title-bar {
+            font-family: var(--font-logo); font-size: 2rem;
+            text-transform: uppercase; color: var(--text-color); letter-spacing: 1px;
+        }
+        .res-close {
+            background: none; border: none; color: var(--text-muted);
+            font-size: 1.5rem; cursor: pointer; transition: color 0.3s;
+        }
+        .res-close:hover { color: var(--accent-color); }
+
+        .res-body { padding: 20px 40px 40px; overflow-y: auto; flex-grow: 1; }
+        .res-step { display: none; animation: fadeInRight 0.3s ease forwards; }
+        .res-step.active { display: block; }
+
+        @keyframes fadeInRight {
+            from { opacity: 0; transform: translateX(20px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+
+        .res-field {
+            padding: 16px 0;
+            border-bottom: 1px solid #333;
+        }
+        .res-field label {
+            font-family: var(--font-nav);
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            color: var(--text-muted);
+            display: block;
+            margin-bottom: 6px;
+        }
+        .res-field select,
+        .res-field input[type="date"] {
+            background: transparent;
+            border: none;
+            color: var(--text-color);
+            font-family: var(--font-headings);
+            font-size: 1.1rem;
+            outline: none;
+            cursor: pointer;
+            width: 100%;
+            padding: 4px 0;
+        }
+        .res-field select option { background-color: var(--bg-color); }
+        .res-field input[type="date"]::-webkit-calendar-picker-indicator { filter: invert(1); cursor: pointer; }
+
+        .res-location-pills {
+            display: flex; gap: 10px;
+        }
+        .loc-pill {
+            flex: 1;
+            background: transparent;
+            border: 1px solid #444;
+            color: var(--text-color);
+            padding: 10px;
+            font-family: var(--font-nav);
+            font-size: 0.9rem;
+            text-align: center;
+            cursor: pointer;
+            border-radius: 4px;
+            transition: all 0.2s;
+        }
+        .loc-pill:hover { border-color: var(--accent-color); color: var(--accent-color); }
+        .loc-pill.selected {
+            border-color: var(--accent-color);
+            background: var(--accent-color);
+            color: #fff;
+        }
+
+        .guest-pills {
+            display: flex; gap: 8px;
+        }
+        .guest-pill {
+            flex: 1;
+            background: transparent;
+            border: 1px solid #444;
+            color: var(--text-color);
+            padding: 10px 0;
+            font-family: var(--font-nav);
+            font-size: 0.9rem;
+            text-align: center;
+            cursor: pointer;
+            border-radius: 4px;
+            transition: all 0.2s;
+        }
+        .guest-pill:hover { border-color: var(--accent-color); color: var(--accent-color); }
+        .guest-pill.selected {
+            border-color: var(--accent-color);
+            background: var(--accent-color);
+            color: #fff;
+        }
+
+        .btn-contact {
+            background-color: transparent;
+            color: var(--accent-color);
+            border: 2px solid var(--accent-color);
+        }
+        .btn-contact:hover { background-color: var(--accent-color); color: #fff; }
+
+        .res-contact {
+            text-align: center;
+            padding: 30px 0;
+        }
+        .res-contact h3 {
+            font-family: var(--font-logo);
+            font-size: 2rem;
+            color: var(--accent-color);
+            margin-bottom: 20px;
+            text-transform: uppercase;
+        }
+        .res-contact p {
+            color: var(--text-muted);
+            margin-bottom: 30px;
+            font-size: 1.1rem;
+        }
+        .res-contact .contact-phone {
+            font-size: 1.4rem;
+            font-family: var(--font-headings);
+            margin-bottom: 10px;
+            color: var(--text-color);
+        }
+        .res-contact .contact-email {
+            font-size: 1.1rem;
+            color: var(--accent-color);
+            font-family: var(--font-nav);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .res-times-pills {
+            display: flex; gap: 6px;
+            overflow-x: auto;
+            white-space: nowrap;
+            padding-bottom: 8px;
+            margin-top: 6px;
+            scrollbar-width: thin;
+            scrollbar-color: var(--accent-color) transparent;
+            -webkit-overflow-scrolling: touch;
+        }
+        .time-pill {
+            background: transparent;
+            border: 1px solid #444;
+            color: var(--text-color);
+            padding: 8px 14px;
+            font-family: var(--font-nav);
+            font-size: 0.85rem;
+            cursor: pointer;
+            border-radius: 4px;
+            transition: all 0.2s;
+        }
+        .time-pill:hover { border-color: var(--accent-color); color: var(--accent-color); }
+        .time-pill.selected {
+            border-color: var(--accent-color);
+            background: var(--accent-color);
+            color: #fff;
+        }
+
+        .res-back {
+            background: none; border: none; color: var(--text-muted);
+            font-family: var(--font-nav); font-size: 0.9rem; text-transform: uppercase;
+            cursor: pointer; margin-bottom: 20px; display: flex; align-items: center; gap: 5px;
+        }
+        .res-back:hover { color: var(--text-color); }
+
+        .res-summary {
+            background-color: #111; padding: 20px; border-left: 3px solid var(--accent-color); margin-bottom: 30px;
+        }
+        .res-summary p { font-family: var(--font-body); font-size: 1.1rem; color: var(--text-color); margin-bottom: 5px;}
+        .res-summary span { font-family: var(--font-nav); font-size: 0.9rem; color: var(--text-muted); text-transform: uppercase;}
+
+        .btn-submit-event {
+            background-color: var(--accent-color);
+            color: #fff;
+            border: none;
+            padding: 15px 30px;
+            font-family: var(--font-nav);
+            font-size: 1rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            width: 100%;
+        }
+        .btn-submit-event:hover { background-color: #903020; }
+
+        .input-group { display: flex; flex-direction: column; }
+        .input-group.full-width { grid-column: span 2; }
+        .input-group label {
+            font-family: var(--font-nav);
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            color: var(--text-muted);
+            margin-bottom: 5px;
+            letter-spacing: 1px;
+        }
+        .input-group input, .input-group textarea {
+            background: transparent;
+            border: none;
+            border-bottom: 1px solid #444;
+            color: var(--text-color);
+            font-family: var(--font-body);
+            font-size: 1.1rem;
+            padding: 10px 0;
+            outline: none;
+            transition: border-bottom-color 0.3s;
+        }
+        .input-group input:focus, .input-group textarea:focus {
+            border-bottom-color: var(--accent-color);
+        }
+
+        .event-form {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+        .full-width { grid-column: span 2; }
+
+        .field-error {
+            font-family: var(--font-nav);
+            font-size: 0.75rem;
+            color: var(--accent-color);
+            margin-top: 4px;
+            display: none;
+        }
+        .field-error.visible { display: block; }
+
+        /* --- CARRUSEL DE IMÁGENES --- */
+        .carousel-section {
+            width: 100%;
+            max-width: none;
+            margin: 60px auto 60px auto;
+            position: relative;
+            overflow: hidden;
+            height: 64vh;
+            min-height: 380px;
+            opacity: 0;
+            transform: scale(0.95);
+            transition: opacity 0.9s ease, transform 0.9s ease;
+        }
+
+        body.page-loaded .carousel-section {
+            opacity: 1;
+            transform: scale(1);
+            transition-delay: 0.35s;
+        }
+
+        .carousel-track {
+            display: flex;
+            height: 100%;
+            transition: transform 0.6s ease-in-out;
+        }
+
+        .carousel-slide {
+            min-width: 100%;
+            height: 100%;
+            background-size: cover;
+            background-position: center;
+            background-color: #666;
+        }
+
+        .carousel-dots {
+            position: absolute;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 10px;
+        }
+
+        .dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background-color: rgba(255, 255, 255, 0.5);
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        .dot.active {
+            background-color: var(--accent-color);
+        }
+
+        .dot:hover {
+            background-color: rgba(255, 255, 255, 0.8);
+        }
+
+        /* --- SEPARADORES --- */
+        .divider {
+            border: 0;
+            height: 4px;
+            background-color: var(--accent-color); /* Separador rojo */
+            margin: 40px 0;
+        }
+
+        /* --- TEXTOS PRINCIPALES --- */
+        .section-title {
+            font-family: var(--font-logo);
+            font-size: 3.2rem;
+            letter-spacing: 1px;
+            margin-bottom: 20px;
+            text-transform: uppercase;
+            position: relative;
+            display: inline-block;
+        }
+
+        .section-title::after {
+            content: '';
+            display: block;
+            width: 100%;
+            height: 5px;
+            background-color: var(--accent-color); /* Subrayado rojo */
+            margin-top: 5px;
+        }
+
+        .intro-text {
+            font-size: 1.25rem;
+            max-width: 900px;
+            margin-bottom: 20px;
+        }
+
+        /* --- UBICACIONES --- */
+        .locations-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 60px;
+            margin: 60px 0;
+        }
+
+        .location-card {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .location-img {
+            width: 100%;
+            height: 350px;
+            background-color: #1a1a1a;
+            background-size: cover;
+            background-position: center;
+            margin-bottom: 25px;
+        }
+
+        .location-title {
+            font-family: var(--font-logo);
+            font-size: 3.8rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            line-height: 1;
+            margin-bottom: 20px;
+            display: inline-block;
+        }
+        
+        .location-title::after {
+            content: '';
+            display: block;
+            width: 100%;
+            height: 5px;
+            background-color: var(--accent-color); /* Subrayado rojo */
+            margin-top: 5px;
+        }
+
+        .location-details {
+            font-family: var(--font-body);
+            font-size: 1.15rem;
+            line-height: 1.5;
+        }
+
+        .location-details p {
+            margin-bottom: 20px;
+        }
+
+        .location-details strong {
+            font-family: var(--font-headings);
+            font-size: 1.2rem;
+            text-transform: uppercase;
+            display: block;
+            margin-bottom: 5px;
+            color: var(--accent-color); /* Detalle fuerte en rojo */
+        }
+
+        /* --- GALERÍA --- */
+        .gallery-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin: 40px 0 60px;
+        }
+
+        .gallery-card {
+            width: 100%;
+            padding-top: 66.66%;
+            position: relative;
+            overflow: hidden;
+            border-radius: 12px;
+            background-color: #1a1a1a;
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.15); /* Sombra más fuerte */
+            transition: transform 0.4s ease;
+        }
+
+        .gallery-card:hover {
+            transform: scale(1.02);
+        }
+
+        /* --- PIE DE PÁGINA (FOOTER) --- */
+        footer {
+            margin-top: 80px;
+            padding-bottom: 60px;
+        }
+
+        .footer-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr) 2fr;
+            gap: 20px;
+            font-family: var(--font-nav);
+            font-size: 0.85rem;
+            text-transform: uppercase;
+        }
+
+        .footer-col h4 {
+            font-size: 1.1rem;
+            margin-bottom: 15px;
+            color: var(--accent-color); /* Títulos rojos */
+        }
+
+        .footer-col p, .footer-col a {
+            color: var(--text-color);
+            text-decoration: none;
+            display: block;
+            margin-bottom: 10px;
+            line-height: 1.4;
+        }
+
+        .footer-col a:hover {
+            color: var(--accent-color); /* Enlaces rojos al pasar el cursor */
+        }
+
+        .newsletter {
+            display: flex;
+            align-items: flex-end;
+            justify-content: flex-end;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .newsletter-links {
+            display: flex;
+            gap: 15px;
+            color: var(--accent-color);
+        }
+
+        .newsletter-links a {
+            color: var(--accent-color);
+        }
+
+        .btn-newsletter {
+            background-color: var(--accent-color); /* Rojo de acento */
+            color: #fff;
+            border: none;
+            padding: 12px 25px;
+            font-family: var(--font-nav);
+            font-size: 0.9rem;
+            cursor: pointer;
+            text-transform: uppercase;
+            width: 100%;
+            max-width: 250px;
+        }
+
+        .credits {
+            text-align: center;
+            font-family: var(--font-body);
+            color: var(--accent-color); /* Acento rojo */
+            font-size: 0.9rem;
+            margin-top: 60px;
+        }
+
+        /* --- ANIMACIONES REVEAL --- */
+        .reveal {
+            opacity: 0;
+            transition: opacity 0.7s ease, transform 0.7s ease;
+        }
+
+        .reveal.visible {
+            opacity: 1;
+            transform: translate(0, 0) scale(1);
+        }
+
+        .reveal-left { transform: translateX(-50px); }
+        .reveal-right { transform: translateX(50px); }
+        .reveal-up { transform: translateY(40px); }
+        .reveal-scale { transform: scale(0.95); }
+
+        .delay-1 { transition-delay: 0.1s; }
+        .delay-2 { transition-delay: 0.2s; }
+        .delay-3 { transition-delay: 0.3s; }
+        .delay-4 { transition-delay: 0.4s; }
+        .delay-5 { transition-delay: 0.5s; }
+
+        /* --- CONTADORES --- */
+        .counter-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 30px;
+            margin-top: 50px;
+            padding-top: 40px;
+            border-top: 1px solid #333;
+        }
+
+        .counter-item {
+            text-align: center;
+        }
+
+        .counter-number {
+            font-family: var(--font-logo);
+            font-size: 3.5rem;
+            color: var(--accent-color);
+            line-height: 1;
+            display: block;
+        }
+
+        .counter-number .suffix {
+            font-size: 2rem;
+        }
+
+        .counter-label {
+            font-family: var(--font-headings);
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            color: var(--text-muted);
+            letter-spacing: 1px;
+            margin-top: 8px;
+            display: block;
+        }
+
+        /* --- SPLASH SCREEN --- */
+        #splash {
+            position: fixed;
+            inset: 0;
+            z-index: 9999;
+            background-color: #000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            animation: splashOut 0.6s ease 2.4s forwards;
+        }
+
+        #splash img {
+            max-width: 220px;
+            height: auto;
+            animation: splashLogo 0.8s ease forwards;
+        }
+
+        @keyframes splashLogo {
+            0% { opacity: 0; transform: scale(0.85); }
+            100% { opacity: 1; transform: scale(1); }
+        }
+
+        @keyframes splashOut {
+            0% { opacity: 1; }
+            100% { opacity: 0; visibility: hidden; }
+        }
+
+        /* Responsive básico */
+        @media (max-width: 900px) {
+            header, .footer-grid { flex-direction: column; text-align: center; }
+            nav { flex-wrap: wrap; justify-content: center; margin-top: 20px; }
+            .carousel-section { height: 40vh; }
+            .locations-grid, .gallery-grid, .footer-grid, .counter-grid { grid-template-columns: 1fr; }
+            .newsletter { align-items: center; margin-top: 30px; }
+        }
+    </style>
+</head>
+<body>
+<div id="splash"><img src="logo_chilte.png" alt="Chiltepin Plaza Real"></div>
+
+    <div class="container">
+        <header>
+            <a href="index.html" class="logo-link">
+                <img src="logo_chilte.png" alt="Chiltepin Plaza Real Logo" class="logo-img">
+            </a>
+            <nav>
+                <a href="index.html">Inicio</a>
+
+                <div class="dropdown">
+                    <button class="dropbtn" onclick="window.location.href='horarioyubicacion.html'">Horarios & Ubicación</button>
+                    <div class="dropdown-content">
+                        <a href="horarioyubicacion.html?sucursal=seafood">Chiltepin Plaza Real</a>
+                        <a href="horarioyubicacion.html?sucursal=450">Chiltepin 450</a>
+                    </div>
+                </div>
+
+                <a href="menu.html">Menu</a>
+                <a href="acercade.html">Acerca de</a>
+                
+                <div class="dropdown">
+                    <button class="dropbtn" onclick="window.location.href='eventos.html'">Eventos</button>
+                    <div class="dropdown-content">
+                        <a href="eventos.html?tipo=privados">Eventos Privados</a>
+                        <a href="eventos.html?tipo=catering">Catering & Banquetes</a>
+                    </div>
+                </div>
+
+                <div class="dropdown">
+                    <button class="dropbtn">Delivery</button>
+                    <div class="dropdown-content">
+                        <div class="sub-dropdown">
+                            <button class="sub-dropbtn">Chiltepin Plaza Real</button>
+                            <div class="sub-dropdown-content">
+                                <a href="https://www.rappi.com.mx/restaurantes/1930107511-chiltepin-seafood" target="_blank">Rappi</a>
+                                <a href="https://www.didi-food.com/es-MX/food/store/5764607524473670170/?channel=10&cityId=52100200&lat=24.004475&lng=-104.653983&ddlCode=16Qms8&area=MX&lang=es-MX&appKey=dlp&redirectType=2&params=&pl=eyJwb2lJZCI6IkNoSUpQOERrSndfSW00WVJESzFBN2NEVU5TMCIsImFkZHJlc3NBbGxEaXNwbGF5IjoiTWFudWVsIEdhcmPDrWEgT2Jlc28gMzEzLCBDb2wgZGVsIFZhbGxlLCAzNDEzMCBEdXJhbmdvLCBEZ28uLCBNw6l4aWNvIiwiY2l0eSI6IkR1cmFuZ28iLCJjaXR5SWQiOjUyMTAwMjAwLCJjb3VudHJ5Q29kZSI6Ik1YIiwiY291bnRyeUlkIjo1MiwibGF0IjoyNC4wMDcxMTI0LCJsbmciOi0xMDQuNjczMzA3NCwiZGlzcGxheU5hbWUiOiJNYW51ZWwgR2FyY8OtYSBPYmVzbywgMzEzIiwiYWRkcmVzcyI6Ik1hbnVlbCBHYXJjw61hIE9iZXNvIDMxMywgQ29sIGRlbCBWYWxsZSwgMzQxMzAgRHVyYW5nbywgRGdvLiwgTcOpeGljbyIsImFkZHJlc3NBbGwiOiJNYW51ZWwgR2FyY8OtYSBPYmVzbyAzMTMsIENvbCBkZWwgVmFsbGUsIDM0MTMwIER1cmFuZ28sIERnby4sIE3DqXhpY28iLCJjb29yZGluYXRlVHlwZSI6Indnczg0IiwicG9pU3JjVGFnIjoibWFudWFsX3JnZW8iLCJzcmNUYWciOiJyZXZlcnNlZ2VvdG9wIiwic2VhcmNoSWQiOiIwYTkzYjkzNjY5ZWFkZjIyOThiZDhkZGMyMjliMjQwMiIsImRpc3RTdHIiOiIxMG0iLCJwb2lUeXBlIjoicHJlbWlzZTtzdHJlZXRfYWRkcmVzcyIsImNvdW50eUlkIjo1MjEwMDIwMSwiY291bnR5R3JvdXBJZCI6NTIxMDAyMDAwMDAxfQ%3D%3D" target="_blank">DiDi</a>
+                            </div>
+                        </div>
+                        <div class="sub-dropdown">
+                            <button class="sub-dropbtn">Chiltepin 450</button>
+                            <div class="sub-dropdown-content">
+                                <a href="https://www.didi-food.com/es-MX/food/store/5764610193128950278/?channel=10&cityId=52100200&lat=24.054347&lng=-104.643926&ddlCode=DGvdnr&area=MX&lang=es-MX&appKey=dlp&redirectType=2&params=&pl=eyJwb2lJZCI6IkNoSUpQOERrSndfSW00WVJESzFBN2NEVU5TMCIsImFkZHJlc3NBbGxEaXNwbGF5IjoiTWFudWVsIEdhcmPDrWEgT2Jlc28gMzEzLCBDb2wgZGVsIFZhbGxlLCAzNDEzMCBEdXJhbmdvLCBEZ28uLCBNw6l4aWNvIiwiY2l0eSI6IkR1cmFuZ28iLCJjaXR5SWQiOjUyMTAwMjAwLCJjb3VudHJ5Q29kZSI6Ik1YIiwiY291bnRyeUlkIjo1MiwibGF0IjoyNC4wMDcxMTI0LCJsbmciOi0xMDQuNjczMzA3NCwiZGlzcGxheU5hbWUiOiJNYW51ZWwgR2FyY8OtYSBPYmVzbywgMzEzIiwiYWRkcmVzcyI6Ik1hbnVlbCBHYXJjw61hIE9iZXNvIDMxMywgQ29sIGRlbCBWYWxsZSwgMzQxMzAgRHVyYW5nbywgRGdvLiwgTcOpeGljbyIsImFkZHJlc3NBbGwiOiJNYW51ZWwgR2FyY8OtYSBPYmVzbyAzMTMsIENvbCBkZWwgVmFsbGUsIDM0MTMwIER1cmFuZ28sIERnby4sIE3DqXhpY28iLCJjb29yZGluYXRlVHlwZSI6Indnczg0IiwicG9pU3JjVGFnIjoibWFudWFsX3JnZW8iLCJzcmNUYWciOiJyZXZlcnNlZ2VvdG9wIiwic2VhcmNoSWQiOiIwYTkzYjkzNjY5ZWFkZjIyOThiZDhkZGMyMjliMjQwMiIsImRpc3RTdHIiOiIxMG0iLCJwb2lUeXBlIjoicHJlbWlzZTtzdHJlZXRfYWRkcmVzcyIsImNvdW50eUlkIjo1MjEwMDIwMSwiY291bnR5R3JvdXBJZCI6NTIxMDAyMDAwMDAxfQ%3D%3D" target="_blank">DiDi</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <button class="btn-reservations res-trigger">Reservaciones</button>
+            </nav>
+        </header>
+    </div>
+
+    <section class="carousel-section">
+        <div class="carousel-track" id="carouselTrack">
+            <div class="carousel-slide" style="background-image: url('carousel1.jpg');"></div>
+            <div class="carousel-slide" style="background-image: url('carousel2.jpg');"></div>
+            <div class="carousel-slide" style="background-image: url('carousel3.jpg');"></div>
+        </div>
+        
+        <div class="carousel-dots" id="carouselDots">
+            <span class="dot active" data-slide="0"></span>
+            <span class="dot" data-slide="1"></span>
+            <span class="dot" data-slide="2"></span>
+        </div>
+    </section>
+
+    <div class="container">
+        <main>
+            <section id="about" class="reveal reveal-up">
+                <h1 class="section-title">Sobre Nosotros</h1>
+                <p class="intro-text">
+                    Fundado en el corazón de Durango, Chiltepin Seafood nace del amor por el mar y el sabor auténtico de la costa del Pacífico. Nuestra cocina se guía por el chile chiltepín silvestre y relaciones duraderas con pescadores locales y proveedores de ingredientes frescos de la región.
+                </p>
+            </section>
+
+            <div class="counter-grid">
+                <div class="counter-item reveal reveal-up">
+                    <span class="counter-number"><span class="counter-value" data-target="2022">0</span></span>
+                    <span class="counter-label">Fundación</span>
+                </div>
+                <div class="counter-item reveal reveal-up delay-1">
+                    <span class="counter-number"><span class="counter-value" data-target="200">0</span><span class="suffix">+</span></span>
+                    <span class="counter-label">Clientes por Día</span>
+                </div>
+                <div class="counter-item reveal reveal-up delay-2">
+                    <span class="counter-number"><span class="counter-value" data-target="2">0</span></span>
+                    <span class="counter-label">Sucursales</span>
+                </div>
+            </div>
+
+            <section id="locations">
+                <div class="locations-grid">
+                    <div class="location-card reveal reveal-up">
+                        <div class="location-img" style="background-image: url('https://placehold.co/800x500/1a1a1a/f4ead6?text=Fachada+Centro');"></div>
+                        <div>
+                            <h2 class="location-title">CHILTEPIN PLAZA REAL</h2>
+                        </div>
+                        <div class="location-details">
+                            <p>Politecnico Nacional 403<br>Huizache I, Durango, Dgo 34170</p>
+                            
+                            <strong>Teléfono:</strong>
+                            <p>618.200.3865</p>
+                            
+                            <strong>Email:</strong>
+                            <p>ejemplo@chiltepin.com</p>
+                            <button class="btn-location" onclick="window.location.href='horarioyubicacion.html?sucursal=seafood'">Ver Detalles y Mapa</button>
+                        </div>
+                    </div>
+
+                    <div class="location-card reveal reveal-up delay-2">
+                        <div class="location-img" style="background-image: url('https://placehold.co/800x500/d32f2f/f4ead6?text=Interior+Norte');"></div>
+                        <div>
+                            <h2 class="location-title">CHILTEPIN 450</h2>
+                        </div>
+                        <div class="location-details">
+                            <p>Local 77, Plaza 450<br>Los Cipreses, Durango, Dgo 34217</p>
+                            
+                            <strong>Teléfono:</strong>
+                            <p>618.200.3865</p>
+                            
+                            <strong>Email:</strong>
+                            <p>ejemplo@chiltepin.com</p>
+                            <button class="btn-location" onclick="window.location.href='horarioyubicacion.html?sucursal=450'">Ver Detalles y Mapa</button>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <hr class="divider">
+
+            <section id="gallery">
+                <h2 class="section-title"></h2>
+                <div class="gallery-grid">
+                    <div class="gallery-card reveal reveal-up" style="background-image: url('https://placehold.co/600x400/1a1a1a/f4ead6?text=Mariscos+Frescos');"></div>
+                    <div class="gallery-card reveal reveal-up delay-1" style="background-image: url('https://placehold.co/600x400/d32f2f/f4ead6?text=Sabores+de+Durango');"></div>
+                    <div class="gallery-card reveal reveal-up delay-2" style="background-image: url('https://placehold.co/600x400/555/f4ead6?text=Ceviche+Especial');"></div>
+                    <div class="gallery-card reveal reveal-up delay-3" style="background-image: url('https://placehold.co/600x400/1a1a1a/f4ead6?text=Chef+en+Acci%C3%B3n');"></div>
+                    <div class="gallery-card reveal reveal-up delay-4" style="background-image: url('https://placehold.co/600x400/d32f2f/f4ead6?text=Ambiente+Acogedor');"></div>
+                    <div class="gallery-card reveal reveal-up delay-5" style="background-image: url('https://placehold.co/600x400/1a1a1a/f4ead6?text=Plato+Delicioso');"></div>
+                </div>
+            </section>
+        </main>
+
+        <footer>
+            <hr class="divider">
+            <div class="footer-grid">
+                <div class="footer-col">
+                    <h4>Ubicaciones</h4>
+                    <a href="horarioyubicacion.html?sucursal=seafood">Chiltepin Plaza Real</a>
+                    <a href="horarioyubicacion.html?sucursal=450">Chiltepin 450</a>
+                    <a href="#">Delivery - Norte</a>
+                </div>
+                
+                <div class="footer-col">
+                    <h4>Contacto</h4>
+                    <p>618.123.4567</p>
+                    <p>DURANGO – INFO@CHILTEPIN.COM</p>
+                    <br>
+                    <a href="#">Instagram</a>
+                    <a href="#">Facebook</a>
+                </div>
+
+                <div class="footer-col">
+                    <h4>Reservaciones</h4>
+                    <a href="#" class="res-trigger">Restaurante Durango</a>
+                    <a href="eventos.html?tipo=privados">Eventos Privados</a>
+                </div>
+
+                <div class="footer-col">
+                    <h4>Bolsa de Trabajo</h4>
+                    <a href="#">Únete a nuestro equipo</a>
+                </div>
+
+                <div class="newsletter">
+                    <div class="newsletter-links">
+                        <a href="#">Accesibilidad</a>
+                        <a href="#">Contacto</a>
+                    </div>
+                    <button class="btn-newsletter">Suscríbete al Boletín</button>
+                </div>
+            </div>
+            
+            <p class="credits">Desarrollado para Chiltepin Plaza Real</p>
+        </footer>
+    </div>
+
+    <script>
+        // Splash único por sesión
+        if (sessionStorage.getItem('splashShown')) {
+            const s = document.getElementById('splash');
+            if (s) s.remove();
+        } else {
+            sessionStorage.setItem('splashShown', 'true');
+            setTimeout(() => {
+                const splash = document.getElementById('splash');
+                if (splash) splash.style.display = 'none';
+            }, 3200);
+        }
+
+        window.addEventListener('load', () => {
+            document.body.classList.add('page-loaded');
+        });
+
+        // Funciones globales para la barra de reservaciones (multi-step)
+        function openReservations() {
+            document.getElementById('resSidebar').classList.add('active');
+            document.getElementById('resOverlay').classList.add('active');
+            document.body.style.overflow = 'hidden';
+            document.getElementById('resStep1').classList.add('active');
+            document.getElementById('resStep2').classList.remove('active');
+            document.getElementById('resStep3').classList.remove('active');
+        }
+
+        function closeReservations() {
+            document.getElementById('resSidebar').classList.remove('active');
+            document.getElementById('resOverlay').classList.remove('active');
+            document.body.style.overflow = '';
+            document.querySelector('#resStep2 input[type="text"]').value = '';
+            document.querySelector('#resStep2 input[type="tel"]').value = '';
+            document.querySelector('#resStep2 input[type="email"]').value = '';
+            document.querySelectorAll('.guest-pill').forEach((b, i) => b.classList.toggle('selected', i === 1));
+            document.querySelectorAll('.loc-pill').forEach((b, i) => b.classList.toggle('selected', i === 0));
+            document.querySelectorAll('.time-pill').forEach(b => b.classList.remove('selected'));
+            document.querySelectorAll('.field-error').forEach(e => e.classList.remove('visible'));
+            document.getElementById('resContactInfo').style.display = 'none';
+            document.querySelector('#resStep2 form').style.display = 'block';
+            const btn = document.getElementById('btnStep1Confirm');
+            btn.textContent = 'Confirmar Horario';
+            btn.className = 'btn-submit-event';
+        }
+
+        function clearError(id) {
+            document.getElementById(id).classList.remove('visible');
+        }
+
+        function showError(id, msg) {
+            const el = document.getElementById(id);
+            el.textContent = msg;
+            el.classList.add('visible');
+        }
+
+        function confirmStep1() {
+            document.querySelectorAll('#resStep1 .field-error').forEach(e => e.classList.remove('visible'));
+            const selectedTimeEl = document.querySelector('.time-pill.selected');
+            const selectedTime = selectedTimeEl ? selectedTimeEl.dataset.value : '';
+            const dateVal = document.getElementById('resDate').value;
+            if (!dateVal) { showError('error-fecha', 'Selecciona una fecha'); return; }
+            if (!selectedTime) { showError('error-horario', 'Selecciona un horario'); return; }
+            const day = new Date(dateVal + 'T12:00:00').getDay();
+            if (day === 0 || day === 6) {
+                showError('error-fecha', 'Solo atendemos reservaciones entre semana. Los fines de semana te esperamos sin reservación.');
+                return;
+            }
+            const locEl = document.querySelector('.loc-pill.selected');
+            const loc = locEl ? locEl.dataset.value : '';
+            const guestEl = document.querySelector('.guest-pill.selected');
+            const guests = guestEl ? guestEl.dataset.value : '';
+            document.getElementById('summaryLoc').innerText = loc;
+            document.getElementById('summaryDetails').innerText = `${guests} • ${dateVal} • ${selectedTime}`;
+
+            const isLargeGroup = guestEl && guestEl.dataset.value === '7+ Personas';
+            document.getElementById('resContactInfo').style.display = isLargeGroup ? 'block' : 'none';
+            document.querySelector('#resStep2 form').style.display = isLargeGroup ? 'none' : 'block';
+
+            document.getElementById('resStep1').classList.remove('active');
+            document.getElementById('resStep2').classList.add('active');
+        }
+
+        function goBackToStep1() {
+            document.getElementById('resStep2').classList.remove('active');
+            document.getElementById('resStep1').classList.add('active');
+        }
+
+        function submitReservation(e) {
+            e.preventDefault();
+            document.querySelectorAll('#resStep2 .field-error').forEach(e => e.classList.remove('visible'));
+            const name = document.querySelector('#resStep2 input[type="text"]').value.trim();
+            const phone = document.querySelector('#resStep2 input[type="tel"]').value.trim();
+            const email = document.querySelector('#resStep2 input[type="email"]').value.trim();
+            let valid = true;
+            if (!name) { showError('error-name', 'Ingresa tu nombre completo'); valid = false; }
+            if (!/^\d{10}$/.test(phone)) { showError('error-phone', 'Ingresa un teléfono válido de 10 dígitos'); valid = false; }
+            if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) { showError('error-email', 'Ingresa un correo electrónico válido'); valid = false; }
+            if (!valid) return;
+            document.getElementById('resStep2').classList.remove('active');
+            document.getElementById('resStep3').classList.add('active');
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const track = document.getElementById('carouselTrack');
+            const slides = Array.from(track.children);
+            const dots = document.querySelectorAll('.dot');
+            
+            let currentIndex = 0;
+
+            function updateCarousel() {
+                const amountToMove = currentIndex * 100;
+                track.style.transform = `translateX(-${amountToMove}%)`;
+                
+                dots.forEach((dot, index) => {
+                    dot.classList.toggle('active', index === currentIndex);
+                });
+            }
+
+            // Add click event to dots
+            dots.forEach((dot, index) => {
+                dot.addEventListener('click', () => {
+                    currentIndex = index;
+                    updateCarousel();
+                });
+            });
+
+            // Autoplay (cambia de imagen cada 8 segundos)
+            setInterval(() => {
+                currentIndex = (currentIndex + 1) % slides.length;
+                updateCarousel();
+            }, 8000);
+
+            // Eventos de la barra lateral
+            const resTriggers = document.querySelectorAll('.res-trigger');
+            const resSidebar = document.getElementById('resSidebar');
+            const resOverlay = document.getElementById('resOverlay');
+            const resClose = document.getElementById('resClose');
+            if (resTriggers.length > 0 && resSidebar && resOverlay && resClose) {
+                resTriggers.forEach(btn => btn.addEventListener('click', openReservations));
+                resClose.addEventListener('click', closeReservations);
+                resOverlay.addEventListener('click', closeReservations);
+            }
+
+            // Pills de sucursal
+            document.querySelectorAll('.loc-pill').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    document.querySelectorAll('.loc-pill').forEach(b => b.classList.remove('selected'));
+                    btn.classList.add('selected');
+                });
+            });
+
+            // Pills de horario
+            document.querySelectorAll('.time-pill').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    document.querySelectorAll('.time-pill').forEach(b => b.classList.remove('selected'));
+                    btn.classList.add('selected');
+                });
+            });
+
+            // Pills de huéspedes
+            document.querySelectorAll('.guest-pill').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    document.querySelectorAll('.guest-pill').forEach(b => b.classList.remove('selected'));
+                    btn.classList.add('selected');
+                    const btnConfirm = document.getElementById('btnStep1Confirm');
+                    if (btn.dataset.value === '7+ Personas') {
+                        btnConfirm.textContent = 'Contáctanos';
+                        btnConfirm.className = 'btn-submit-event btn-contact';
+                    } else {
+                        btnConfirm.textContent = 'Confirmar Horario';
+                        btnConfirm.className = 'btn-submit-event';
+                    }
+                });
+            });
+
+            // Configurar fecha de hoy
+            const dateResInput = document.getElementById('resDate');
+            if (dateResInput) {
+                const today = new Date().toISOString().split('T')[0];
+                dateResInput.value = today;
+                dateResInput.min = today;
+            }
+
+            // Animación de contadores
+            function animateCounter(el, target) {
+                const duration = 1500;
+                const start = performance.now();
+                
+                function update(now) {
+                    const elapsed = now - start;
+                    const progress = Math.min(elapsed / duration, 1);
+                    const eased = 1 - Math.pow(1 - progress, 3);
+                    el.textContent = Math.round(eased * target);
+                    if (progress < 1) requestAnimationFrame(update);
+                }
+                requestAnimationFrame(update);
+            }
+
+            // Parallax del carrusel por JS
+            const carouselSlides = document.querySelectorAll('.carousel-slide');
+            function updateParallax() {
+                const carousel = document.querySelector('.carousel-section');
+                if (!carousel) return;
+                const rect = carousel.getBoundingClientRect();
+                const offset = rect.top * 0.25;
+                carouselSlides.forEach(slide => {
+                    slide.style.backgroundPositionY = `calc(50% + ${offset}px)`;
+                });
+                requestAnimationFrame(updateParallax);
+            }
+            if (carouselSlides.length > 0) updateParallax();
+
+            // Scroll reveal + contadores
+            const revealElements = document.querySelectorAll('.reveal');
+            if (revealElements.length > 0) {
+                const observer = new IntersectionObserver((entries) => {
+                    entries.forEach(entry => {
+                        if (entry.isIntersecting) {
+                            entry.target.classList.add('visible');
+                            observer.unobserve(entry.target);
+                            // Si el elemento contiene contadores, animarlos
+                            const counters = entry.target.querySelectorAll('.counter-value');
+                            counters.forEach(c => {
+                                const target = parseInt(c.dataset.target);
+                                animateCounter(c, target);
+                            });
+                        }
+                    });
+                }, { threshold: 0.15 });
+                revealElements.forEach(el => observer.observe(el));
+            }
+        });
+    </script>
+
+    <div class="res-overlay" id="resOverlay"></div>
+    <aside class="res-sidebar" id="resSidebar">
+        
+        <div class="res-header">
+            <h2 class="res-title-bar">Reservaciones</h2>
+            <button class="res-close" id="resClose">✕</button>
+        </div>
+        
+        <div class="res-body">
+            
+            <div id="resStep1" class="res-step active">
+                
+                <div class="res-field">
+                    <label>Sucursal</label>
+                    <div class="res-location-pills" id="resLocation">
+                        <button class="loc-pill selected" data-value="Chiltepin Plaza Real">Plaza Real</button>
+                        <button class="loc-pill" data-value="Chiltepin 450">Chiltepin 450</button>
+                    </div>
+                </div>
+
+                <div class="res-field">
+                    <label>Huéspedes</label>
+                    <div class="guest-pills" id="resGuests">
+                        <button class="guest-pill" data-value="1 Persona">1</button>
+                        <button class="guest-pill selected" data-value="2 Personas">2</button>
+                        <button class="guest-pill" data-value="3 Personas">3</button>
+                        <button class="guest-pill" data-value="4 Personas">4</button>
+                        <button class="guest-pill" data-value="5 Personas">5</button>
+                        <button class="guest-pill" data-value="6 Personas">6</button>
+                        <button class="guest-pill" data-value="7+ Personas">7+</button>
+                    </div>
+                </div>
+
+                <div class="res-field">
+                    <label>Fecha</label>
+                    <input type="date" id="resDate">
+                </div>
+                <span class="field-error" id="error-fecha"></span>
+
+                <div class="res-field">
+                    <label>Horario</label>
+                    <div class="res-times-pills" id="resTimePills">
+                        <button class="time-pill" data-value="11:30">11:30</button>
+                        <button class="time-pill" data-value="12:00">12:00</button>
+                        <button class="time-pill" data-value="12:30">12:30</button>
+                        <button class="time-pill" data-value="13:00">13:00</button>
+                        <button class="time-pill" data-value="13:30">13:30</button>
+                        <button class="time-pill" data-value="14:00">14:00</button>
+                        <button class="time-pill" data-value="14:30">14:30</button>
+                        <button class="time-pill" data-value="15:00">15:00</button>
+                        <button class="time-pill" data-value="15:30">15:30</button>
+                        <button class="time-pill" data-value="16:00">16:00</button>
+                        <button class="time-pill" data-value="16:30">16:30</button>
+                        <button class="time-pill" data-value="17:00">17:00</button>
+                        <button class="time-pill" data-value="17:30">17:30</button>
+                        <button class="time-pill" data-value="18:00">18:00</button>
+                        <button class="time-pill" data-value="18:30">18:30</button>
+                        <button class="time-pill" data-value="19:00">19:00</button>
+                    </div>
+                    <span class="field-error" id="error-horario"></span>
+                </div>
+
+                <button id="btnStep1Confirm" class="btn-submit-event" onclick="confirmStep1()" style="margin-top: 20px;">Confirmar Horario</button>
+            </div>
+
+            <div id="resStep2" class="res-step">
+                <button class="res-back" onclick="goBackToStep1()">❮ Cambiar Hora</button>
+                
+                <div class="res-summary">
+                    <p id="summaryLoc">Chiltepin Plaza Real</p>
+                    <span id="summaryDetails">2 Personas • Hoy • 19:00</span>
+                </div>
+
+                <form class="event-form" onsubmit="submitReservation(event)">
+                    <div class="input-group full-width">
+                        <label>Nombre Completo</label>
+                        <input type="text" placeholder="Ej. Juan Pérez" oninput="clearError('error-name')">
+                        <span class="field-error" id="error-name"></span>
+                    </div>
+                    <div class="input-group full-width">
+                        <label>Teléfono</label>
+                        <input type="tel" placeholder="618..." oninput="clearError('error-phone')">
+                        <span class="field-error" id="error-phone"></span>
+                    </div>
+                    <div class="input-group full-width">
+                        <label>Correo Electrónico</label>
+                        <input type="email" placeholder="correo@ejemplo.com" oninput="clearError('error-email')">
+                        <span class="field-error" id="error-email"></span>
+                    </div>
+                    <div class="full-width">
+                        <button type="submit" class="btn-submit-event" style="margin-top: 20px;">Confirmar Reserva</button>
+                    </div>
+                </form>
+
+                <div id="resContactInfo" class="res-contact" style="display: none;">
+                    <h3>Grandes Grupos</h3>
+                    <p>Para reservaciones de 7+ personas,<br>contáctanos directamente:</p>
+                    <p class="contact-phone">618.123.4567</p>
+                    <p class="contact-email">info@chiltepin.com</p>
+                    <button class="btn-submit-event" onclick="closeReservations()" style="margin-top: 20px;">Cerrar</button>
+                </div>
+            </div>
+
+            <div id="resStep3" class="res-step" style="text-align: center; margin-top: 50px;">
+                <h2 style="font-family: var(--font-logo); font-size: 3rem; color: var(--accent-color); margin-bottom: 20px;">¡Reserva Confirmada!</h2>
+                <p style="font-size: 1.1rem; color: var(--text-muted); margin-bottom: 30px;">Te hemos enviado un correo con los detalles de tu reservación.</p>
+                <button class="btn-submit-event" onclick="closeReservations()">Cerrar</button>
+            </div>
+
+        </div>
+    </aside>
+
+</body>
+</html>

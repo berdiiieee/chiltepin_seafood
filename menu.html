@@ -1,0 +1,1822 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Menú | Chiltepin Plaza Real</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Anton&family=Lora:ital,wght@0,400;0,600;1,400&family=Oswald:wght@400;600&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --bg-color: #1a1a1a;
+            --accent-color: #d32f2f;
+            --text-color: #ffffff;
+            --text-muted: #a0a0a0;
+            
+            --font-logo: 'Anton', sans-serif;
+            --font-headings: 'Oswald', sans-serif;
+            --font-body: 'Lora', serif;
+            --font-nav: 'Oswald', sans-serif;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            font-family: var(--font-body);
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 12px;
+        }
+
+        /* --- CABECERA Y LOGO --- */
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 28px;
+            padding: 10px 0 8px;
+            background-color: transparent;
+            border-bottom: 2px solid var(--accent-color);
+        }
+
+        .logo-link {
+            display: block;
+            max-width: 220px;
+            height: auto;
+        }
+
+        .logo-img {
+            width: 100%;
+            height: auto;
+            object-fit: contain;
+        }
+
+        /* --- NAVEGACIÓN PRINCIPAL --- */
+        nav {
+            display: flex;
+            align-items: center;
+            gap: 24px;
+            font-family: var(--font-nav);
+            font-size: 1rem;
+            letter-spacing: 1.5px;
+        }
+
+        nav a {
+            text-decoration: none;
+            color: var(--text-color);
+            text-transform: uppercase;
+            transition: color 0.3s ease;
+        }
+
+        nav a:hover, .dropdown-content a:hover {
+            color: var(--accent-color);
+            cursor: pointer;
+        }
+
+        .btn-reservations {
+            background-color: var(--accent-color);
+            color: #fff;
+            padding: 11px 18px;
+            text-transform: uppercase;
+            border: none;
+            cursor: pointer;
+            font-family: var(--font-nav);
+            font-size: 1rem;
+            letter-spacing: 1px;
+            transition: background-color 0.3s;
+        }
+
+        .btn-reservations:hover {
+            background-color: #903020;
+        }
+
+        .dropdown {
+            position: relative;
+            display: inline-block;
+        }
+
+        .dropbtn {
+            background-color: transparent;
+            color: var(--text-color);
+            padding: 0;
+            font-family: var(--font-nav);
+            font-size: 1rem;
+            letter-spacing: 1.5px;
+            text-transform: uppercase;
+            border: none;
+            cursor: pointer;
+            transition: color 0.3s ease;
+        }
+
+        .dropbtn:hover {
+            color: var(--accent-color);
+        }
+
+        .dropbtn::after {
+            content: " ▼";
+            font-size: 0.8em;
+            margin-left: 5px;
+            display: inline-block;
+            transition: transform 0.3s ease;
+        }
+
+        .dropdown-content {
+            display: none;
+            position: absolute;
+            background-color: var(--bg-color);
+            min-width: 200px;
+            box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.5);
+            z-index: 20;
+            top: 100%;
+            left: 0;
+            border: 1px solid var(--accent-color);
+        }
+
+        .dropdown-content a {
+            color: var(--text-color);
+            padding: 12px 16px;
+            text-decoration: none;
+            display: block;
+            text-transform: uppercase;
+            font-family: var(--font-nav);
+            font-size: 0.9rem;
+            transition: background-color 0.3s;
+        }
+
+        .dropdown:hover .dropdown-content {
+            display: block;
+        }
+
+        .dropdown:hover .dropbtn::after,
+        .dropdown:focus-within .dropbtn::after {
+            transform: rotate(180deg);
+        }
+
+        .sub-dropdown {
+            position: relative;
+        }
+
+        .sub-dropbtn {
+            background-color: transparent;
+            color: var(--text-color);
+            padding: 12px 16px;
+            text-decoration: none;
+            display: block;
+            text-transform: uppercase;
+            font-family: var(--font-nav);
+            font-size: 0.9rem;
+            border: none;
+            cursor: pointer;
+            width: 100%;
+            text-align: left;
+            transition: background-color 0.3s;
+        }
+
+        .sub-dropbtn:hover {
+            background-color: var(--accent-color);
+            color: #fff;
+        }
+
+        .sub-dropdown-content {
+            display: none;
+            position: absolute;
+            background-color: var(--bg-color);
+            min-width: 200px;
+            box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.5);
+            z-index: 21;
+            left: 100%;
+            top: 0;
+            border: 1px solid var(--accent-color);
+        }
+
+        .sub-dropdown-content a {
+            color: var(--text-color);
+            padding: 12px 16px;
+            text-decoration: none;
+            display: block;
+            text-transform: uppercase;
+            font-family: var(--font-nav);
+            font-size: 0.8rem;
+            transition: background-color 0.3s;
+        }
+
+        .sub-dropdown-content a:hover {
+            background-color: var(--accent-color);
+            color: #fff;
+        }
+
+        .sub-dropdown:hover .sub-dropdown-content {
+            display: block;
+        }
+
+        /* --- ENCABEZADO DE LA PÁGINA --- */
+        .page-header {
+            position: relative;
+            display: grid;
+            place-items: center;
+            text-align: center;
+            margin: 60px 0 40px;
+            padding: 140px 20px 120px;
+            min-height: 450px;
+            background-image: linear-gradient(rgba(0,0,0,0.52), rgba(0,0,0,0.52)), url('img_menu.jpg');
+            background-size: cover;
+            background-position: center;
+            border-radius: 18px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.35);
+            overflow: hidden;
+        }
+
+        .page-header::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.25);
+            pointer-events: none;
+        }
+
+        .page-title {
+            position: relative;
+            z-index: 1;
+            font-family: var(--font-logo);
+            font-size: clamp(3rem, 5vw, 5rem);
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            color: var(--text-color);
+            line-height: 1;
+            margin: 0;
+        }
+
+        /* --- BARRA DE NAVEGACIÓN DEL MENÚ (STICKY) --- */
+        .menu-nav-wrapper {
+            position: sticky;
+            top: 0;
+            background-color: rgba(26, 26, 26, 0.95); /* Fondo oscuro semitransparente */
+            backdrop-filter: blur(5px);
+            z-index: 10;
+            padding: 15px 0;
+            border-bottom: 1px solid #333;
+            margin-bottom: 60px;
+        }
+
+        .menu-nav {
+            display: flex;
+            overflow-x: auto;
+            gap: 30px;
+            list-style: none;
+            padding-bottom: 5px;
+            justify-content: center;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        /* Ocultar barra de scroll en navegadores webkit pero permitir el deslizamiento */
+        .menu-nav::-webkit-scrollbar {
+            height: 0px;
+            background: transparent;
+        }
+
+        .menu-nav a {
+            color: var(--text-color);
+            text-decoration: none;
+            font-family: var(--font-headings);
+            text-transform: uppercase;
+            font-size: 1.1rem;
+            white-space: nowrap;
+            letter-spacing: 1px;
+            transition: color 0.3s;
+            padding-bottom: 5px;
+        }
+
+        .menu-nav a:hover {
+            color: var(--accent-color);
+        }
+
+        .menu-nav a.active {
+            color: var(--accent-color);
+            border-bottom: 2px solid var(--accent-color);
+        }
+
+        /* --- ESTRUCTURA DEL MENÚ --- */
+        .menu-container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        .menu-section {
+            margin-bottom: 80px;
+            scroll-margin-top: 90px; /* Offset para que la barra sticky no tape el título */
+        }
+
+        .section-heading {
+            font-family: var(--font-logo);
+            font-size: 3rem;
+            color: var(--text-color);
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin-bottom: 40px;
+            text-align: center;
+        }
+
+        .section-heading::after {
+            content: '';
+            display: block;
+            width: 60px;
+            height: 4px;
+            background-color: var(--accent-color);
+            margin: 10px auto 0;
+        }
+
+        .menu-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            column-gap: 60px;
+            row-gap: 40px;
+        }
+
+        .menu-item {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .dish-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+            margin-bottom: 8px;
+            border-bottom: 1px dotted #444; /* Línea punteada sutil como guía visual */
+            padding-bottom: 4px;
+        }
+
+        .dish-name {
+            font-family: var(--font-headings);
+            font-size: 1.25rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--text-color);
+            padding-right: 15px;
+        }
+
+        .dish-price {
+            font-family: var(--font-headings);
+            font-size: 1.2rem;
+            color: var(--accent-color);
+        }
+
+        .dish-desc {
+            font-family: var(--font-body);
+            font-size: 1rem;
+            color: var(--text-muted);
+            line-height: 1.5;
+        }
+
+        /* --- BARRA LATERAL DE RESERVACIONES (MULTI-STEP) --- */
+        .res-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.7); backdrop-filter: blur(4px);
+            z-index: 999; display: none;
+        }
+        .res-overlay.active { display: block; }
+
+        .res-sidebar {
+            position: fixed; top: 0; right: -480px; width: 100%; max-width: 480px;
+            height: 100%; background-color: #1a1a1a; z-index: 1000;
+            box-shadow: -5px 0 25px rgba(0,0,0,0.8);
+            transition: right 0.4s cubic-bezier(0.77, 0, 0.175, 1);
+            display: flex; flex-direction: column;
+        }
+        .res-sidebar.active { right: 0; }
+
+        .res-header {
+            padding: 30px 40px 20px; display: flex; justify-content: space-between; align-items: center;
+            border-bottom: 1px solid #333;
+        }
+        .res-title-bar {
+            font-family: var(--font-logo); font-size: 2rem;
+            text-transform: uppercase; color: var(--text-color); letter-spacing: 1px;
+        }
+        .res-close {
+            background: none; border: none; color: var(--text-muted);
+            font-size: 1.5rem; cursor: pointer; transition: color 0.3s;
+        }
+        .res-close:hover { color: var(--accent-color); }
+
+        .res-body { padding: 20px 40px 40px; overflow-y: auto; flex-grow: 1; }
+        .res-step { display: none; animation: fadeInRight 0.3s ease forwards; }
+        .res-step.active { display: block; }
+
+        @keyframes fadeInRight {
+            from { opacity: 0; transform: translateX(20px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+
+        .res-field {
+            padding: 16px 0;
+            border-bottom: 1px solid #333;
+        }
+        .res-field label {
+            font-family: var(--font-nav);
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            color: var(--text-muted);
+            display: block;
+            margin-bottom: 6px;
+        }
+        .res-field select,
+        .res-field input[type="date"] {
+            background: transparent;
+            border: none;
+            color: var(--text-color);
+            font-family: var(--font-headings);
+            font-size: 1.1rem;
+            outline: none;
+            cursor: pointer;
+            width: 100%;
+            padding: 4px 0;
+        }
+        .res-field select option { background-color: var(--bg-color); }
+        .res-field input[type="date"]::-webkit-calendar-picker-indicator { filter: invert(1); cursor: pointer; }
+
+        .res-location-pills {
+            display: flex; gap: 10px;
+        }
+        .loc-pill {
+            flex: 1;
+            background: transparent;
+            border: 1px solid #444;
+            color: var(--text-color);
+            padding: 10px;
+            font-family: var(--font-nav);
+            font-size: 0.9rem;
+            text-align: center;
+            cursor: pointer;
+            border-radius: 4px;
+            transition: all 0.2s;
+        }
+        .loc-pill:hover { border-color: var(--accent-color); color: var(--accent-color); }
+        .loc-pill.selected {
+            border-color: var(--accent-color);
+            background: var(--accent-color);
+            color: #fff;
+        }
+
+        .guest-pills {
+            display: flex; gap: 8px;
+        }
+        .guest-pill {
+            flex: 1;
+            background: transparent;
+            border: 1px solid #444;
+            color: var(--text-color);
+            padding: 10px 0;
+            font-family: var(--font-nav);
+            font-size: 0.9rem;
+            text-align: center;
+            cursor: pointer;
+            border-radius: 4px;
+            transition: all 0.2s;
+        }
+        .guest-pill:hover { border-color: var(--accent-color); color: var(--accent-color); }
+        .guest-pill.selected {
+            border-color: var(--accent-color);
+            background: var(--accent-color);
+            color: #fff;
+        }
+
+        .btn-contact {
+            background-color: transparent;
+            color: var(--accent-color);
+            border: 2px solid var(--accent-color);
+        }
+        .btn-contact:hover { background-color: var(--accent-color); color: #fff; }
+
+        .res-contact {
+            text-align: center;
+            padding: 30px 0;
+        }
+        .res-contact h3 {
+            font-family: var(--font-logo);
+            font-size: 2rem;
+            color: var(--accent-color);
+            margin-bottom: 20px;
+            text-transform: uppercase;
+        }
+        .res-contact p {
+            color: var(--text-muted);
+            margin-bottom: 30px;
+            font-size: 1.1rem;
+        }
+        .res-contact .contact-phone {
+            font-size: 1.4rem;
+            font-family: var(--font-headings);
+            margin-bottom: 10px;
+            color: var(--text-color);
+        }
+        .res-contact .contact-email {
+            font-size: 1.1rem;
+            color: var(--accent-color);
+            font-family: var(--font-nav);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .res-times-pills {
+            display: flex; gap: 6px;
+            overflow-x: auto;
+            white-space: nowrap;
+            padding-bottom: 8px;
+            margin-top: 6px;
+            scrollbar-width: thin;
+            scrollbar-color: var(--accent-color) transparent;
+            -webkit-overflow-scrolling: touch;
+        }
+        .time-pill {
+            background: transparent;
+            border: 1px solid #444;
+            color: var(--text-color);
+            padding: 8px 14px;
+            font-family: var(--font-nav);
+            font-size: 0.85rem;
+            cursor: pointer;
+            border-radius: 4px;
+            transition: all 0.2s;
+        }
+        .time-pill:hover { border-color: var(--accent-color); color: var(--accent-color); }
+        .time-pill.selected {
+            border-color: var(--accent-color);
+            background: var(--accent-color);
+            color: #fff;
+        }
+
+        .res-back {
+            background: none; border: none; color: var(--text-muted);
+            font-family: var(--font-nav); font-size: 0.9rem; text-transform: uppercase;
+            cursor: pointer; margin-bottom: 20px; display: flex; align-items: center; gap: 5px;
+        }
+        .res-back:hover { color: var(--text-color); }
+
+        .res-summary {
+            background-color: #111; padding: 20px; border-left: 3px solid var(--accent-color); margin-bottom: 30px;
+        }
+        .res-summary p { font-family: var(--font-body); font-size: 1.1rem; color: var(--text-color); margin-bottom: 5px;}
+        .res-summary span { font-family: var(--font-nav); font-size: 0.9rem; color: var(--text-muted); text-transform: uppercase;}
+
+        .btn-submit-event {
+            background-color: var(--accent-color);
+            color: #fff;
+            border: none;
+            padding: 15px 30px;
+            font-family: var(--font-nav);
+            font-size: 1rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            width: 100%;
+        }
+        .btn-submit-event:hover { background-color: #903020; }
+
+        .input-group { display: flex; flex-direction: column; }
+        .input-group.full-width { grid-column: span 2; }
+        .input-group label {
+            font-family: var(--font-nav);
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            color: var(--text-muted);
+            margin-bottom: 5px;
+            letter-spacing: 1px;
+        }
+        .input-group input, .input-group textarea {
+            background: transparent;
+            border: none;
+            border-bottom: 1px solid #444;
+            color: var(--text-color);
+            font-family: var(--font-body);
+            font-size: 1.1rem;
+            padding: 10px 0;
+            outline: none;
+            transition: border-bottom-color 0.3s;
+        }
+        .input-group input:focus, .input-group textarea:focus {
+            border-bottom-color: var(--accent-color);
+        }
+
+        .event-form {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+        .full-width { grid-column: span 2; }
+
+        .field-error {
+            font-family: var(--font-nav);
+            font-size: 0.75rem;
+            color: var(--accent-color);
+            margin-top: 4px;
+            display: none;
+        }
+        .field-error.visible { display: block; }
+
+        /* --- FOOTER --- */
+        footer {
+            padding-top: 40px;
+            padding-bottom: 60px;
+            border-top: 4px solid var(--accent-color);
+            margin-top: 60px;
+        }
+
+        .footer-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr) 2fr;
+            gap: 20px;
+            font-family: var(--font-nav);
+            font-size: 0.85rem;
+            text-transform: uppercase;
+        }
+
+        .footer-col h4 {
+            font-size: 1.1rem;
+            margin-bottom: 15px;
+            color: var(--accent-color);
+        }
+
+        .footer-col p, .footer-col a {
+            color: var(--text-color);
+            text-decoration: none;
+            display: block;
+            margin-bottom: 10px;
+            line-height: 1.4;
+        }
+
+        .footer-col a:hover {
+            color: var(--accent-color);
+        }
+
+        .newsletter {
+            display: flex;
+            align-items: flex-end;
+            justify-content: flex-end;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .newsletter-links {
+            display: flex;
+            gap: 15px;
+        }
+
+        .newsletter-links a {
+            color: var(--accent-color);
+        }
+
+        .btn-newsletter {
+            background-color: var(--accent-color);
+            color: #fff;
+            border: none;
+            padding: 12px 25px;
+            font-family: var(--font-nav);
+            font-size: 0.9rem;
+            cursor: pointer;
+            text-transform: uppercase;
+            width: 100%;
+            max-width: 250px;
+        }
+
+        .credits {
+            text-align: center;
+            font-family: var(--font-body);
+            color: var(--accent-color);
+            font-size: 0.9rem;
+            margin-top: 60px;
+        }
+
+        /* --- ANIMACIONES REVEAL --- */
+        .reveal {
+            opacity: 0;
+            transition: opacity 0.7s ease, transform 0.7s ease;
+        }
+
+        .reveal.visible {
+            opacity: 1;
+            transform: translate(0, 0) scale(1);
+        }
+
+        .reveal-left { transform: translateX(-50px); }
+        .reveal-right { transform: translateX(50px); }
+        .reveal-up { transform: translateY(40px); }
+        .reveal-scale { transform: scale(0.95); }
+
+        .delay-1 { transition-delay: 0.1s; }
+        .delay-2 { transition-delay: 0.2s; }
+        .delay-3 { transition-delay: 0.3s; }
+        .delay-4 { transition-delay: 0.4s; }
+
+        .page-header {
+            animation: heroFadeIn 1s ease forwards;
+        }
+
+        @keyframes heroFadeIn {
+            from { opacity: 0; transform: scale(0.97); }
+            to { opacity: 1; transform: scale(1); }
+        }
+
+        /* Responsivo */
+        @media (max-width: 900px) {
+            header { flex-direction: column; text-align: center; gap: 20px;}
+            nav { flex-wrap: wrap; justify-content: center;}
+            .menu-grid { grid-template-columns: 1fr; }
+            .menu-nav { justify-content: flex-start; padding: 0 20px; } /* Permite hacer scroll lateral en móvil */
+            .footer-grid { grid-template-columns: 1fr; gap: 40px; }
+            .newsletter { align-items: center; margin-top: 30px; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <header>
+            <a href="index.html" class="logo-link">
+                <img src="logo_chilte.png" alt="Chiltepin Plaza Real Logo" class="logo-img">
+            </a>
+            <nav>
+                <a href="index.html">Inicio</a>
+
+                <div class="dropdown">
+                    <button class="dropbtn" onclick="window.location.href='horarioyubicacion.html'">Horarios & Ubicación</button>
+                    <div class="dropdown-content">
+                        <a href="horarioyubicacion.html?sucursal=seafood">Chiltepin Plaza Real</a>
+                        <a href="horarioyubicacion.html?sucursal=450">Chiltepin 450</a>
+                    </div>
+                </div>
+
+                <a href="menu.html">Menú</a>
+                <a href="acercade.html">Acerca de</a>
+                <div class="dropdown">
+                    <button class="dropbtn" onclick="window.location.href='eventos.html'">Eventos</button>
+                    <div class="dropdown-content">
+                        <a href="eventos.html?tipo=privados">Eventos Privados</a>
+                        <a href="eventos.html?tipo=catering">Catering & Banquetes</a>
+                    </div>
+                </div>
+                <div class="dropdown">
+                    <button class="dropbtn">Delivery</button>
+                    <div class="dropdown-content">
+                        <div class="sub-dropdown">
+                            <button class="sub-dropbtn">Chiltepin Plaza Real</button>
+                            <div class="sub-dropdown-content">
+                                <a href="https://www.rappi.com.mx/restaurantes/1930107511-chiltepin-seafood">Rappi</a>
+                                <a href="https://www.didi-food.com/es-MX/food/store/5764607524473670170/?channel=10&cityId=52100200&lat=24.004475&lng=-104.653983&ddlCode=16Qms8&area=MX&lang=es-MX&appKey=dlp&redirectType=2&params=&pl=eyJwb2lJZCI6IkNoSUpQOERrSndfSW00WVJESzFBN2NEVU5TMCIsImFkZHJlc3NBbGxEaXNwbGF5IjoiTWFudWVsIEdhcmPDrWEgT2Jlc28gMzEzLCBDb2wgZGVsIFZhbGxlLCAzNDEzMCBEdXJhbmdvLCBEZ28uLCBNw6l4aWNvIiwiY2l0eSI6IkR1cmFuZ28iLCJjaXR5SWQiOjUyMTAwMjAwLCJjb3VudHJ5Q29kZSI6Ik1YIiwiY291bnRyeUlkIjo1MiwibGF0IjoyNC4wMDcxMTI0LCJsbmciOi0xMDQuNjczMzA3NCwiZGlzcGxheU5hbWUiOiJNYW51ZWwgR2FyY8OtYSBPYmVzbywgMzEzIiwiYWRkcmVzcyI6Ik1hbnVlbCBHYXJjw61hIE9iZXNvIDMxMywgQ29sIGRlbCBWYWxsZSwgMzQxMzAgRHVyYW5nbywgRGdvLiwgTcOpeGljbyIsImFkZHJlc3NBbGwiOiJNYW51ZWwgR2FyY8OtYSBPYmVzbyAzMTMsIENvbCBkZWwgVmFsbGUsIDM0MTMwIER1cmFuZ28sIERnby4sIE3DqXhpY28iLCJjb29yZGluYXRlVHlwZSI6Indnczg0IiwicG9pU3JjVGFnIjoibWFudWFsX3JnZW8iLCJzcmNUYWciOiJyZXZlcnNlZ2VvdG9wIiwic2VhcmNoSWQiOiIwYTkzYjkzNjY5ZWFkZjIyOThiZDhkZGMyMjliMjQwMiIsImRpc3RTdHIiOiIxMG0iLCJwb2lUeXBlIjoicHJlbWlzZTtzdHJlZXRfYWRkcmVzcyIsImNvdW50eUlkIjo1MjEwMDIwMSwiY291bnR5R3JvdXBJZCI6NTIxMDAyMDAwMDAxfQ%3D%3D">DiDi</a>
+                            </div>
+                        </div>
+                        <div class="sub-dropdown">
+                            <button class="sub-dropbtn">Chiltepin 450</button>
+                            <div class="sub-dropdown-content">
+                                <a href="https://www.didi-food.com/es-MX/food/store/5764610193128950278/?channel=10&cityId=52100200&lat=24.054347&lng=-104.643926&ddlCode=DGvdnr&area=MX&lang=es-MX&appKey=dlp&redirectType=2&params=&pl=eyJwb2lJZCI6IkNoSUpQOERrSndfSW00WVJESzFBN2NEVU5TMCIsImFkZHJlc3NBbGxEaXNwbGF5IjoiTWFudWVsIEdhcmPDrWEgT2Jlc28gMzEzLCBDb2wgZGVsIFZhbGxlLCAzNDEzMCBEdXJhbmdvLCBEZ28uLCBNw6l4aWNvIiwiY2l0eSI6IkR1cmFuZ28iLCJjaXR5SWQiOjUyMTAwMjAwLCJjb3VudHJ5Q29kZSI6Ik1YIiwiY291bnRyeUlkIjo1MiwibGF0IjoyNC4wMDcxMTI0LCJsbmciOi0xMDQuNjczMzA3NCwiZGlzcGxheU5hbWUiOiJNYW51ZWwgR2FyY8OtYSBPYmVzbywgMzEzIiwiYWRkcmVzcyI6Ik1hbnVlbCBHYXJjw61hIE9iZXNvIDMxMywgQ29sIGRlbCBWYWxsZSwgMzQxMzAgRHVyYW5nbywgRGdvLiwgTcOpeGljbyIsImFkZHJlc3NBbGwiOiJNYW51ZWwgR2FyY8OtYSBPYmVzbyAzMTMsIENvbCBkZWwgVmFsbGUsIDM0MTMwIER1cmFuZ28sIERnby4sIE3DqXhpY28iLCJjb29yZGluYXRlVHlwZSI6Indnczg0IiwicG9pU3JjVGFnIjoibWFudWFsX3JnZW8iLCJzcmNUYWciOiJyZXZlcnNlZ2VvdG9wIiwic2VhcmNoSWQiOiIwYTkzYjkzNjY5ZWFkZjIyOThiZDhkZGMyMjliMjQwMiIsImRpc3RTdHIiOiIxMG0iLCJwb2lUeXBlIjoicHJlbWlzZTtzdHJlZXRfYWRkcmVzcyIsImNvdW50eUlkIjo1MjEwMDIwMSwiY291bnR5R3JvdXBJZCI6NTIxMDAyMDAwMDAxfQ%3D%3D">DiDi</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <button class="btn-reservations res-trigger">Reservaciones</button>
+            </nav>
+        </header>
+    </div>
+
+    <div class="page-header">
+        <h1 class="page-title">Nuestro Menú </h1>
+    </div>
+
+    <div class="menu-nav-wrapper">
+        <ul class="menu-nav">
+            <li><a href="#entradas" class="active">Entradas</a></li>
+            <li><a href="#aguachile">Aguachile</a></li>
+            <li><a href="#coctel">Cóctel</a></li>
+            <li><a href="#kids">Kids</a></li>
+            <li><a href="#tostadas">Tostadas</a></li>
+            <li><a href="#lonuevo">Lo Nuevo</a></li>
+            <li><a href="#tacosburros">Tacos & Burros</a></li>
+            <li><a href="#bebidas">Bebidas</a></li>
+        </ul>
+    </div>
+
+    <main class="menu-container">
+        
+        <section id="entradas" class="menu-section reveal reveal-up">
+            <h2 class="section-heading">Entradas</h2>
+            <div class="menu-grid">
+                <div class="menu-item">
+                    <div class="dish-header">
+                        <span class="dish-name">Callo de hacha</span>
+                        <span class="dish-price">$145</span>
+                    </div>
+                    <p class="dish-desc">Laminado bañado de nuestra salsa.</p>
+                </div>
+                <div class="menu-item">
+                    <div class="dish-header">
+                        <span class="dish-name">Guacamole</span>
+                        <span class="dish-price">$65</span>
+                    </div>
+                    <p class="dish-desc">100 g de guacamole acompañado de chicharrón de cuero y salsa majada.</p>
+                </div>
+                <div class="menu-item">
+                    <div class="dish-header">
+                        <span class="dish-name">Shot de ostión</span>
+                        <span class="dish-price">$85</span>
+                    </div>
+                    <p class="dish-desc">Ostión, camarón cocido, callo de almeja acompañado de pepino, cebolla morada, cilantro y leche de tigre.</p>
+                </div>
+                <div class="menu-item">
+                    <div class="dish-header">
+                        <span class="dish-name">Shot de camarón</span>
+                        <span class="dish-price">$80</span>
+                    </div>
+                    <p class="dish-desc">Camarón, pepino, cebolla morada, cilantro y leche de tigre.</p>
+                </div>
+                <div class="menu-item">
+                    <div class="dish-header">
+                        <span class="dish-name">Shot mix</span>
+                        <span class="dish-price">$90</span>
+                    </div>
+                    <p class="dish-desc">Camarón, ceviche, pulpo, pepino, cebolla morada, cilantro, leche de tigre y carne seca.</p>
+                </div>
+            </div>
+        </section>
+
+        <section id="aguachile" class="menu-section reveal reveal-up delay-1">
+            <h2 class="section-heading">Aguachile</h2>
+            <div class="menu-grid">
+                <div class="menu-item">
+                    <div class="dish-header">
+                        <span class="dish-name">Aguachile chiltepín</span>
+                        <span class="dish-price">$199</span>
+                    </div>
+                    <p class="dish-desc">Camarón curtido en limón, acompañado de salsa chiltepín.</p>
+                </div>
+                <div class="menu-item">
+                    <div class="dish-header">
+                        <span class="dish-name">Aguachile de temporada</span>
+                        <span class="dish-price">$199</span>
+                    </div>
+                    <p class="dish-desc">Camarón curtido en limón, salsa de temporada y piña.</p>
+                </div>
+                <div class="menu-item">
+                    <div class="dish-header">
+                        <span class="dish-name">Aguachile mixto</span>
+                        <span class="dish-price">$199</span>
+                    </div>
+                    <p class="dish-desc">Combinación perfecta de la casa.</p>
+                </div>
+                <div class="menu-item">
+                    <div class="dish-header">
+                        <span class="dish-name">Aguachile verde</span>
+                        <span class="dish-price">$199</span>
+                    </div>
+                    <p class="dish-desc">Camarón curtido en limón, bañado en salsa de chile serrano - habanero.</p>
+                </div>
+                <div class="menu-item">
+                    <div class="dish-header">
+                        <span class="dish-name">Aguachile con atún</span>
+                        <span class="dish-price">$260</span>
+                    </div>
+                    <p class="dish-desc">Camarón cocido, atún fresco. Puede ser cocido o aguachileado.</p>
+                </div>
+                <div class="menu-item">
+                    <div class="dish-header">
+                        <span class="dish-name">Aguachile con pulpo</span>
+                        <span class="dish-price">$330</span>
+                    </div>
+                    <p class="dish-desc"></p>
+                </div>
+            </div>
+        </section>
+
+        <section id="coctel" class="menu-section reveal reveal-up delay-2">
+            <h2 class="section-heading">Cóctel</h2>
+            <div class="menu-grid">
+                <div class="menu-item">
+                    <div class="dish-header">
+                        <span class="dish-name">Cóctel de camarón</span>
+                        <span class="dish-price">$130</span>
+                    </div>
+                    <p class="dish-desc">Camarón cocido, aguacate y salsa coctelera.</p>
+                </div>
+                <div class="menu-item">
+                    <div class="dish-header">
+                        <span class="dish-name">Cóctel combinado</span>
+                        <span class="dish-price">$180</span>
+                    </div>
+                    <p class="dish-desc">Camarón cocido, camarón aguachile y ceviche de pescado.</p>
+                </div>
+                <div class="menu-item">
+                    <div class="dish-header">
+                        <span class="dish-name">Cóctel chiltepín premium</span>
+                        <span class="dish-price">$240</span>
+                    </div>
+                    <p class="dish-desc">Camarón cocido, camarón aguachile, ceviche de pescado, atún fresco y pulpo.</p>
+                </div>
+                <div class="menu-item">
+                    <div class="dish-header">
+                        <span class="dish-name">Tostada vaciada</span>
+                        <span class="dish-price">$100</span>
+                    </div>
+                    <p class="dish-desc">Ceviche de pescado, salsa coctelera.</p>
+                </div>
+            </div>
+        </section>
+
+        <section id="kids" class="menu-section reveal reveal-up delay-3">
+            <h2 class="section-heading">Kids</h2>
+            <div class="menu-grid">
+                <div class="menu-item">
+                    <div class="dish-header">
+                        <span class="dish-name">Mini burger</span>
+                        <span class="dish-price">$94</span>
+                    </div>
+                    <p class="dish-desc">Carne de res y papas a la francesa.</p>
+                </div>
+                <div class="menu-item">
+                    <div class="dish-header">
+                        <span class="dish-name">Chicken tenders</span>
+                        <span class="dish-price">$84</span>
+                    </div>
+                    <p class="dish-desc">Pollo frito con papas a la francesa y aderezo.</p>
+                </div>
+                <div class="menu-item">
+                    <div class="dish-header">
+                        <span class="dish-name">Papas chiltepín</span>
+                        <span class="dish-price">$114</span>
+                    </div>
+                    <p class="dish-desc">Papas crisscut, carne asada y aguacate.</p>
+                </div>
+                <div class="menu-item">
+                    <div class="dish-header">
+                        <span class="dish-name">Postre</span>
+                        <span class="dish-price">$100</span>
+                    </div>
+                    <p class="dish-desc"></p>
+                </div>
+            </div>
+        </section>
+
+        <section id="tostadas" class="menu-section reveal reveal-up">
+            <h2 class="section-heading">Tostadas</h2>
+            <div class="menu-grid">
+                <div class="menu-item">
+                    <div class="dish-header">
+                        <span class="dish-name">Combinada especial</span>
+                        <span class="dish-price">$135</span>
+                    </div>
+                    <p class="dish-desc">Ceviche de pescado, camarón aguachileado y cocido.</p>
+                </div>
+                <div class="menu-item">
+                    <div class="dish-header">
+                        <span class="dish-name">Tostada chiltepín premium</span>
+                        <span class="dish-price">$230</span>
+                    </div>
+                    <p class="dish-desc">Ceviche de pescado acompañado de camarón aguachile, camarón cocido, atún y pulpo.</p>
+                </div>
+                <div class="menu-item">
+                    <div class="dish-header">
+                        <span class="dish-name">Tostada de aguachile</span>
+                        <span class="dish-price">$145</span>
+                    </div>
+                    <p class="dish-desc">Camarón aguachile en salsa a elegir: verde, temporada o chiltepín.</p>
+                </div>
+                <div class="menu-item">
+                    <div class="dish-header">
+                        <span class="dish-name">Tosticeviches</span>
+                        <span class="dish-price">$165</span>
+                    </div>
+                    <p class="dish-desc">Ceviche de pescado, aguacate, leche de tigre. Camarón cocido y aguachile.</p>
+                </div>
+                <div class="menu-item">
+                    <div class="dish-header">
+                        <span class="dish-name">Trilogía de camarón</span>
+                        <span class="dish-price">$175</span>
+                    </div>
+                    <p class="dish-desc">Ceviche de camarón cocido, camarón aguachile y camarón seco, bañados en salsa a elegir: verde, temporada o chiltepín.</p>
+                </div>
+                <div class="menu-item">
+                    <div class="dish-header">
+                        <span class="dish-name">Sample mini tostadas</span>
+                        <span class="dish-price">$204</span>
+                    </div>
+                    <p class="dish-desc">3 tipos de mini tostadas, ceviche, camarón y atún.</p>
+                </div>
+                <div class="menu-item">
+                    <div class="dish-header">
+                        <span class="dish-name">Ceviche chiltepín</span>
+                        <span class="dish-price">$75</span>
+                    </div>
+                    <p class="dish-desc">Pescado curtido en limón acompañado de chiltepín, cebolla morada, tomate, pepino, aguacate, bañados en salsa de la casa.</p>
+                </div>
+                <div class="menu-item">
+                    <div class="dish-header">
+                        <span class="dish-name">Atún en salsas negras</span>
+                        <span class="dish-price">$184</span>
+                    </div>
+                    <p class="dish-desc">Atún en láminas, pepino, cebolla, aguacate, bañados en leche de tigre y salsas negras.</p>
+                </div>
+                <div class="menu-item">
+                    <div class="dish-header">
+                        <span class="dish-name">Chicharrón</span>
+                        <span class="dish-price">$150</span>
+                    </div>
+                    <p class="dish-desc">Ceviche de pescado con camarón, sobre chicharrón de cerdo.</p>
+                </div>
+            </div>
+        </section>
+
+        <section id="lonuevo" class="menu-section reveal reveal-up delay-1">
+            <h2 class="section-heading">Lo Nuevo</h2>
+            <div class="menu-grid">
+                <div class="menu-item">
+                    <div class="dish-header">
+                        <span class="dish-name">Tacos de asada</span>
+                        <span class="dish-price">$105</span>
+                    </div>
+                    <p class="dish-desc">4 tacos de asada con una tostada llena de queso con guacamole y salsa majada.</p>
+                </div>
+                <div class="menu-item">
+                    <div class="dish-header">
+                        <span class="dish-name">Dobladita</span>
+                        <span class="dish-price">$70</span>
+                    </div>
+                    <p class="dish-desc">Taco dorado de chicharrón o frijoles con un topping de camarón aguachileado o ceviche de pescado.</p>
+                </div>
+                <div class="menu-item">
+                    <div class="dish-header">
+                        <span class="dish-name">Taco harina</span>
+                        <span class="dish-price">$80</span>
+                    </div>
+                    <p class="dish-desc">Camarón zarandeado sobre una cama de frijol con queso en tortilla de harina.</p>
+                </div>
+                <div class="menu-item">
+                    <div class="dish-header">
+                        <span class="dish-name">Taco caribe</span>
+                        <span class="dish-price">$70</span>
+                    </div>
+                    <p class="dish-desc">Chile caribe relleno de marlín ahumado.</p>
+                </div>
+                <div class="menu-item">
+                    <div class="dish-header">
+                        <span class="dish-name">Sopa marinera</span>
+                        <span class="dish-price">$204</span>
+                    </div>
+                    <p class="dish-desc">Pescado, camarón, papa, zanahoria y apio.</p>
+                </div>
+            </div>
+        </section>
+
+        <section id="tacosburros" class="menu-section reveal reveal-up delay-2">
+            <h2 class="section-heading">Tacos, Burros y Más</h2>
+            <div class="menu-grid">
+                <div class="menu-item">
+                    <div class="dish-header">
+                        <span class="dish-name">Taco camarón capeado</span>
+                        <span class="dish-price">$45</span>
+                    </div>
+                    <p class="dish-desc"></p>
+                </div>
+                <div class="menu-item">
+                    <div class="dish-header">
+                        <span class="dish-name">Taco pescado capeado</span>
+                        <span class="dish-price">$45</span>
+                    </div>
+                    <p class="dish-desc"></p>
+                </div>
+                <div class="menu-item">
+                    <div class="dish-header">
+                        <span class="dish-name">Taco de atún</span>
+                        <span class="dish-price">$84</span>
+                    </div>
+                    <p class="dish-desc">Carnitas de atún, aguacate y cebolla curtida.</p>
+                </div>
+                <div class="menu-item">
+                    <div class="dish-header">
+                        <span class="dish-name">Taco güero</span>
+                        <span class="dish-price">$135</span>
+                    </div>
+                    <p class="dish-desc">Carne asada, camarón, queso y chile güero.</p>
+                </div>
+                <div class="menu-item">
+                    <div class="dish-header">
+                        <span class="dish-name">Burro norteño</span>
+                        <span class="dish-price">$135</span>
+                    </div>
+                    <p class="dish-desc">Carne asada, camarón capeado y aguacate. 30 cm tortilla.</p>
+                </div>
+                <div class="menu-item">
+                    <div class="dish-header">
+                        <span class="dish-name">Volcán marino</span>
+                        <span class="dish-price">$104</span>
+                    </div>
+                    <p class="dish-desc">Carne asada, camarón, queso y aguacate.</p>
+                </div>
+                <div class="menu-item">
+                    <div class="dish-header">
+                        <span class="dish-name">Hamburguesa bucanera</span>
+                        <span class="dish-price">$150</span>
+                    </div>
+                    <p class="dish-desc">Carne de res, camarón capeado, queso y tocino.</p>
+                </div>
+                <div class="menu-item">
+                    <div class="dish-header">
+                        <span class="dish-name">Pescado empanizado</span>
+                        <span class="dish-price">$204</span>
+                    </div>
+                    <p class="dish-desc">Pescado y arroz.</p>
+                </div>
+                <div class="menu-item">
+                    <div class="dish-header">
+                        <span class="dish-name">Ensalada chiltepín</span>
+                        <span class="dish-price">$145</span>
+                    </div>
+                    <p class="dish-desc">Col morada, zanahoria, tomate, pepino, arándanos, aguacate, chicharrón de atún y aderezos.</p>
+                </div>
+            </div>
+        </section>
+
+        <section id="bebidas" class="menu-section reveal reveal-up delay-3">
+            <h2 class="section-heading">Bebidas</h2>
+
+            <div style="margin-bottom: 80px;">
+                <h3 style="font-family: var(--font-headings); font-size: 1.8rem; color: var(--accent-color); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 30px;">Bebidas sin Alcohol</h3>
+                <div class="menu-grid">
+                    <div class="menu-item">
+                        <div class="dish-header">
+                            <span class="dish-name">Refresco</span>
+                            <span class="dish-price">$39</span>
+                        </div>
+                    </div>
+                    <div class="menu-item">
+                        <div class="dish-header">
+                            <span class="dish-name">Limonada</span>
+                            <span class="dish-price">$45</span>
+                        </div>
+                    </div>
+                    <div class="menu-item">
+                        <div class="dish-header">
+                            <span class="dish-name">Agua del día</span>
+                            <span class="dish-price">$35</span>
+                        </div>
+                    </div>
+                    <div class="menu-item">
+                        <div class="dish-header">
+                            <span class="dish-name">Clamato Mineral</span>
+                            <span class="dish-price">$95</span>
+                        </div>
+                    </div>
+                    <div class="menu-item">
+                        <div class="dish-header">
+                            <span class="dish-name">Botella Agua</span>
+                            <span class="dish-price">$30</span>
+                        </div>
+                    </div>
+                    <div class="menu-item">
+                        <div class="dish-header">
+                            <span class="dish-name">Agua Mineral</span>
+                            <span class="dish-price">$40</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div style="margin-bottom: 80px;">
+                <h3 style="font-family: var(--font-headings); font-size: 1.8rem; color: var(--accent-color); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 30px;">Coctelería</h3>
+                <div class="menu-grid">
+                    <div class="menu-item">
+                        <div class="dish-header">
+                            <span class="dish-name">Carajillo</span>
+                            <span class="dish-price">$130</span>
+                        </div>
+                        <p class="dish-desc">Licor 43, café expreso, guarnitura naranja, canela.</p>
+                    </div>
+                    <div class="menu-item">
+                        <div class="dish-header">
+                            <span class="dish-name">Mi Viaje</span>
+                            <span class="dish-price">$130</span>
+                        </div>
+                        <p class="dish-desc">Tequila, jugo de guayaba natural, miel de agave, romero y limón.</p>
+                    </div>
+                    <div class="menu-item">
+                        <div class="dish-header">
+                            <span class="dish-name">Chiltepino</span>
+                            <span class="dish-price">$130</span>
+                        </div>
+                        <p class="dish-desc">Mezcal, endulzante, limón y pepino.</p>
+                    </div>
+                    <div class="menu-item">
+                        <div class="dish-header">
+                            <span class="dish-name">Tritón</span>
+                            <span class="dish-price">$130</span>
+                        </div>
+                        <p class="dish-desc">Ginebra, jugo de piña natural, arándano y un toque de limón.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div style="margin-bottom: 80px;">
+                <h3 style="font-family: var(--font-headings); font-size: 1.8rem; color: var(--accent-color); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 30px;">Cervezas</h3>
+                <div class="menu-grid">
+                    <div class="menu-item">
+                        <div class="dish-header">
+                            <span class="dish-name">Corona</span>
+                            <span class="dish-price">$43</span>
+                        </div>
+                    </div>
+                    <div class="menu-item">
+                        <div class="dish-header">
+                            <span class="dish-name">Victoria</span>
+                            <span class="dish-price">$43</span>
+                        </div>
+                    </div>
+                    <div class="menu-item">
+                        <div class="dish-header">
+                            <span class="dish-name">Pacífico</span>
+                            <span class="dish-price">$43</span>
+                        </div>
+                    </div>
+                    <div class="menu-item">
+                        <div class="dish-header">
+                            <span class="dish-name">Modelo Negra</span>
+                            <span class="dish-price">$48</span>
+                        </div>
+                    </div>
+                    <div class="menu-item">
+                        <div class="dish-header">
+                            <span class="dish-name">Ultra</span>
+                            <span class="dish-price">$45</span>
+                        </div>
+                    </div>
+                    <div class="menu-item">
+                        <div class="dish-header">
+                            <span class="dish-name">Michelado</span>
+                            <span class="dish-price">$30</span>
+                        </div>
+                    </div>
+                    <div class="menu-item">
+                        <div class="dish-header">
+                            <span class="dish-name">Clamato</span>
+                            <span class="dish-price">$35</span>
+                        </div>
+                    </div>
+                    <div class="menu-item">
+                        <div class="dish-header">
+                            <span class="dish-name">Chelado</span>
+                            <span class="dish-price">$25</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div style="margin-bottom: 80px;">
+                <h3 style="font-family: var(--font-headings); font-size: 1.8rem; color: var(--accent-color); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 30px;">Licores - Tequila</h3>
+                <div class="menu-grid">
+                    <div class="menu-item">
+                        <div class="dish-header">
+                            <span class="dish-name">Tradicional</span>
+                            <span class="dish-price">$110</span>
+                        </div>
+                    </div>
+                    <div class="menu-item">
+                        <div class="dish-header">
+                            <span class="dish-name">José Cuervo</span>
+                            <span class="dish-price">$110</span>
+                        </div>
+                    </div>
+                    <div class="menu-item">
+                        <div class="dish-header">
+                            <span class="dish-name">Don Julio 70</span>
+                            <span class="dish-price">$150</span>
+                        </div>
+                    </div>
+                    <div class="menu-item">
+                        <div class="dish-header">
+                            <span class="dish-name">Maestro Dobel</span>
+                            <span class="dish-price">$150</span>
+                        </div>
+                    </div>
+                    <div class="menu-item">
+                        <div class="dish-header">
+                            <span class="dish-name">Gran Malo</span>
+                            <span class="dish-price">$110</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div style="margin-bottom: 80px;">
+                <h3 style="font-family: var(--font-headings); font-size: 1.8rem; color: var(--accent-color); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 30px;">Licores - Whiskey</h3>
+                <div class="menu-grid">
+                    <div class="menu-item">
+                        <div class="dish-header">
+                            <span class="dish-name">Red Label</span>
+                            <span class="dish-price">$120</span>
+                        </div>
+                    </div>
+                    <div class="menu-item">
+                        <div class="dish-header">
+                            <span class="dish-name">Jack Daniel's</span>
+                            <span class="dish-price">$310</span>
+                        </div>
+                    </div>
+                    <div class="menu-item">
+                        <div class="dish-header">
+                            <span class="dish-name">Buchanan's</span>
+                            <span class="dish-price">$140</span>
+                        </div>
+                    </div>
+                    <div class="menu-item">
+                        <div class="dish-header">
+                            <span class="dish-name">Black Label</span>
+                            <span class="dish-price">$140</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div style="margin-bottom: 80px;">
+                <h3 style="font-family: var(--font-headings); font-size: 1.8rem; color: var(--accent-color); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 30px;">Licores - Mezcal</h3>
+                <div class="menu-grid">
+                    <div class="menu-item">
+                        <div class="dish-header">
+                            <span class="dish-name">De la Casa</span>
+                            <span class="dish-price">$60</span>
+                        </div>
+                    </div>
+                    <div class="menu-item">
+                        <div class="dish-header">
+                            <span class="dish-name">Apaluz</span>
+                            <span class="dish-price">$110</span>
+                        </div>
+                    </div>
+                    <div class="menu-item">
+                        <div class="dish-header">
+                            <span class="dish-name">Boscal</span>
+                            <span class="dish-price">$140</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div style="margin-bottom: 80px;">
+                <h3 style="font-family: var(--font-headings); font-size: 1.8rem; color: var(--accent-color); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 30px;">Licores - Vodka</h3>
+                <div class="menu-grid">
+                    <div class="menu-item">
+                        <div class="dish-header">
+                            <span class="dish-name">Absolut 70</span>
+                            <span class="dish-price">$120</span>
+                        </div>
+                    </div>
+                    <div class="menu-item">
+                        <div class="dish-header">
+                            <span class="dish-name">Smirnoff de Tamarindo</span>
+                            <span class="dish-price">$120</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div style="margin-bottom: 80px;">
+                <h3 style="font-family: var(--font-headings); font-size: 1.8rem; color: var(--accent-color); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 30px;">Licores - Gin</h3>
+                <div class="menu-grid">
+                    <div class="menu-item">
+                        <div class="dish-header">
+                            <span class="dish-name">Gibson's</span>
+                            <span class="dish-price">$90</span>
+                        </div>
+                    </div>
+                    <div class="menu-item">
+                        <div class="dish-header">
+                            <span class="dish-name">Tanqueray</span>
+                            <span class="dish-price">$140</span>
+                        </div>
+                    </div>
+                    <div class="menu-item">
+                        <div class="dish-header">
+                            <span class="dish-name">Bombay</span>
+                            <span class="dish-price">$140</span>
+                        </div>
+                    </div>
+                    <div class="menu-item">
+                        <div class="dish-header">
+                            <span class="dish-name">Hendricks</span>
+                            <span class="dish-price">$130</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div style="margin-bottom: 80px;">
+                <h3 style="font-family: var(--font-headings); font-size: 1.8rem; color: var(--accent-color); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 30px;">Licores - Ron</h3>
+                <div class="menu-grid">
+                    <div class="menu-item">
+                        <div class="dish-header">
+                            <span class="dish-name">Bacardi</span>
+                            <span class="dish-price">$100</span>
+                        </div>
+                    </div>
+                    <div class="menu-item">
+                        <div class="dish-header">
+                            <span class="dish-name">Kraken</span>
+                            <span class="dish-price">$90</span>
+                        </div>
+                    </div>
+                    <div class="menu-item">
+                        <div class="dish-header">
+                            <span class="dish-name">Bacardi Solera</span>
+                            <span class="dish-price">$100</span>
+                        </div>
+                    </div>
+                    <div class="menu-item">
+                        <div class="dish-header">
+                            <span class="dish-name">Havana</span>
+                            <span class="dish-price">$130</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div style="margin-bottom: 80px;">
+                <h3 style="font-family: var(--font-headings); font-size: 1.8rem; color: var(--accent-color); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 30px;">Otros Licores</h3>
+                <div class="menu-grid">
+                    <div class="menu-item">
+                        <div class="dish-header">
+                            <span class="dish-name">Jager</span>
+                            <span class="dish-price">$110</span>
+                        </div>
+                    </div>
+                    <div class="menu-item">
+                        <div class="dish-header">
+                            <span class="dish-name">Licor 43</span>
+                            <span class="dish-price">$110</span>
+                        </div>
+                    </div>
+                    <div class="menu-item">
+                        <div class="dish-header">
+                            <span class="dish-name">Aperol</span>
+                            <span class="dish-price">$120</span>
+                        </div>
+                    </div>
+                    <div class="menu-item">
+                        <div class="dish-header">
+                            <span class="dish-name">Hipnótic</span>
+                            <span class="dish-price">$130</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <div class="container">
+        <footer>
+            <div class="footer-grid">
+                <div class="footer-col">
+                    <h4>Ubicaciones</h4>
+                    <a href="horarioyubicacion.html?sucursal=seafood">Chiltepin Plaza Real</a>
+                    <a href="horarioyubicacion.html?sucursal=450">Chiltepin 450</a>
+                </div>
+                
+                <div class="footer-col">
+                    <h4>Contacto</h4>
+                    <p>618.123.4567</p>
+                    <p>DURANGO – INFO@CHILTEPIN.COM</p>
+                    <br>
+                    <a href="#">Instagram</a>
+                    <a href="#">Facebook</a>
+                </div>
+
+                <div class="footer-col">
+                    <h4>Reservaciones</h4>
+                    <a href="#">Restaurante Durango</a>
+                    <a href="#">Eventos Privados</a>
+                </div>
+
+                <div class="footer-col">
+                    <h4>Bolsa de Trabajo</h4>
+                    <a href="#">Únete a nuestro equipo</a>
+                </div>
+
+                <div class="newsletter">
+                    <div class="newsletter-links">
+                        <a href="#">Accesibilidad</a>
+                        <a href="#">Contacto</a>
+                    </div>
+                    <button class="btn-newsletter">Suscríbete al Boletín</button>
+                </div>
+            </div>
+            
+            <p class="credits">Desarrollado para Chiltepin Plaza Real</p>
+        </footer>
+    </div>
+
+    <script>
+        // Funciones globales para la barra de reservaciones (multi-step)
+        function openReservations() {
+            document.getElementById('resSidebar').classList.add('active');
+            document.getElementById('resOverlay').classList.add('active');
+            document.body.style.overflow = 'hidden';
+            document.getElementById('resStep1').classList.add('active');
+            document.getElementById('resStep2').classList.remove('active');
+            document.getElementById('resStep3').classList.remove('active');
+        }
+
+        function closeReservations() {
+            document.getElementById('resSidebar').classList.remove('active');
+            document.getElementById('resOverlay').classList.remove('active');
+            document.body.style.overflow = '';
+            document.querySelector('#resStep2 input[type="text"]').value = '';
+            document.querySelector('#resStep2 input[type="tel"]').value = '';
+            document.querySelector('#resStep2 input[type="email"]').value = '';
+            document.querySelectorAll('.guest-pill').forEach((b, i) => b.classList.toggle('selected', i === 1));
+            document.querySelectorAll('.loc-pill').forEach((b, i) => b.classList.toggle('selected', i === 0));
+            document.querySelectorAll('.time-pill').forEach(b => b.classList.remove('selected'));
+            document.querySelectorAll('.field-error').forEach(e => e.classList.remove('visible'));
+            document.getElementById('resContactInfo').style.display = 'none';
+            document.querySelector('#resStep2 form').style.display = 'block';
+            const btn = document.getElementById('btnStep1Confirm');
+            btn.textContent = 'Confirmar Horario';
+            btn.className = 'btn-submit-event';
+        }
+
+        function clearError(id) {
+            document.getElementById(id).classList.remove('visible');
+        }
+
+        function showError(id, msg) {
+            const el = document.getElementById(id);
+            el.textContent = msg;
+            el.classList.add('visible');
+        }
+
+        function confirmStep1() {
+            document.querySelectorAll('#resStep1 .field-error').forEach(e => e.classList.remove('visible'));
+            const selectedTimeEl = document.querySelector('.time-pill.selected');
+            const selectedTime = selectedTimeEl ? selectedTimeEl.dataset.value : '';
+            const dateVal = document.getElementById('resDate').value;
+            if (!dateVal) { showError('error-fecha', 'Selecciona una fecha'); return; }
+            if (!selectedTime) { showError('error-horario', 'Selecciona un horario'); return; }
+            const day = new Date(dateVal + 'T12:00:00').getDay();
+            if (day === 0 || day === 6) {
+                showError('error-fecha', 'Solo atendemos reservaciones entre semana. Los fines de semana te esperamos sin reservación.');
+                return;
+            }
+            const locEl = document.querySelector('.loc-pill.selected');
+            const loc = locEl ? locEl.dataset.value : '';
+            const guestEl = document.querySelector('.guest-pill.selected');
+            const guests = guestEl ? guestEl.dataset.value : '';
+            document.getElementById('summaryLoc').innerText = loc;
+            document.getElementById('summaryDetails').innerText = `${guests} • ${dateVal} • ${selectedTime}`;
+
+            const isLargeGroup = guestEl && guestEl.dataset.value === '7+ Personas';
+            document.getElementById('resContactInfo').style.display = isLargeGroup ? 'block' : 'none';
+            document.querySelector('#resStep2 form').style.display = isLargeGroup ? 'none' : 'block';
+
+            document.getElementById('resStep1').classList.remove('active');
+            document.getElementById('resStep2').classList.add('active');
+        }
+
+        function goBackToStep1() {
+            document.getElementById('resStep2').classList.remove('active');
+            document.getElementById('resStep1').classList.add('active');
+        }
+
+        function submitReservation(e) {
+            e.preventDefault();
+            document.querySelectorAll('#resStep2 .field-error').forEach(e => e.classList.remove('visible'));
+            const name = document.querySelector('#resStep2 input[type="text"]').value.trim();
+            const phone = document.querySelector('#resStep2 input[type="tel"]').value.trim();
+            const email = document.querySelector('#resStep2 input[type="email"]').value.trim();
+            let valid = true;
+            if (!name) { showError('error-name', 'Ingresa tu nombre completo'); valid = false; }
+            if (!/^\d{10}$/.test(phone)) { showError('error-phone', 'Ingresa un teléfono válido de 10 dígitos'); valid = false; }
+            if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) { showError('error-email', 'Ingresa un correo electrónico válido'); valid = false; }
+            if (!valid) return;
+            document.getElementById('resStep2').classList.remove('active');
+            document.getElementById('resStep3').classList.add('active');
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const sections = document.querySelectorAll('.menu-section');
+            const navLinks = document.querySelectorAll('.menu-nav a');
+
+            // Scroll spy
+            window.addEventListener('scroll', () => {
+                let current = '';
+                sections.forEach(section => {
+                    const sectionTop = section.offsetTop;
+                    if (pageYOffset >= (sectionTop - 120)) {
+                        current = section.getAttribute('id');
+                    }
+                });
+
+                navLinks.forEach(link => {
+                    link.classList.remove('active');
+                    if (link.getAttribute('href').includes(current)) {
+                        link.classList.add('active');
+                    }
+                });
+            });
+
+            // Eventos de la barra lateral
+            const resTriggers = document.querySelectorAll('.res-trigger');
+            const resSidebar = document.getElementById('resSidebar');
+            const resOverlay = document.getElementById('resOverlay');
+            const resClose = document.getElementById('resClose');
+            if (resTriggers.length > 0 && resSidebar && resOverlay && resClose) {
+                resTriggers.forEach(btn => btn.addEventListener('click', openReservations));
+                resClose.addEventListener('click', closeReservations);
+                resOverlay.addEventListener('click', closeReservations);
+            }
+
+            // Configurar fecha de hoy
+            const dateResInput = document.getElementById('resDate');
+            if (dateResInput) {
+                const today = new Date().toISOString().split('T')[0];
+                dateResInput.value = today;
+                dateResInput.min = today;
+            }
+
+            // Pills de sucursal
+            document.querySelectorAll('.loc-pill').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    document.querySelectorAll('.loc-pill').forEach(b => b.classList.remove('selected'));
+                    btn.classList.add('selected');
+                });
+            });
+
+            // Pills de horario
+            document.querySelectorAll('.time-pill').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    document.querySelectorAll('.time-pill').forEach(b => b.classList.remove('selected'));
+                    btn.classList.add('selected');
+                });
+            });
+
+            // Pills de huéspedes
+            document.querySelectorAll('.guest-pill').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    document.querySelectorAll('.guest-pill').forEach(b => b.classList.remove('selected'));
+                    btn.classList.add('selected');
+                    const btnConfirm = document.getElementById('btnStep1Confirm');
+                    if (btn.dataset.value === '7+ Personas') {
+                        btnConfirm.textContent = 'Contáctanos';
+                        btnConfirm.className = 'btn-submit-event btn-contact';
+                    } else {
+                        btnConfirm.textContent = 'Confirmar Horario';
+                        btnConfirm.className = 'btn-submit-event';
+                    }
+                });
+            });
+
+            // Scroll reveal
+            const revealElements = document.querySelectorAll('.reveal');
+            if (revealElements.length > 0) {
+                const observer = new IntersectionObserver((entries) => {
+                    entries.forEach(entry => {
+                        if (entry.isIntersecting) {
+                            entry.target.classList.add('visible');
+                            observer.unobserve(entry.target);
+                        }
+                    });
+                }, { threshold: 0.15 });
+                revealElements.forEach(el => observer.observe(el));
+            }
+        });
+    </script>
+
+    <div class="res-overlay" id="resOverlay"></div>
+
+    <aside class="res-sidebar" id="resSidebar">
+        
+        <div class="res-header">
+            <h2 class="res-title-bar">Reservaciones</h2>
+            <button class="res-close" id="resClose">✕</button>
+        </div>
+        
+        <div class="res-body">
+            
+            <div id="resStep1" class="res-step active">
+                
+                <div class="res-field">
+                    <label>Sucursal</label>
+                    <div class="res-location-pills" id="resLocation">
+                        <button class="loc-pill selected" data-value="Chiltepin Plaza Real">Plaza Real</button>
+                        <button class="loc-pill" data-value="Chiltepin 450">Chiltepin 450</button>
+                    </div>
+                </div>
+
+                <div class="res-field">
+                    <label>Huéspedes</label>
+                    <div class="guest-pills" id="resGuests">
+                        <button class="guest-pill" data-value="1 Persona">1</button>
+                        <button class="guest-pill selected" data-value="2 Personas">2</button>
+                        <button class="guest-pill" data-value="3 Personas">3</button>
+                        <button class="guest-pill" data-value="4 Personas">4</button>
+                        <button class="guest-pill" data-value="5 Personas">5</button>
+                        <button class="guest-pill" data-value="6 Personas">6</button>
+                        <button class="guest-pill" data-value="7+ Personas">7+</button>
+                    </div>
+                </div>
+
+                <div class="res-field">
+                    <label>Fecha</label>
+                    <input type="date" id="resDate">
+                </div>
+                <span class="field-error" id="error-fecha"></span>
+
+                <div class="res-field">
+                    <label>Horario</label>
+                    <div class="res-times-pills" id="resTimePills">
+                        <button class="time-pill" data-value="11:30">11:30</button>
+                        <button class="time-pill" data-value="12:00">12:00</button>
+                        <button class="time-pill" data-value="12:30">12:30</button>
+                        <button class="time-pill" data-value="13:00">13:00</button>
+                        <button class="time-pill" data-value="13:30">13:30</button>
+                        <button class="time-pill" data-value="14:00">14:00</button>
+                        <button class="time-pill" data-value="14:30">14:30</button>
+                        <button class="time-pill" data-value="15:00">15:00</button>
+                        <button class="time-pill" data-value="15:30">15:30</button>
+                        <button class="time-pill" data-value="16:00">16:00</button>
+                        <button class="time-pill" data-value="16:30">16:30</button>
+                        <button class="time-pill" data-value="17:00">17:00</button>
+                        <button class="time-pill" data-value="17:30">17:30</button>
+                        <button class="time-pill" data-value="18:00">18:00</button>
+                        <button class="time-pill" data-value="18:30">18:30</button>
+                        <button class="time-pill" data-value="19:00">19:00</button>
+                    </div>
+                    <span class="field-error" id="error-horario"></span>
+                </div>
+
+                <button id="btnStep1Confirm" class="btn-submit-event" onclick="confirmStep1()" style="margin-top: 20px;">Confirmar Horario</button>
+            </div>
+
+            <div id="resStep2" class="res-step">
+                <button class="res-back" onclick="goBackToStep1()">❮ Cambiar Hora</button>
+                
+                <div class="res-summary">
+                    <p id="summaryLoc">Chiltepin Plaza Real</p>
+                    <span id="summaryDetails">2 Personas • Hoy • 19:00</span>
+                </div>
+
+                <form class="event-form" onsubmit="submitReservation(event)">
+                    <div class="input-group full-width">
+                        <label>Nombre Completo</label>
+                        <input type="text" placeholder="Ej. Juan Pérez" oninput="clearError('error-name')">
+                        <span class="field-error" id="error-name"></span>
+                    </div>
+                    <div class="input-group full-width">
+                        <label>Teléfono</label>
+                        <input type="tel" placeholder="618..." oninput="clearError('error-phone')">
+                        <span class="field-error" id="error-phone"></span>
+                    </div>
+                    <div class="input-group full-width">
+                        <label>Correo Electrónico</label>
+                        <input type="email" placeholder="correo@ejemplo.com" oninput="clearError('error-email')">
+                        <span class="field-error" id="error-email"></span>
+                    </div>
+                    <div class="full-width">
+                        <button type="submit" class="btn-submit-event" style="margin-top: 20px;">Confirmar Reserva</button>
+                    </div>
+                </form>
+
+                <div id="resContactInfo" class="res-contact" style="display: none;">
+                    <h3>Grandes Grupos</h3>
+                    <p>Para reservaciones de 7+ personas,<br>contáctanos directamente:</p>
+                    <p class="contact-phone">618.123.4567</p>
+                    <p class="contact-email">info@chiltepin.com</p>
+                    <button class="btn-submit-event" onclick="closeReservations()" style="margin-top: 20px;">Cerrar</button>
+                </div>
+            </div>
+
+            <div id="resStep3" class="res-step" style="text-align: center; margin-top: 50px;">
+                <h2 style="font-family: var(--font-logo); font-size: 3rem; color: var(--accent-color); margin-bottom: 20px;">¡Reserva Confirmada!</h2>
+                <p style="font-size: 1.1rem; color: var(--text-muted); margin-bottom: 30px;">Te hemos enviado un correo con los detalles de tu reservación.</p>
+                <button class="btn-submit-event" onclick="closeReservations()">Cerrar</button>
+            </div>
+
+        </div>
+    </aside>
+
+</body>
+</html>
