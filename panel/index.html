@@ -1,0 +1,506 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="robots" content="noindex, nofollow">
+    <title>Chiltepin | Panel</title>
+    <link rel="icon" type="image/png" sizes="32x32" href="../img/logos/favicon.png">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Anton&family=Oswald:wght@400;500;600;700&family=Lora:ital,wght@0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg: #1a1a1a;
+            --bg-card: #222;
+            --bg-input: #2a2a2a;
+            --accent: #903020;
+            --accent-hover: #a83828;
+            --text: #f0f0f0;
+            --text-muted: #aaa;
+            --border: #333;
+            --font-logo: 'Anton', sans-serif;
+            --font-headings: 'Oswald', sans-serif;
+            --font-body: 'Lora', serif;
+            --green: #2d8a4e;
+            --green-hover: #36a35a;
+        }
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+        html { scroll-behavior: smooth; }
+        body {
+            font-family: var(--font-body);
+            background: var(--bg);
+            color: var(--text);
+            min-height: 100vh;
+            line-height: 1.6;
+        }
+
+        /* ─── LOGIN ─────────────────────── */
+        .login-wrapper {
+            display: flex; align-items: center; justify-content: center;
+            min-height: 100vh; padding: 20px;
+        }
+        .login-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 48px 40px;
+            width: 100%; max-width: 420px;
+            text-align: center;
+        }
+        .login-card img { width: 180px; margin-bottom: 32px; }
+        .login-card h1 {
+            font-family: var(--font-logo); font-size: 1.6rem;
+            text-transform: uppercase; letter-spacing: 2px;
+            margin-bottom: 8px; color: var(--text);
+        }
+        .login-card p { color: var(--text-muted); font-size: 0.9rem; margin-bottom: 24px; }
+        .login-card input {
+            width: 100%; padding: 14px 16px; border: 1px solid var(--border);
+            border-radius: 8px; background: var(--bg-input); color: var(--text);
+            font-family: var(--font-body); font-size: 1rem;
+            outline: none; transition: border-color .2s;
+        }
+        .login-card input:focus { border-color: var(--accent); }
+        .login-card .btn {
+            width: 100%; padding: 14px; margin-top: 16px;
+            border: none; border-radius: 8px; background: var(--accent);
+            color: #fff; font-family: var(--font-headings); font-size: 1rem;
+            text-transform: uppercase; letter-spacing: 1px; cursor: pointer;
+            transition: background .2s;
+        }
+        .login-card .btn:hover { background: var(--accent-hover); }
+        .login-error { color: #e74c3c; font-size: 0.85rem; margin-top: 12px; display: none; }
+
+        /* ─── DASHBOARD ────────────────── */
+        .dashboard { display: flex; min-height: 100vh; }
+        .sidebar {
+            width: 240px; background: #1a1a1a; border-right: 1px solid var(--border);
+            padding: 24px 0; display: flex; flex-direction: column;
+            flex-shrink: 0;
+        }
+        .sidebar-logo { padding: 0 24px 24px; text-align: center; }
+        .sidebar-logo img { width: 100px; }
+        .sidebar-nav { flex: 1; }
+        .sidebar-nav button {
+            display: block; width: 100%; padding: 14px 24px;
+            border: none; background: none; color: var(--text-muted);
+            font-family: var(--font-headings); font-size: 1rem;
+            text-align: left; text-transform: uppercase; letter-spacing: 1px;
+            cursor: pointer; transition: all .2s;
+            border-left: 3px solid transparent;
+        }
+        .sidebar-nav button:hover { color: var(--text); background: rgba(144,48,32,0.08); }
+        .sidebar-nav button.active {
+            color: var(--accent); background: rgba(144,48,32,0.12);
+            border-left-color: var(--accent);
+        }
+        .sidebar-footer { padding: 24px; }
+        .btn-logout {
+            width: 100%; padding: 10px; border: 1px solid var(--border);
+            border-radius: 6px; background: transparent; color: var(--text-muted);
+            font-family: var(--font-body); font-size: 0.85rem; cursor: pointer;
+            transition: all .2s;
+        }
+        .btn-logout:hover { color: #e74c3c; border-color: #e74c3c; }
+        .main { flex: 1; padding: 32px 40px; overflow-y: auto; max-height: 100vh; }
+        .main h2 {
+            font-family: var(--font-logo); font-size: 1.5rem;
+            text-transform: uppercase; letter-spacing: 1px; margin-bottom: 24px;
+        }
+
+        /* ─── PRICE TABLE ──────────────── */
+        .section-card {
+            background: var(--bg-card); border: 1px solid var(--border);
+            border-radius: 10px; margin-bottom: 20px; overflow: hidden;
+        }
+        .section-card h3 {
+            font-family: var(--font-headings); font-size: 1.2rem;
+            padding: 16px 24px; background: rgba(144,48,32,0.15);
+            color: var(--accent); text-transform: uppercase; letter-spacing: 1px;
+            cursor: pointer; user-select: none; display: flex; justify-content: space-between; align-items: center;
+        }
+        .section-card h3 .arrow { font-size: 0.8rem; transition: transform .2s; }
+        .section-card.collapsed h3 .arrow { transform: rotate(-90deg); }
+        .section-card .section-body { padding: 8px 0; }
+        .section-card.collapsed .section-body { display: none; }
+        .price-row {
+            display: flex; align-items: center; padding: 12px 24px;
+            border-bottom: 1px solid rgba(255,255,255,0.04); gap: 16px;
+        }
+        .price-row:last-child { border-bottom: none; }
+        .price-row .item-name { flex: 1; font-family: var(--font-body); font-size: 0.95rem; }
+        .price-row .item-price {
+            font-family: var(--font-headings); font-size: 1rem;
+            color: var(--text-muted); min-width: 60px; text-align: right;
+        }
+        .price-row input {
+            width: 90px; padding: 8px 10px; border: 1px solid var(--border);
+            border-radius: 6px; background: var(--bg-input); color: var(--text);
+            font-family: var(--font-body); font-size: 0.95rem; text-align: center;
+            outline: none; transition: border-color .2s;
+        }
+        .price-row input:focus { border-color: var(--accent); }
+        .price-row input.dirty { border-color: var(--accent); background: rgba(144,48,32,0.08); }
+        .price-row .btn-save {
+            padding: 6px 14px; border: none; border-radius: 6px;
+            background: var(--green); color: #fff; font-family: var(--font-headings);
+            font-size: 0.8rem; text-transform: uppercase; cursor: pointer;
+            transition: background .2s; white-space: nowrap;
+        }
+        .price-row .btn-save:hover { background: var(--green-hover); }
+        .price-row .btn-save:disabled { opacity: 0.4; cursor: default; }
+        .toast {
+            position: fixed; bottom: 24px; right: 24px; padding: 14px 24px;
+            border-radius: 8px; font-family: var(--font-body); font-size: 0.9rem;
+            z-index: 100; transition: all .3s; opacity: 0; transform: translateY(10px);
+            pointer-events: none;
+        }
+        .toast.show { opacity: 1; transform: translateY(0); }
+        .toast.success { background: #1b5e20; color: #c8e6c9; border: 1px solid var(--green); }
+        .toast.error { background: #4a1414; color: #f5c6cb; border: 1px solid #e74c3c; }
+
+        /* ─── IMAGE GRID ───────────────── */
+        .image-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 16px; }
+        .image-card {
+            background: var(--bg-card); border: 1px solid var(--border);
+            border-radius: 10px; overflow: hidden; text-align: center;
+        }
+        .image-card .img-preview {
+            width: 100%; height: 150px; background: var(--bg) center/cover no-repeat;
+            border-bottom: 1px solid var(--border);
+        }
+        .image-card .img-info {
+            padding: 12px; font-size: 0.8rem; color: var(--text-muted);
+        }
+        .image-card .img-info strong {
+            display: block; font-family: var(--font-headings); font-size: 0.85rem;
+            color: var(--text); margin-bottom: 4px; word-break: break-all;
+        }
+        .image-card .btn-upload {
+            display: block; width: 100%; padding: 8px; border: none;
+            background: var(--bg-input); color: var(--text-muted);
+            font-family: var(--font-body); font-size: 0.8rem; cursor: pointer;
+            transition: all .2s; border-top: 1px solid var(--border);
+        }
+        .image-card .btn-upload:hover { background: var(--accent); color: #fff; }
+        .image-card.uploading { opacity: 0.6; pointer-events: none; }
+
+        @media (max-width: 768px) {
+            .dashboard { flex-direction: column; }
+            .sidebar { width: 100%; padding: 16px; flex-direction: row; align-items: center; border-right: none; border-bottom: 1px solid var(--border); }
+            .sidebar-logo { padding: 0 16px 0 0; }
+            .sidebar-logo img { width: 60px; }
+            .sidebar-nav { display: flex; flex: 1; }
+            .sidebar-nav button { border-left: none; border-bottom: 3px solid transparent; padding: 10px 16px; font-size: 0.9rem; }
+            .sidebar-nav button.active { border-left: none; border-bottom-color: var(--accent); }
+            .sidebar-footer { padding: 0; }
+            .main { padding: 20px; max-height: none; }
+            .image-grid { grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); }
+            .price-row { flex-wrap: wrap; gap: 8px; }
+        }
+    </style>
+</head>
+<body>
+
+<div id="loginScreen" class="login-wrapper">
+    <div class="login-card">
+        <img src="../img/logos/logo_chilte.png" alt="Chiltepin">
+        <h1>Panel de Gestión</h1>
+        <p>Ingresa la contraseña para continuar</p>
+        <input type="password" id="passwordInput" placeholder="Contraseña" autofocus>
+        <button class="btn" id="btnLogin">Entrar</button>
+        <div class="login-error" id="loginError">Contraseña incorrecta</div>
+    </div>
+</div>
+
+<div id="dashboard" class="dashboard" style="display:none">
+    <aside class="sidebar">
+        <div class="sidebar-logo">
+            <img src="../img/logos/logo_chilte.png" alt="Chiltepin">
+        </div>
+        <nav class="sidebar-nav">
+            <button class="active" data-tab="precios">Precios</button>
+            <button data-tab="imagenes">Imagenes</button>
+        </nav>
+        <div class="sidebar-footer">
+            <button class="btn-logout" id="btnLogout">Cerrar sesión</button>
+        </div>
+    </aside>
+    <main class="main" id="mainContent"></main>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+(function() {
+    var loginScreen = document.getElementById('loginScreen');
+    var dashboard = document.getElementById('dashboard');
+    var loginError = document.getElementById('loginError');
+    var passwordInput = document.getElementById('passwordInput');
+    var mainContent = document.getElementById('mainContent');
+    var currentTab = 'precios';
+
+    // ─── Toast ─────────────────────────────────
+    var toastTimer;
+    function showToast(msg, type) {
+        var t = document.getElementById('toast');
+        t.textContent = msg;
+        t.className = 'toast ' + (type || 'success') + ' show';
+        clearTimeout(toastTimer);
+        toastTimer = setTimeout(function() { t.classList.remove('show'); }, 2500);
+    }
+
+    // ─── API calls ─────────────────────────────
+    function api(url, opts) {
+        opts = opts || {};
+        opts.credentials = 'same-origin';
+        if (opts.body && typeof opts.body === 'object' && !(opts.body instanceof FormData)) {
+            opts.headers = Object.assign({ 'Content-Type': 'application/json' }, opts.headers || {});
+            opts.body = JSON.stringify(opts.body);
+        }
+        return fetch(url, opts).then(function(r) { return r.json(); });
+    }
+
+    // ─── Login ─────────────────────────────────
+    function doLogin() {
+        var pw = passwordInput.value;
+        if (!pw) return;
+        loginError.style.display = 'none';
+        api('/api/auth', { method: 'POST', body: { password: pw } }).then(function(data) {
+            if (data.ok) {
+                loginScreen.style.display = 'none';
+                dashboard.style.display = 'flex';
+                loadTab(currentTab);
+            } else {
+                loginError.style.display = 'block';
+            }
+        });
+    }
+
+    document.getElementById('btnLogin').addEventListener('click', doLogin);
+    passwordInput.addEventListener('keydown', function(e) {
+        if (e.key === 'Enter') doLogin();
+    });
+
+    // Check if already logged in
+    api('/api/images').then(function(data) {
+        if (!data.error) {
+            loginScreen.style.display = 'none';
+            dashboard.style.display = 'flex';
+            loadTab(currentTab);
+        }
+    }).catch(function() {});
+
+    // ─── Logout ────────────────────────────────
+    document.getElementById('btnLogout').addEventListener('click', function() {
+        api('/api/logout', { method: 'POST' }).then(function() {
+            dashboard.style.display = 'none';
+            loginScreen.style.display = 'flex';
+            passwordInput.value = '';
+            loginError.style.display = 'none';
+        });
+    });
+
+    // ─── Tab switching ─────────────────────────
+    document.querySelectorAll('.sidebar-nav button').forEach(function(btn) {
+        btn.addEventListener('click', function() {
+            document.querySelectorAll('.sidebar-nav button').forEach(function(b) { b.classList.remove('active'); });
+            btn.classList.add('active');
+            currentTab = btn.dataset.tab;
+            loadTab(currentTab);
+        });
+    });
+
+    // ─── Tab loader ────────────────────────────
+    function loadTab(tab) {
+        if (tab === 'precios') loadPrecios();
+        else if (tab === 'imagenes') loadImagenes();
+    }
+
+    // ─── PRECIOS TAB ───────────────────────────
+    function loadPrecios() {
+        mainContent.innerHTML = '<h2>Precios del Menu</h2><p style="color:var(--text-muted)">Cargando...</p>';
+        api('/api/menu').then(renderPrecios).catch(function() {
+            mainContent.innerHTML = '<h2>Precios del Menu</h2><p style="color:#e74c3c">Error al cargar el menu</p>';
+        });
+    }
+
+    function renderPrecios(data) {
+        var html = '<h2>Precios del Menu</h2>';
+        html += '<p style="color:var(--text-muted);margin-bottom:24px">' +
+            data.sections.reduce(function(s, sec) { return s + sec.items.length; }, 0) +
+            ' platillos &bull; ' + data.promos.length + ' promociones</p>';
+
+        data.sections.forEach(function(section) {
+            html += '<div class="section-card">';
+            html += '<h3 onclick="this.parentElement.classList.toggle(\'collapsed\')">' +
+                section.name + ' <span class="arrow">&#9660;</span></h3>';
+            html += '<div class="section-body">';
+            section.items.forEach(function(item, idx) {
+                html += '<div class="price-row" data-section="' + escAttr(section.name) + '" data-name="' + escAttr(item.name) + '">';
+                html += '<span class="item-name">' + escHtml(item.name) + '</span>';
+                html += '<span class="item-price">$' + item.price + '</span>';
+                html += '<input type="number" min="0" value="' + item.price + '" placeholder="Precio" data-original="' + item.price + '" oninput="this.classList.toggle(\'dirty\', this.value != this.dataset.original)" onkeydown="if(event.key===\'Enter\')saveSingle(this)">';
+                html += '<button class="btn-save" disabled onclick="saveSingle(this.previousElementSibling)">Guardar</button>';
+                html += '</div>';
+            });
+            html += '</div></div>';
+        });
+
+        html += '<div class="section-card"><h3 onclick="this.parentElement.classList.toggle(\'collapsed\')">Promociones <span class="arrow">&#9660;</span></h3>';
+        html += '<div class="section-body">';
+        var currentLoc = '';
+        data.promos.forEach(function(promo) {
+            if (promo.location !== currentLoc) {
+                currentLoc = promo.location;
+                html += '<div style="padding:8px 24px;font-family:var(--font-headings);color:var(--accent);font-size:0.9rem;text-transform:uppercase;letter-spacing:1px">' + escHtml(promo.location) + '</div>';
+            }
+            html += '<div class="price-row" data-section="promos" data-name="' + escAttr(promo.location + '|' + promo.day + '|' + promo.desc) + '">';
+            html += '<span class="item-name">' + escHtml(promo.day) + ' &mdash; ' + escHtml(promo.desc) + '</span>';
+            if (promo.price !== null) {
+                html += '<span class="item-price">$' + promo.price + '</span>';
+                html += '<input type="number" min="0" value="' + promo.price + '" data-original="' + promo.price + '" oninput="this.classList.toggle(\'dirty\', this.value != this.dataset.original)" onkeydown="if(event.key===\'Enter\')saveSingle(this)">';
+                html += '<button class="btn-save" disabled onclick="saveSingle(this.previousElementSibling)">Guardar</button>';
+            } else {
+                html += '<span class="item-price" style="font-style:italic">Sin precio</span>';
+                html += '<input type="number" min="0" value="" data-original="" oninput="this.classList.toggle(\'dirty\', this.value != this.dataset.original)" onkeydown="if(event.key===\'Enter\')saveSingle(this)">';
+                html += '<button class="btn-save" disabled onclick="saveSingle(this.previousElementSibling)">Guardar</button>';
+            }
+            html += '</div>';
+        });
+        html += '</div></div>';
+
+        mainContent.innerHTML = html;
+
+        document.querySelectorAll('.price-row input').forEach(function(inp) {
+            inp.addEventListener('input', function() {
+                var btn = inp.parentElement.querySelector('.btn-save');
+                if (btn) btn.disabled = inp.value === inp.dataset.original;
+            });
+        });
+    }
+
+    window.saveSingle = function(input) {
+        var row = input.closest('.price-row');
+        var section = row.dataset.section;
+        var name = row.dataset.name;
+        var price = parseInt(input.value, 10);
+        if (isNaN(price) || price < 0) { showToast('Ingresa un precio valido', 'error'); return; }
+
+        var body;
+        if (section === 'promos') {
+            var parts = name.split('|');
+            body = { promos: [{ location: parts[0], day: parts[1], desc: parts[2], price: price }] };
+        } else {
+            body = { sections: [{ name: section, items: [{ name: name, price: price }] }] };
+        }
+
+        api('/api/menu', { method: 'PATCH', body: body }).then(function(data) {
+            if (data.ok) {
+                input.dataset.original = price;
+                input.classList.remove('dirty');
+                var btn = row.querySelector('.btn-save');
+                if (btn) btn.disabled = true;
+                row.querySelector('.item-price').textContent = '$' + price;
+                showToast('Precio actualizado', 'success');
+            } else {
+                showToast('Error al guardar', 'error');
+            }
+        }).catch(function() {
+            showToast('Error de conexion', 'error');
+        });
+    };
+
+    // ─── IMAGENES TAB ──────────────────────────
+    function loadImagenes() {
+        mainContent.innerHTML = '<h2>Imagenes del Sitio</h2><p style="color:var(--text-muted)">Cargando...</p>';
+        api('/api/images').then(renderImagenes).catch(function() {
+            mainContent.innerHTML = '<h2>Imagenes del Sitio</h2><p style="color:#e74c3c">Error al cargar imagenes</p>';
+        });
+    }
+
+    function renderImagenes(images) {
+        var html = '<h2>Imagenes del Sitio</h2>';
+        html += '<p style="color:var(--text-muted);margin-bottom:24px">' + images.length + ' imagenes en total &bull; Haz clic en <strong>Reemplazar</strong> para subir una nueva version</p>';
+        html += '<div class="image-grid">';
+
+        images.forEach(function(img) {
+            html += '<div class="image-card" data-path="' + escAttr(img.path) + '">';
+            html += '<div class="img-preview" style="background-image:url(../' + img.path + '?v=' + Date.now() + ')"></div>';
+            html += '<div class="img-info"><strong>' + escHtml(img.name) + '</strong>' + formatSize(img.size) + '</div>';
+            html += '<button class="btn-upload" onclick="uploadImage(this)">Reemplazar</button>';
+            html += '<input type="file" accept="image/*" style="display:none" onchange="handleImageUpload(this, \'' + escAttr(img.path) + '\')">';
+            html += '</div>';
+        });
+
+        html += '</div>';
+        mainContent.innerHTML = html;
+    }
+
+    window.uploadImage = function(btn) {
+        var card = btn.closest('.image-card');
+        var fileInput = card.querySelector('input[type="file"]');
+        fileInput.click();
+    };
+
+    window.handleImageUpload = function(input, imagePath) {
+        var file = input.files[0];
+        if (!file) return;
+
+        var card = input.closest('.image-card');
+        card.classList.add('uploading');
+
+        // Extract directory and filename from path (e.g. "img/hero/carousel1.jpg")
+        var parts = imagePath.split('/');
+        var filename = parts.pop();
+        var subPath = parts.slice(1).join('/'); // e.g. "hero"
+
+        var formData = new FormData();
+        formData.append('image', file);
+        formData.append('targetName', filename.replace(/\.[^.]+$/, ''));
+        formData.append('originalName', filename);
+        formData.append('subPath', subPath);
+
+        fetch('/api/images/upload', {
+            method: 'POST',
+            credentials: 'same-origin',
+            body: formData
+        }).then(function(r) { return r.json(); }).then(function(data) {
+            card.classList.remove('uploading');
+            if (data.ok) {
+                showToast('Imagen reemplazada', 'success');
+                var preview = card.querySelector('.img-preview');
+                preview.style.backgroundImage = 'url(../' + imagePath + '?v=' + data.version + ')';
+                setTimeout(function() { loadImagenes(); }, 500);
+            } else {
+                showToast(data.error || 'Error al subir', 'error');
+            }
+        }).catch(function() {
+            card.classList.remove('uploading');
+            showToast('Error de conexion', 'error');
+        });
+
+        input.value = '';
+    };
+
+    // ─── Helpers ───────────────────────────────
+    function escHtml(s) {
+        var d = document.createElement('div');
+        d.textContent = s;
+        return d.innerHTML;
+    }
+    function escAttr(s) {
+        return s.replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/'/g,'&#39;');
+    }
+    function formatSize(bytes) {
+        if (bytes < 1024) return bytes + ' B';
+        if (bytes < 1024*1024) return (bytes/1024).toFixed(0) + ' KB';
+        return (bytes/(1024*1024)).toFixed(1) + ' MB';
+    }
+
+})();
+</script>
+
+</body>
+</html>

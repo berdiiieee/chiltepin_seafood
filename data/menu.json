@@ -1,0 +1,495 @@
+{
+  "sections": [
+    {
+      "name": "Entradas",
+      "items": [
+        {
+          "name": "Callo de hacha",
+          "price": 145
+        },
+        {
+          "name": "Guacamole",
+          "price": 65
+        },
+        {
+          "name": "Shot de ostión",
+          "price": 85
+        },
+        {
+          "name": "Shot de camarón",
+          "price": 80
+        },
+        {
+          "name": "Shot mix",
+          "price": 90
+        }
+      ]
+    },
+    {
+      "name": "Aguachile",
+      "items": [
+        {
+          "name": "Aguachile chiltepín",
+          "price": 199
+        },
+        {
+          "name": "Aguachile de temporada",
+          "price": 199
+        },
+        {
+          "name": "Aguachile mixto",
+          "price": 199
+        },
+        {
+          "name": "Aguachile verde",
+          "price": 199
+        },
+        {
+          "name": "Aguachile con atún",
+          "price": 260
+        },
+        {
+          "name": "Aguachile con pulpo",
+          "price": 330
+        }
+      ]
+    },
+    {
+      "name": "Cóctel",
+      "items": [
+        {
+          "name": "Cóctel de camarón",
+          "price": 130
+        },
+        {
+          "name": "Cóctel combinado",
+          "price": 180
+        },
+        {
+          "name": "Cóctel chiltepín premium",
+          "price": 240
+        },
+        {
+          "name": "Tostada vaciada",
+          "price": 100
+        }
+      ]
+    },
+    {
+      "name": "Kids",
+      "items": [
+        {
+          "name": "Mini burger",
+          "price": 94
+        },
+        {
+          "name": "Chicken tenders",
+          "price": 84
+        },
+        {
+          "name": "Papas chiltepín",
+          "price": 114
+        },
+        {
+          "name": "Postre",
+          "price": 100
+        }
+      ]
+    },
+    {
+      "name": "Tostadas",
+      "items": [
+        {
+          "name": "Combinada especial",
+          "price": 135
+        },
+        {
+          "name": "Tostada chiltepín premium",
+          "price": 230
+        },
+        {
+          "name": "Tostada de aguachile",
+          "price": 145
+        },
+        {
+          "name": "Tosticeviches",
+          "price": 165
+        },
+        {
+          "name": "Trilogía de camarón",
+          "price": 175
+        },
+        {
+          "name": "Sample mini tostadas",
+          "price": 204
+        },
+        {
+          "name": "Ceviche chiltepín",
+          "price": 75
+        },
+        {
+          "name": "Atún en salsas negras",
+          "price": 184
+        },
+        {
+          "name": "Chicharrón",
+          "price": 150
+        }
+      ]
+    },
+    {
+      "name": "Lo Nuevo",
+      "items": [
+        {
+          "name": "Tacos de asada",
+          "price": 105
+        },
+        {
+          "name": "Dobladita",
+          "price": 70
+        },
+        {
+          "name": "Taco harina",
+          "price": 80
+        },
+        {
+          "name": "Taco caribe",
+          "price": 70
+        },
+        {
+          "name": "Sopa marinera",
+          "price": 204
+        }
+      ]
+    },
+    {
+      "name": "Tacos, Burros y Más",
+      "items": [
+        {
+          "name": "Taco camarón capeado",
+          "price": 45
+        },
+        {
+          "name": "Taco pescado capeado",
+          "price": 45
+        },
+        {
+          "name": "Taco de atún",
+          "price": 84
+        },
+        {
+          "name": "Taco güero",
+          "price": 135
+        },
+        {
+          "name": "Burro norteño",
+          "price": 135
+        },
+        {
+          "name": "Volcán marino",
+          "price": 104
+        },
+        {
+          "name": "Hamburguesa bucanera",
+          "price": 150
+        },
+        {
+          "name": "Pescado empanizado",
+          "price": 204
+        },
+        {
+          "name": "Ensalada chiltepín",
+          "price": 145
+        }
+      ]
+    },
+    {
+      "name": "Bebidas sin Alcohol",
+      "items": [
+        {
+          "name": "Refresco",
+          "price": 39
+        },
+        {
+          "name": "Limonada",
+          "price": 45
+        },
+        {
+          "name": "Agua del día",
+          "price": 35
+        },
+        {
+          "name": "Clamato Mineral",
+          "price": 95
+        },
+        {
+          "name": "Botella Agua",
+          "price": 30
+        },
+        {
+          "name": "Agua Mineral",
+          "price": 40
+        }
+      ]
+    },
+    {
+      "name": "Coctelería",
+      "items": [
+        {
+          "name": "Carajillo",
+          "price": 130
+        },
+        {
+          "name": "Mi Viaje",
+          "price": 130
+        },
+        {
+          "name": "Chiltepino",
+          "price": 130
+        },
+        {
+          "name": "Tritón",
+          "price": 130
+        }
+      ]
+    },
+    {
+      "name": "Cervezas",
+      "items": [
+        {
+          "name": "Corona",
+          "price": 43
+        },
+        {
+          "name": "Victoria",
+          "price": 43
+        },
+        {
+          "name": "Pacífico",
+          "price": 43
+        },
+        {
+          "name": "Modelo Negra",
+          "price": 48
+        },
+        {
+          "name": "Ultra",
+          "price": 45
+        },
+        {
+          "name": "Michelado",
+          "price": 30
+        },
+        {
+          "name": "Clamato",
+          "price": 35
+        },
+        {
+          "name": "Chelado",
+          "price": 25
+        }
+      ]
+    },
+    {
+      "name": "Licores - Tequila",
+      "items": [
+        {
+          "name": "Tradicional",
+          "price": 110
+        },
+        {
+          "name": "José Cuervo",
+          "price": 110
+        },
+        {
+          "name": "Don Julio 70",
+          "price": 150
+        },
+        {
+          "name": "Maestro Dobel",
+          "price": 150
+        },
+        {
+          "name": "Gran Malo",
+          "price": 110
+        }
+      ]
+    },
+    {
+      "name": "Licores - Whiskey",
+      "items": [
+        {
+          "name": "Red Label",
+          "price": 120
+        },
+        {
+          "name": "Jack Daniel's",
+          "price": 310
+        },
+        {
+          "name": "Buchanan's",
+          "price": 140
+        },
+        {
+          "name": "Black Label",
+          "price": 140
+        }
+      ]
+    },
+    {
+      "name": "Licores - Mezcal",
+      "items": [
+        {
+          "name": "De la Casa",
+          "price": 60
+        },
+        {
+          "name": "Apaluz",
+          "price": 110
+        },
+        {
+          "name": "Boscal",
+          "price": 140
+        }
+      ]
+    },
+    {
+      "name": "Licores - Vodka",
+      "items": [
+        {
+          "name": "Absolut 70",
+          "price": 120
+        },
+        {
+          "name": "Smirnoff de Tamarindo",
+          "price": 120
+        }
+      ]
+    },
+    {
+      "name": "Licores - Gin",
+      "items": [
+        {
+          "name": "Gibson's",
+          "price": 90
+        },
+        {
+          "name": "Tanqueray",
+          "price": 140
+        },
+        {
+          "name": "Bombay",
+          "price": 140
+        },
+        {
+          "name": "Hendricks",
+          "price": 130
+        }
+      ]
+    },
+    {
+      "name": "Licores - Ron",
+      "items": [
+        {
+          "name": "Bacardi",
+          "price": 100
+        },
+        {
+          "name": "Kraken",
+          "price": 90
+        },
+        {
+          "name": "Bacardi Solera",
+          "price": 100
+        },
+        {
+          "name": "Havana",
+          "price": 130
+        }
+      ]
+    },
+    {
+      "name": "Otros Licores",
+      "items": [
+        {
+          "name": "Jager",
+          "price": 110
+        },
+        {
+          "name": "Licor 43",
+          "price": 110
+        },
+        {
+          "name": "Aperol",
+          "price": 120
+        },
+        {
+          "name": "Hipnótic",
+          "price": 130
+        }
+      ]
+    }
+  ],
+  "promos": [
+    {
+      "location": "Plaza Real",
+      "day": "Lun",
+      "desc": "Ceviche + agua del día",
+      "price": 65
+    },
+    {
+      "location": "Plaza Real",
+      "day": "Mar",
+      "desc": "Tacos 3x2",
+      "price": null
+    },
+    {
+      "location": "Plaza Real",
+      "day": "Mié",
+      "desc": "Chicharrón",
+      "price": 110
+    },
+    {
+      "location": "Plaza Real",
+      "day": "Jue",
+      "desc": "Atún salsas negras",
+      "price": 160
+    },
+    {
+      "location": "Plaza Real",
+      "day": "Vie",
+      "desc": "Burro norteño",
+      "price": 110
+    },
+    {
+      "location": "Plaza 450",
+      "day": "Lun",
+      "desc": "Tostada ceviche + agua",
+      "price": 65
+    },
+    {
+      "location": "Plaza 450",
+      "day": "Mar",
+      "desc": "Tacos capeados 3x2",
+      "price": null
+    },
+    {
+      "location": "Plaza 450",
+      "day": "Mié",
+      "desc": "Chicharrón",
+      "price": 110
+    },
+    {
+      "location": "Plaza 450",
+      "day": "Jue",
+      "desc": "Hamburguesa bucanera + papas",
+      "price": 99
+    },
+    {
+      "location": "Plaza 450",
+      "day": "Vie",
+      "desc": "Aguachiles gratis en compra de cubeta de cerveza",
+      "price": null
+    }
+  ]
+}
