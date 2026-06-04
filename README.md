@@ -4,6 +4,38 @@ Proyecto del sitio web de Chiltepin Seafood (restaurante de mariscos, 2 sucursal
 
 ---
 
+## Stack Tecnológico
+
+### Sitio público (7 páginas)
+| Capa | Tecnología |
+|---|---|
+| Estructura | HTML5 semántico |
+| Estilos | CSS3 vanilla — variables, flexbox, grid, animaciones, media queries |
+| Lógica | JavaScript ES6+ vanilla — sin frameworks, sin dependencias |
+| Fuentes | Google Fonts — Anton (logo), Oswald (headings/nav), Lora (body) |
+| SEO | Open Graph, Twitter Cards, canonical URLs |
+| Rendimiento | Imágenes redimensionadas/optimizadas, lazy loading nativo, cache-busting vía API |
+| Compatibilidad | Chrome, Firefox, Safari, Edge, iOS Safari, Android Chrome |
+
+### Backend (servidor temporal de referencia)
+| Capa | Tecnología |
+|---|---|
+| Entorno | Node.js ≥ 18 |
+| Servidor | Express.js 4.x |
+| Autenticación | Cookie simple con contraseña compartida (sin usuarios/roles) |
+| Uploads | Multer (multipart/form-data) |
+| Datos | JSON en filesystem (`data/menu.json`, `data/version.json`) |
+| Dependencias | `express`, `multer`, `cookie-parser` — 3 paquetes total |
+
+### Panel Admin
+| Capa | Tecnología |
+|---|---|
+| UI | HTML5 + CSS3 + JavaScript vanilla — mismo stack visual del sitio público |
+| Comunicación | Fetch API contra los endpoints REST del servidor |
+| Acceso | URL oculta `/panel` sin enlaces desde el sitio público, protegida por cookie |
+
+---
+
 ## Arranque rápido
 
 ```bash
