@@ -1,0 +1,626 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chiltepin Seafood | Boletín</title>
+    <meta name="description" content="Boletín Chiltepin Seafood — Suscríbete y recibe noticias y promociones exclusivas.">
+    <link rel="icon" type="image/png" sizes="32x32" href="img/favicon.png?v=2">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Anton&family=Lora:ital,wght@0,400;0,600;1,400&family=Oswald:wght@400;600&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --bg-color: #1a1a1a;
+            --accent-color: #d32f2f;
+            --text-color: #ffffff;
+            --text-muted: #a0a0a0;
+            --font-logo: 'Anton', sans-serif;
+            --font-headings: 'Oswald', sans-serif;
+            --font-body: 'Lora', serif;
+            --font-nav: 'Oswald', sans-serif;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            font-family: var(--font-body);
+            line-height: 1.6;
+            overflow-x: hidden;
+                    }
+
+        .container { max-width: 1200px; margin: 0 auto; padding: 0 12px; }
+
+        header { display: flex; justify-content: space-between; align-items: center; margin-top: 28px; padding: 10px 0 8px; background-color: transparent; border-bottom: 2px solid var(--accent-color); }
+        .logo-link { display: block; max-width: 220px; height: auto; }
+        .logo-img { width: 100%; height: auto; object-fit: contain; }
+
+        nav { display: flex; align-items: center; gap: 24px; font-family: var(--font-nav); font-size: 1rem; letter-spacing: 1.5px; }
+        nav a { text-decoration: none; color: var(--text-color); text-transform: uppercase; transition: color 0.3s ease; }
+        nav a:hover { color: var(--accent-color); }
+
+        .btn-reservations { background-color: var(--accent-color); color: #fff; padding: 11px 18px; text-transform: uppercase; border: none; cursor: pointer; font-family: var(--font-nav); font-size: 1rem; letter-spacing: 1px; transition: background-color 0.3s; }
+        .btn-reservations:hover { background-color: #903020; }
+
+        .dropdown { position: relative; display: inline-block; }
+        .dropbtn { background-color: transparent; color: var(--text-color); padding: 0; font-family: var(--font-nav); font-size: 1rem; letter-spacing: 1.5px; text-transform: uppercase; border: none; cursor: pointer; transition: color 0.3s ease; }
+        .dropbtn:hover { color: var(--accent-color); }
+        .dropbtn::after { content: " ▼"; font-size: 0.8em; margin-left: 5px; display: inline-block; transition: transform 0.3s ease; }
+        .dropdown-content { display: none; position: absolute; background-color: var(--bg-color); min-width: 200px; box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.5); z-index: 10; top: 100%; left: 0; border: 1px solid var(--accent-color); }
+        .dropdown-content a { color: var(--text-color); padding: 12px 16px; text-decoration: none; display: block; text-transform: uppercase; font-family: var(--font-nav); font-size: 0.9rem; transition: background-color 0.3s; }
+        .dropdown-content a:hover { background-color: var(--accent-color); color: #fff; }
+        .dropdown:hover .dropdown-content { display: block; }
+        .dropdown:hover .dropbtn::after { transform: rotate(180deg); }
+        .sub-dropdown { position: relative; }
+        .sub-dropbtn { background-color: transparent; color: var(--text-color); padding: 12px 16px; text-decoration: none; display: block; text-transform: uppercase; font-family: var(--font-nav); font-size: 0.9rem; border: none; cursor: pointer; width: 100%; text-align: left; transition: background-color 0.3s; }
+        .sub-dropbtn:hover { background-color: var(--accent-color); color: #fff; }
+        .sub-dropdown-content { display: none; position: absolute; background-color: var(--bg-color); min-width: 200px; box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.5); z-index: 21; left: 100%; top: 0; border: 1px solid var(--accent-color); }
+        .sub-dropdown-content a { color: var(--text-color); padding: 12px 16px; text-decoration: none; display: block; text-transform: uppercase; font-family: var(--font-nav); font-size: 0.8rem; transition: background-color 0.3s; }
+        .sub-dropdown-content a:hover { background-color: var(--accent-color); color: #fff; }
+        .sub-dropdown:hover .sub-dropdown-content { display: block; }
+
+        .page-header { position: relative; display: grid; place-items: center; text-align: center; margin: 60px 0 40px; padding: 140px 20px 120px; min-height: 450px; background-image: linear-gradient(rgba(0,0,0,0.65), rgba(0,0,0,0.65)), url('img/galeria3.jpeg'); background-size: cover; background-position: center; border-radius: 18px; box-shadow: 0 20px 40px rgba(0,0,0,0.35); overflow: hidden; animation: heroFadeIn 1s ease forwards; }
+        .page-title { position: relative; z-index: 1; font-family: var(--font-logo); font-size: clamp(3rem, 5vw, 5rem); text-transform: uppercase; letter-spacing: 2px; color: var(--text-color); line-height: 1; margin: 0; }
+        .page-subtitle { position: relative; z-index: 1; font-family: var(--font-headings); font-size: 1.3rem; color: var(--text-muted); margin-top: 20px; letter-spacing: 1px; text-transform: uppercase; }
+
+        @keyframes heroFadeIn { from { opacity: 0; transform: scale(0.97); } to { opacity: 1; transform: scale(1); } }
+
+        .newsletter-section { max-width: 600px; margin: 60px auto; text-align: center; }
+        .newsletter-section h2 { font-family: var(--font-logo); font-size: 2.5rem; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 15px; }
+        .newsletter-section p { color: var(--text-muted); font-size: 1.1rem; margin-bottom: 40px; }
+
+        .input-group { display: flex; flex-direction: column; text-align: left; }
+        .input-group label { font-family: var(--font-nav); font-size: 0.8rem; text-transform: uppercase; color: var(--text-muted); margin-bottom: 5px; letter-spacing: 1px; }
+        .input-group input { background: transparent; border: none; border-bottom: 1px solid #444; color: var(--text-color); font-family: var(--font-body); font-size: 1.1rem; padding: 10px 0; outline: none; transition: border-bottom-color 0.3s; }
+        .input-group input:focus { border-bottom-color: var(--accent-color); }
+        .input-group .field-hint { font-size: 0.8rem; color: #555; margin-top: 4px; font-style: italic; }
+
+        .btn-submit-event { background-color: var(--accent-color); color: #fff; border: none; padding: 15px 30px; font-family: var(--font-nav); font-size: 1rem; text-transform: uppercase; letter-spacing: 2px; cursor: pointer; transition: background-color 0.3s; width: 100%; margin-top: 20px; }
+        .btn-submit-event:hover { background-color: #903020; }
+
+        .reveal { opacity: 0; transition: opacity 0.7s ease, transform 0.7s ease; }
+        .reveal.visible { opacity: 1; transform: translate(0, 0) scale(1); }
+        .reveal-up { transform: translateY(40px); }
+        .delay-1 { transition-delay: 0.1s; }
+        .delay-2 { transition-delay: 0.2s; }
+
+        .divider { border: 0; height: 4px; background-color: var(--accent-color); margin: 40px 0; }
+        footer { margin-top: 80px; padding-bottom: 60px; }
+        .footer-grid { display: grid; grid-template-columns: repeat(4, 1fr) 2fr; gap: 20px; font-family: var(--font-nav); font-size: 0.85rem; text-transform: uppercase; }
+        .footer-col h4 { font-size: 1.1rem; margin-bottom: 15px; color: var(--accent-color); }
+        .footer-col p, .footer-col a { color: var(--text-color); text-decoration: none; display: block; margin-bottom: 10px; line-height: 1.4; }
+        .footer-col a:hover { color: var(--accent-color); }
+        .newsletter { display: flex; align-items: flex-end; justify-content: flex-end; flex-direction: column; gap: 15px; }
+        .btn-newsletter { background-color: var(--accent-color); color: #fff; border: none; padding: 12px 25px; font-family: var(--font-nav); font-size: 0.9rem; cursor: pointer; text-transform: uppercase; width: 100%; max-width: 250px; text-align: center; text-decoration: none; display: inline-block; }
+        .credits { text-align: center; font-family: var(--font-body); color: var(--accent-color); font-size: 0.9rem; margin-top: 60px; }
+
+        .scroll-top {
+            position: fixed; bottom: 24px; right: 24px; z-index: 99;
+            opacity: 0; pointer-events: none; width: 40px; height: 40px;
+            border-radius: 50%; border: 1px solid #555; background: #2a2a2a;
+            color: #fff; font-size: 1.2rem; cursor: pointer; transition: all 0.3s;
+        }
+        .scroll-top.visible { opacity: 0.6; pointer-events: auto; }
+        .scroll-top:hover { opacity: 1; background: var(--accent-color); border-color: var(--accent-color); }
+
+        .modal-overlay {
+            position: fixed; inset: 0; z-index: 9999;
+            background: rgba(0,0,0,0.85);
+            display: none; place-items: center;
+        }
+        .modal-overlay.active { display: grid; }
+        .modal-box {
+            background: #1a1a1a; padding: 40px; border-radius: 12px;
+            max-width: 400px; text-align: center; border: 1px solid #333;
+            animation: modalIn 0.3s ease;
+        }
+        .modal-box p { color: var(--text-muted); font-size: 1.1rem; line-height: 1.6; }
+        @keyframes modalIn { from { transform: scale(0.9); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+
+        .res-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); z-index: 999; display: none; }
+        .res-overlay.active { display: block; }
+        .res-sidebar { position: fixed; top: 0; right: -480px; width: 100%; max-width: 480px; height: 100%; background-color: #1a1a1a; z-index: 1000; box-shadow: -5px 0 25px rgba(0,0,0,0.8); transition: right 0.4s cubic-bezier(0.77, 0, 0.175, 1); display: flex; flex-direction: column; }
+        .res-sidebar.active { right: 0; }
+        .res-header { padding: 30px 40px 20px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #333; }
+        .res-title-bar { font-family: var(--font-logo); font-size: 2rem; text-transform: uppercase; color: var(--text-color); letter-spacing: 1px; }
+        .res-close { background: none; border: none; color: var(--text-muted); font-size: 1.5rem; cursor: pointer; transition: color 0.3s; }
+        .res-close:hover { color: var(--accent-color); }
+        .res-body { padding: 20px 40px 40px; overflow-y: auto; flex-grow: 1; }
+        .res-step { display: none; animation: fadeInRight 0.3s ease forwards; }
+        .res-step.active { display: block; }
+        @keyframes fadeInRight { from { opacity: 0; transform: translateX(20px); } to { opacity: 1; transform: translateX(0); } }
+        .res-field { padding: 16px 0; border-bottom: 1px solid #333; }
+        .res-field label { font-family: var(--font-nav); font-size: 0.75rem; text-transform: uppercase; letter-spacing: 1.5px; color: var(--text-muted); display: block; margin-bottom: 6px; }
+        .res-field select, .res-field input[type="date"] { background: transparent; border: none; color: var(--text-color); font-family: var(--font-headings); font-size: 1.1rem; outline: none; cursor: pointer; width: 100%; padding: 4px 0; }
+        .res-field select option { background-color: var(--bg-color); }
+        .res-field input[type="date"]::-webkit-calendar-picker-indicator { filter: invert(1); cursor: pointer; }
+        .res-location-pills { display: flex; gap: 10px; }
+        .loc-pill { flex: 1; background: transparent; border: 1px solid #444; color: var(--text-color); padding: 10px; font-family: var(--font-nav); font-size: 0.9rem; text-align: center; cursor: pointer; border-radius: 4px; transition: all 0.2s; }
+        .loc-pill:hover { border-color: var(--accent-color); color: var(--accent-color); }
+        .loc-pill.selected { border-color: var(--accent-color); background: var(--accent-color); color: #fff; }
+        .guest-pills { display: flex; gap: 8px; }
+        .guest-pill { flex: 1; background: transparent; border: 1px solid #444; color: var(--text-color); padding: 10px 0; font-family: var(--font-nav); font-size: 0.9rem; text-align: center; cursor: pointer; border-radius: 4px; transition: all 0.2s; }
+        .guest-pill:hover { border-color: var(--accent-color); color: var(--accent-color); }
+        .guest-pill.selected { border-color: var(--accent-color); background: var(--accent-color); color: #fff; }
+        .res-times-pills { display: flex; gap: 6px; overflow-x: auto; white-space: nowrap; padding-bottom: 8px; margin-top: 6px; scrollbar-width: thin; scrollbar-color: var(--accent-color) transparent; -webkit-overflow-scrolling: touch; }
+        .time-pill { background: transparent; border: 1px solid #444; color: var(--text-color); padding: 8px 14px; font-family: var(--font-nav); font-size: 0.85rem; cursor: pointer; border-radius: 4px; transition: all 0.2s; }
+        .time-pill:hover { border-color: var(--accent-color); color: var(--accent-color); }
+        .time-pill.selected { border-color: var(--accent-color); background: var(--accent-color); color: #fff; }
+        .btn-contact { background-color: transparent; color: var(--accent-color); border: 2px solid var(--accent-color); }
+        .btn-contact:hover { background-color: var(--accent-color); color: #fff; }
+        .res-contact { text-align: center; padding: 30px 0; }
+        .res-contact h3 { font-family: var(--font-logo); font-size: 2rem; color: var(--accent-color); margin-bottom: 20px; text-transform: uppercase; }
+        .res-contact p { color: var(--text-muted); margin-bottom: 30px; font-size: 1.1rem; }
+        .res-contact .contact-phone { font-size: 1.4rem; font-family: var(--font-headings); margin-bottom: 10px; color: var(--text-color); }
+        .res-contact .contact-email { font-size: 1.1rem; color: var(--accent-color); font-family: var(--font-nav); text-transform: uppercase; letter-spacing: 1px; }
+        .res-back { background: none; border: none; color: var(--text-muted); font-family: var(--font-nav); font-size: 0.9rem; text-transform: uppercase; cursor: pointer; margin-bottom: 20px; display: flex; align-items: center; gap: 5px; }
+        .res-back:hover { color: var(--text-color); }
+        .res-summary { background-color: #111; padding: 20px; border-left: 3px solid var(--accent-color); margin-bottom: 30px; }
+        .res-summary p { font-family: var(--font-body); font-size: 1.1rem; color: var(--text-color); margin-bottom: 5px; }
+        .res-summary span { font-family: var(--font-nav); font-size: 0.9rem; color: var(--text-muted); text-transform: uppercase; }
+        .event-form { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+        .full-width { grid-column: span 2; }
+        .field-error { font-family: var(--font-nav); font-size: 0.75rem; color: var(--accent-color); margin-top: 4px; display: none; }
+        .field-error.visible { display: block; }
+
+        @media (max-width: 900px) {
+            header, .footer-grid { flex-direction: column; text-align: center; }
+            nav { flex-wrap: wrap; justify-content: center; margin-top: 20px; }
+            .newsletter { align-items: center; margin-top: 30px; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <header>
+            <a href="index.html" class="logo-link">
+                <img src="img/logo_chilte.png" alt="Chiltepin Plaza Real Logo" class="logo-img">
+            </a>
+            <nav>
+                <a href="index.html">Inicio</a>
+
+                <div class="dropdown">
+                    <button class="dropbtn" onclick="window.location.href='horarioyubicacion.html'">Horarios & Ubicación</button>
+                    <div class="dropdown-content">
+                        <a href="horarioyubicacion.html?sucursal=seafood">Chiltepin Plaza Real</a>
+                        <a href="horarioyubicacion.html?sucursal=450">Chiltepin Plaza 450</a>
+                    </div>
+                </div>
+
+                <a href="menu.html">Menú</a>
+
+                <div class="dropdown">
+                    <button class="dropbtn" onclick="window.location.href='acercade.html'">Acerca de</button>
+                    <div class="dropdown-content">
+                        <a href="acercade.html">Nuestra Historia</a>
+                        <a href="contacto.html">Contáctanos</a>
+                    </div>
+                </div>
+
+                <div class="dropdown">
+                    <button class="dropbtn" onclick="window.location.href='eventos.html'">Eventos</button>
+                    <div class="dropdown-content">
+                        <a href="eventos.html?tipo=privados">Eventos Privados</a>
+                        <a href="eventos.html?tipo=catering">Catering & Banquetes</a>
+                    </div>
+                </div>
+
+                <div class="dropdown">
+                    <button class="dropbtn">Delivery</button>
+                    <div class="dropdown-content">
+                        <div class="sub-dropdown">
+                            <button class="sub-dropbtn">Chiltepin Plaza Real</button>
+                            <div class="sub-dropdown-content">
+                                <a href="https://www.rappi.com.mx/restaurantes/1930107511-chiltepin-seafood" target="_blank" rel="noopener noreferrer">Rappi</a>
+                                <a href="https://www.didi-food.com/es-MX/food/store/5764607524473670170/" target="_blank" rel="noopener noreferrer">DiDi</a>
+                            </div>
+                        </div>
+                        <div class="sub-dropdown">
+                            <button class="sub-dropbtn">Chiltepin Plaza 450</button>
+                            <div class="sub-dropdown-content">
+                                <a href="https://www.didi-food.com/es-MX/food/store/5764610193128950278/" target="_blank" rel="noopener noreferrer">DiDi</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <button class="btn-reservations res-trigger">Reservaciones</button>
+            </nav>
+        </header>
+    </div>
+
+    <div class="container">
+        <div class="page-header">
+            <div>
+                <h1 class="page-title">Boletín</h1>
+                <p class="page-subtitle">Recibe noticias y promociones exclusivas</p>
+            </div>
+        </div>
+    </div>
+
+    <main class="container">
+        <section class="newsletter-section reveal reveal-up">
+            <h2>Suscríbete a nuestro boletín</h2>
+            <p>Déjanos tu correo o tu teléfono y recibe las últimas novedades de Chiltepin Seafood directamente en tu bandeja.</p>
+
+            <form id="boletinForm" onsubmit="return validarBoletin(event)">
+                <div class="input-group reveal reveal-up delay-1">
+                    <label>Nombre</label>
+                    <input type="text" placeholder="Tu nombre (opcional)">
+                </div>
+
+                <div class="input-group reveal reveal-up delay-1" style="margin-top: 20px;">
+                    <label>Correo Electrónico</label>
+                    <input type="email" placeholder="correo@ejemplo.com">
+                    <span class="field-error" id="err-bol-email"></span>
+                </div>
+
+                <div class="input-group reveal reveal-up delay-2" style="margin-top: 20px;">
+                    <label>Teléfono</label>
+                    <input type="tel" placeholder="618...">
+                    <span class="field-error" id="err-bol-telefono"></span>
+                </div>
+
+                <button type="submit" class="btn-submit-event reveal reveal-up delay-2">Suscribirme</button>
+            </form>
+        </section>
+    </main>
+
+    <div class="container">
+        <footer>
+            <hr class="divider">
+            <div class="footer-grid">
+                <div class="footer-col">
+                    <h4>Ubicaciones</h4>
+                    <a href="horarioyubicacion.html?sucursal=seafood">Chiltepin Plaza Real</a>
+                    <a href="horarioyubicacion.html?sucursal=450">Chiltepin Plaza 450</a>
+                </div>
+
+                <div class="footer-col">
+                    <h4>Contacto</h4>
+                    <p><strong>Teléfono:</strong></p>
+                    <p>618.200.3865</p>
+                    <br>
+                    <p><strong>Correo:</strong></p>
+                    <p>info@chiltepin.com</p>
+                    <a href="https://www.instagram.com/chiltepinseafood/" target="_blank" rel="noopener noreferrer">Instagram</a>
+                    <a href="https://www.facebook.com/Chiltepinseafood/?locale=es_LA" target="_blank" rel="noopener noreferrer">Facebook</a>
+                </div>
+
+                <div class="footer-col">
+                    <h4>Reservaciones</h4>
+                    <a href="eventos.html?tipo=catering">Catering &amp; Banquetes</a>
+                    <a href="eventos.html?tipo=privados">Eventos Privados</a>
+                </div>
+
+                <div class="footer-col">
+                    <h4>Bolsa de Trabajo</h4>
+                    <a href="#" onclick="mostrarModal('Actualmente no estamos buscando empleados.'); return false;">Únete a nuestro equipo</a>
+                </div>
+
+                <div class="newsletter">
+                    <a href="boletin.html" class="btn-newsletter">Suscríbete al Boletín</a>
+                </div>
+            </div>
+
+            <p class="credits">Desarrollado para Chiltepin Seafood</p>
+        </footer>
+    </div>
+
+    <script>
+        function openReservations() {
+            document.getElementById('resSidebar').classList.add('active');
+            document.getElementById('resOverlay').classList.add('active');
+            document.body.style.overflow = 'hidden';
+            document.getElementById('resStep1').classList.add('active');
+            document.getElementById('resStep2').classList.remove('active');
+            document.getElementById('resStep3').classList.remove('active');
+        }
+
+        function mostrarModal(msg) {
+            document.getElementById('modalMsg').innerText = msg;
+            document.getElementById('modalOverlay').classList.add('active');
+        }
+        function cerrarModal() {
+            document.getElementById('modalOverlay').classList.remove('active');
+        }
+
+        function closeReservations() {
+            document.getElementById('resSidebar').classList.remove('active');
+            document.getElementById('resOverlay').classList.remove('active');
+            document.body.style.overflow = '';
+            document.querySelector('#resStep2 input[type="text"]').value = '';
+            document.querySelector('#resStep2 input[type="tel"]').value = '';
+            document.querySelector('#resStep2 input[type="email"]').value = '';
+            document.querySelectorAll('.guest-pill').forEach((b, i) => b.classList.toggle('selected', i === 1));
+            document.querySelectorAll('.loc-pill').forEach((b, i) => b.classList.toggle('selected', i === 0));
+            document.querySelectorAll('.time-pill').forEach(b => b.classList.remove('selected'));
+            document.querySelectorAll('.field-error').forEach(e => e.classList.remove('visible'));
+            document.getElementById('resContactInfo').style.display = 'none';
+            document.querySelector('#resStep2 form').style.display = 'block';
+            const btn = document.getElementById('btnStep1Confirm');
+            btn.textContent = 'Confirmar Horario';
+            btn.className = 'btn-submit-event';
+        }
+
+        function clearError(id) { document.getElementById(id).classList.remove('visible'); }
+
+        function showError(id, msg) {
+            const el = document.getElementById(id);
+            el.textContent = msg;
+            el.classList.add('visible');
+        }
+
+        function validateResDate(input) {
+            if (!input.value) return;
+            const day = new Date(input.value + 'T12:00:00').getDay();
+            if (day === 0 || day === 6) {
+                showError('error-fecha', 'Solo atendemos reservaciones entre semana. Los fines de semana te esperamos sin reservación.');
+                input.value = '';
+            } else {
+                const el = document.getElementById('error-fecha');
+                if (el) el.classList.remove('visible');
+            }
+        }
+
+        function validarBoletin(e) {
+            e.preventDefault();
+            document.querySelectorAll('#boletinForm .field-error').forEach(el => el.classList.remove('visible'));
+
+            const email = document.querySelector('#boletinForm input[type="email"]').value.trim();
+            const phone = document.querySelector('#boletinForm input[type="tel"]').value.trim();
+            let valido = true;
+
+            if (!email && !phone) {
+                document.getElementById('err-bol-email').textContent = 'Ingresa al menos tu correo.';
+                document.getElementById('err-bol-email').classList.add('visible');
+                document.getElementById('err-bol-telefono').textContent = 'O tu teléfono.';
+                document.getElementById('err-bol-telefono').classList.add('visible');
+                valido = false;
+            } else {
+                if (email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+                    document.getElementById('err-bol-email').textContent = 'Correo inválido.';
+                    document.getElementById('err-bol-email').classList.add('visible');
+                    valido = false;
+                }
+                if (phone && !/^\d{10}$/.test(phone)) {
+                    document.getElementById('err-bol-telefono').textContent = 'Teléfono inválido (10 dígitos).';
+                    document.getElementById('err-bol-telefono').classList.add('visible');
+                    valido = false;
+                }
+            }
+
+            if (valido) mostrarModal('¡Gracias por suscribirte! Te mantendremos al tanto de nuestras novedades.');
+        }
+
+        function confirmStep1() {
+            document.querySelectorAll('#resStep1 .field-error').forEach(e => e.classList.remove('visible'));
+            const selectedTimeEl = document.querySelector('.time-pill.selected');
+            const selectedTime = selectedTimeEl ? selectedTimeEl.dataset.value : '';
+            const dateVal = document.getElementById('resDate').value;
+            if (!dateVal) { showError('error-fecha', 'Selecciona una fecha'); return; }
+            if (!selectedTime) { showError('error-horario', 'Selecciona un horario'); return; }
+            const day = new Date(dateVal + 'T12:00:00').getDay();
+            if (day === 0 || day === 6) {
+                showError('error-fecha', 'Solo atendemos reservaciones entre semana. Los fines de semana te esperamos sin reservación.');
+                return;
+            }
+            const locEl = document.querySelector('.loc-pill.selected');
+            const loc = locEl ? locEl.dataset.value : '';
+            const guestEl = document.querySelector('.guest-pill.selected');
+            const guests = guestEl ? guestEl.dataset.value : '';
+            document.getElementById('summaryLoc').innerText = loc;
+            document.getElementById('summaryDetails').innerText = `${guests} • ${dateVal} • ${selectedTime}`;
+            const isLargeGroup = guestEl && guestEl.dataset.value === '7+ Personas';
+            document.getElementById('resContactInfo').style.display = isLargeGroup ? 'block' : 'none';
+            document.querySelector('#resStep2 form').style.display = isLargeGroup ? 'none' : 'block';
+            document.getElementById('resStep1').classList.remove('active');
+            document.getElementById('resStep2').classList.add('active');
+        }
+
+        function goBackToStep1() {
+            document.getElementById('resStep2').classList.remove('active');
+            document.getElementById('resStep1').classList.add('active');
+        }
+
+        function submitReservation(e) {
+            e.preventDefault();
+            document.querySelectorAll('#resStep2 .field-error').forEach(e => e.classList.remove('visible'));
+            const name = document.querySelector('#resStep2 input[type="text"]').value.trim();
+            const phone = document.querySelector('#resStep2 input[type="tel"]').value.trim();
+            const email = document.querySelector('#resStep2 input[type="email"]').value.trim();
+            let valid = true;
+            if (!name) { showError('error-name', 'Ingresa tu nombre completo'); valid = false; }
+            if (!/^\d{10}$/.test(phone)) { showError('error-phone', 'Ingresa un teléfono válido de 10 dígitos'); valid = false; }
+            if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) { showError('error-email', 'Ingresa un correo electrónico válido'); valid = false; }
+            if (!valid) return;
+            document.getElementById('resStep2').classList.remove('active');
+            document.getElementById('resStep3').classList.add('active');
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const resTriggers = document.querySelectorAll('.res-trigger');
+            const resSidebar = document.getElementById('resSidebar');
+            const resOverlay = document.getElementById('resOverlay');
+            const resClose = document.getElementById('resClose');
+            if (resTriggers.length > 0 && resSidebar && resOverlay && resClose) {
+                resTriggers.forEach(btn => btn.addEventListener('click', openReservations));
+                resClose.addEventListener('click', closeReservations);
+                resOverlay.addEventListener('click', closeReservations);
+            }
+
+            document.querySelectorAll('.loc-pill').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    document.querySelectorAll('.loc-pill').forEach(b => b.classList.remove('selected'));
+                    btn.classList.add('selected');
+                });
+            });
+
+            document.querySelectorAll('.time-pill').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    document.querySelectorAll('.time-pill').forEach(b => b.classList.remove('selected'));
+                    btn.classList.add('selected');
+                });
+            });
+
+            document.querySelectorAll('.guest-pill').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    document.querySelectorAll('.guest-pill').forEach(b => b.classList.remove('selected'));
+                    btn.classList.add('selected');
+                    const btnConfirm = document.getElementById('btnStep1Confirm');
+                    if (btn.dataset.value === '7+ Personas') {
+                        btnConfirm.textContent = 'Contáctanos';
+                        btnConfirm.className = 'btn-submit-event btn-contact';
+                    } else {
+                        btnConfirm.textContent = 'Confirmar Horario';
+                        btnConfirm.className = 'btn-submit-event';
+                    }
+                });
+            });
+
+            const dateResInput = document.getElementById('resDate');
+            if (dateResInput) {
+                const today = new Date().toISOString().split('T')[0];
+                dateResInput.value = today;
+                dateResInput.min = today;
+            }
+
+            const revealElements = document.querySelectorAll('.reveal');
+            if (revealElements.length > 0) {
+                const observer = new IntersectionObserver((entries) => {
+                    entries.forEach(entry => {
+                        if (entry.isIntersecting) {
+                            entry.target.classList.add('visible');
+                            observer.unobserve(entry.target);
+                        }
+                    });
+                }, { threshold: 0.15 });
+                revealElements.forEach(el => observer.observe(el));
+            }
+
+            // Scroll to top button
+            window.addEventListener('scroll', () => {
+                document.getElementById('scrollTopBtn')?.classList.toggle('visible', scrollY > 400);
+            });
+
+
+
+        });
+    </script>
+
+    <div class="res-overlay" id="resOverlay"></div>
+    <aside class="res-sidebar" id="resSidebar">
+        <div class="res-header">
+            <h2 class="res-title-bar">Reservaciones</h2>
+            <button class="res-close" id="resClose">✕</button>
+        </div>
+        <div class="res-body">
+            <div id="resStep1" class="res-step active">
+                <div class="res-field">
+                    <label>Sucursal</label>
+                    <div class="res-location-pills" id="resLocation">
+                        <button class="loc-pill selected" data-value="Chiltepin Plaza Real">Plaza Real</button>
+                        <button class="loc-pill" data-value="Chiltepin Plaza 450">Plaza 450</button>
+                    </div>
+                </div>
+                <div class="res-field">
+                    <label>Huéspedes</label>
+                    <div class="guest-pills" id="resGuests">
+                        <button class="guest-pill" data-value="1 Persona">1</button>
+                        <button class="guest-pill selected" data-value="2 Personas">2</button>
+                        <button class="guest-pill" data-value="3 Personas">3</button>
+                        <button class="guest-pill" data-value="4 Personas">4</button>
+                        <button class="guest-pill" data-value="5 Personas">5</button>
+                        <button class="guest-pill" data-value="6 Personas">6</button>
+                        <button class="guest-pill" data-value="7+ Personas">7+</button>
+                    </div>
+                </div>
+                <div class="res-field">
+                    <label>Fecha</label>
+                    <input type="date" id="resDate" onchange="validateResDate(this)">
+                </div>
+                <span class="field-error" id="error-fecha"></span>
+                <div class="res-field">
+                    <label>Horario</label>
+                    <div class="res-times-pills" id="resTimePills">
+                        <button class="time-pill" data-value="11:30">11:30</button>
+                        <button class="time-pill" data-value="12:00">12:00</button>
+                        <button class="time-pill" data-value="12:30">12:30</button>
+                        <button class="time-pill" data-value="13:00">13:00</button>
+                        <button class="time-pill" data-value="13:30">13:30</button>
+                        <button class="time-pill" data-value="14:00">14:00</button>
+                        <button class="time-pill" data-value="14:30">14:30</button>
+                        <button class="time-pill" data-value="15:00">15:00</button>
+                        <button class="time-pill" data-value="15:30">15:30</button>
+                        <button class="time-pill" data-value="16:00">16:00</button>
+                        <button class="time-pill" data-value="16:30">16:30</button>
+                        <button class="time-pill" data-value="17:00">17:00</button>
+                        <button class="time-pill" data-value="17:30">17:30</button>
+                        <button class="time-pill" data-value="18:00">18:00</button>
+                        <button class="time-pill" data-value="18:30">18:30</button>
+                        <button class="time-pill" data-value="19:00">19:00</button>
+                    </div>
+                    <span class="field-error" id="error-horario"></span>
+                </div>
+                <button id="btnStep1Confirm" class="btn-submit-event" onclick="confirmStep1()" style="margin-top: 20px;">Confirmar Horario</button>
+            </div>
+            <div id="resStep2" class="res-step">
+                <button class="res-back" onclick="goBackToStep1()">❮ Cambiar Hora</button>
+                <div class="res-summary">
+                    <p id="summaryLoc">Chiltepin Plaza Real</p>
+                    <span id="summaryDetails">2 Personas • Hoy • 19:00</span>
+                </div>
+                <form class="event-form" onsubmit="submitReservation(event)">
+                    <div class="input-group full-width">
+                        <label>Nombre Completo</label>
+                        <input type="text" placeholder="Ej. Juan Pérez" oninput="clearError('error-name')">
+                        <span class="field-error" id="error-name"></span>
+                    </div>
+                    <div class="input-group full-width">
+                        <label>Teléfono</label>
+                        <input type="tel" placeholder="618..." oninput="clearError('error-phone')">
+                        <span class="field-error" id="error-phone"></span>
+                    </div>
+                    <div class="input-group full-width">
+                        <label>Correo Electrónico</label>
+                        <input type="email" placeholder="correo@ejemplo.com" oninput="clearError('error-email')">
+                        <span class="field-error" id="error-email"></span>
+                    </div>
+                    <div class="full-width">
+                        <button type="submit" class="btn-submit-event" style="margin-top: 20px;">Confirmar Reserva</button>
+                    </div>
+                </form>
+                <div id="resContactInfo" class="res-contact" style="display: none;">
+                    <h3>Grandes Grupos</h3>
+                    <p>Para reservaciones de 7+ personas,<br>contáctanos directamente:</p>
+                    <p class="contact-phone">618.200.3865</p>
+                    <p class="contact-email">info@chiltepin.com</p>
+                    <button class="btn-submit-event" onclick="closeReservations()" style="margin-top: 20px;">Cerrar</button>
+                </div>
+            </div>
+            <div id="resStep3" class="res-step" style="text-align: center; margin-top: 50px;">
+                <h2 style="font-family: var(--font-logo); font-size: 3rem; color: var(--accent-color); margin-bottom: 20px;">¡Reserva Confirmada!</h2>
+                <p style="font-size: 1.1rem; color: var(--text-muted); margin-bottom: 30px;">Te hemos enviado un correo con los detalles de tu reservación.</p>
+                <button class="btn-submit-event" onclick="closeReservations()">Cerrar</button>
+            </div>
+        </div>
+    </aside>
+
+    <div class="modal-overlay" id="modalOverlay" onclick="cerrarModal()">
+        <div class="modal-box" onclick="event.stopPropagation()">
+            <p id="modalMsg"></p>
+            <button class="btn-submit-event" onclick="cerrarModal()" style="margin-top:20px;">Aceptar</button>
+        </div>
+    </div>
+
+    <button class="scroll-top" id="scrollTopBtn" onclick="window.scrollTo({top:0,behavior:'smooth'})" aria-label="Volver arriba">↑</button>
+
+</body>
+</html>

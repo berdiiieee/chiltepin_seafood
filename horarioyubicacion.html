@@ -3,7 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Horarios y Ubicación | Chiltepin Plaza Real</title>
+    <title>Chiltepin Seafood | Horarios y Ubicación</title>
+    <link rel="icon" type="image/png" sizes="32x32" href="img/favicon.png?v=2">
+    <meta name="description" content="Horarios y ubicación de Chiltepin Seafood — Plaza Real y Chiltepin Plaza 450 en Durango, Dgo.">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Anton&family=Lora:ital,wght@0,400;0,600;1,400&family=Oswald:wght@400;600&display=swap" rel="stylesheet">
@@ -139,7 +141,7 @@
             background-color: var(--bg-color);
             min-width: 200px;
             box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.5);
-            z-index: 2;
+            z-index: 10;
             top: 100%;
             left: 0;
             border: 1px solid var(--accent-color);
@@ -548,6 +550,25 @@
             font-size: 1.1rem;
         }
 
+        .promo-row {
+            display: flex; flex-wrap: wrap; align-items: center;
+            padding: 8px 0; border-bottom: 1px solid #2a2a2a; gap: 10px;
+        }
+        .promo-row:last-child { border-bottom: none; }
+        .promo-day {
+            font-family: var(--font-nav); color: var(--accent-color);
+            min-width: 36px; text-transform: uppercase; font-size: 0.85rem; letter-spacing: 1px;
+        }
+        .promo-desc { flex: 1; color: var(--text-color); font-size: 1rem; }
+        .promo-price {
+            font-family: var(--font-headings); color: var(--accent-color);
+            font-size: 1.1rem; white-space: nowrap;
+        }
+        .promo-note {
+            width: 100%; font-size: 0.75rem; color: var(--text-muted);
+            font-style: italic; margin-top: 2px; padding-left: 46px;
+        }
+
         .btn-outline {
             display: inline-block;
             background-color: transparent;
@@ -662,6 +683,9 @@
             text-transform: uppercase;
             width: 100%;
             max-width: 250px;
+            text-align: center;
+            text-decoration: none;
+            display: inline-block;
         }
 
         .credits {
@@ -692,6 +716,37 @@
             .footer-grid { grid-template-columns: 1fr; gap: 40px; }
             .newsletter { align-items: center; margin-top: 30px; }
         }
+
+        .scroll-top {
+            position: fixed; bottom: 24px; right: 24px; z-index: 99;
+            opacity: 0; pointer-events: none; width: 40px; height: 40px;
+            border-radius: 50%; border: 1px solid #555; background: #2a2a2a;
+            color: #fff; font-size: 1.2rem; cursor: pointer; transition: all 0.3s;
+        }
+        .scroll-top.visible { opacity: 0.6; pointer-events: auto; }
+        .scroll-top:hover { opacity: 1; background: var(--accent-color); border-color: var(--accent-color); }
+
+        .modal-overlay {
+            position: fixed; inset: 0; z-index: 9999;
+            background: rgba(0,0,0,0.85);
+            display: none; place-items: center;
+        }
+        .modal-overlay.active { display: grid; }
+        .modal-box {
+            background: #1a1a1a; padding: 40px; border-radius: 12px;
+            max-width: 400px; text-align: center; border: 1px solid #333;
+            animation: modalIn 0.3s ease;
+        }
+        .modal-box p { color: var(--text-muted); font-size: 1.1rem; line-height: 1.6; }
+        @keyframes modalIn { from { transform: scale(0.9); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+
+        .divider {
+            border: 0;
+            height: 4px;
+            background-color: var(--accent-color);
+            margin: 40px 0;
+        }
+
     </style>
 </head>
 <body>
@@ -699,7 +754,7 @@
     <div class="container">
         <header>
             <a href="index.html" class="logo-link">
-                <img src="logo_chilte.png" alt="Chiltepin Plaza Real Logo" class="logo-img">
+                <img src="img/logo_chilte.png" alt="Chiltepin Plaza Real Logo" class="logo-img">
             </a>
             <nav>
                 <a href="index.html">Inicio</a>
@@ -708,12 +763,18 @@
                     <button class="dropbtn">Horarios & Ubicación</button>
                     <div class="dropdown-content">
                         <a onclick="loadLocation('seafood')">Chiltepin Plaza Real</a>
-                        <a onclick="loadLocation('450')">Chiltepin 450</a>
+                        <a onclick="loadLocation('450')">Chiltepin Plaza 450</a>
                     </div>
                 </div>
 
-                <a href="menu.html">Menu</a>
-                <a href="acercade.html">Acerca de</a>
+                <a href="menu.html">Menú</a>
+                <div class="dropdown">
+                    <button class="dropbtn" onclick="window.location.href='acercade.html'">Acerca de</button>
+                    <div class="dropdown-content">
+                        <a href="acercade.html">Nuestra Historia</a>
+                        <a href="contacto.html">Contáctanos</a>
+                    </div>
+                </div>
                 <div class="dropdown">
                     <button class="dropbtn" onclick="window.location.href='eventos.html'">Eventos</button>
                     <div class="dropdown-content">
@@ -732,7 +793,7 @@
                             </div>
                         </div>
                         <div class="sub-dropdown">
-                            <button class="sub-dropbtn">Chiltepin 450</button>
+                            <button class="sub-dropbtn">Chiltepin Plaza 450</button>
                             <div class="sub-dropdown-content">
                                 <a href="https://www.didi-food.com/es-MX/food/store/5764610193128950278/?channel=10&cityId=52100200&lat=24.054347&lng=-104.643926&ddlCode=DGvdnr&area=MX&lang=es-MX&appKey=dlp&redirectType=2&params=&pl=eyJwb2lJZCI6IkNoSUpQOERrSndfSW00WVJESzFBN2NEVU5TMCIsImFkZHJlc3NBbGxEaXNwbGF5IjoiTWFudWVsIEdhcmPDrWEgT2Jlc28gMzEzLCBDb2wgZGVsIFZhbGxlLCAzNDEzMCBEdXJhbmdvLCBEZ28uLCBNw6l4aWNvIiwiY2l0eSI6IkR1cmFuZ28iLCJjaXR5SWQiOjUyMTAwMjAwLCJjb3VudHJ5Q29kZSI6Ik1YIiwiY291bnRyeUlkIjo1MiwibGF0IjoyNC4wMDcxMTI0LCJsbmciOi0xMDQuNjczMzA3NCwiZGlzcGxheU5hbWUiOiJNYW51ZWwgR2FyY8OtYSBPYmVzbywgMzEzIiwiYWRkcmVzcyI6Ik1hbnVlbCBHYXJjw61hIE9iZXNvIDMxMywgQ29sIGRlbCBWYWxsZSwgMzQxMzAgRHVyYW5nbywgRGdvLiwgTcOpeGljbyIsImFkZHJlc3NBbGwiOiJNYW51ZWwgR2FyY8OtYSBPYmVzbyAzMTMsIENvbCBkZWwgVmFsbGUsIDM0MTMwIER1cmFuZ28sIERnby4sIE3DqXhpY28iLCJjb29yZGluYXRlVHlwZSI6Indnczg0IiwicG9pU3JjVGFnIjoibWFudWFsX3JnZW8iLCJzcmNUYWciOiJyZXZlcnNlZ2VvdG9wIiwic2VhcmNoSWQiOiIwYTkzYjkzNjY5ZWFkZjIyOThiZDhkZGMyMjliMjQwMiIsImRpc3RTdHIiOiIxMG0iLCJwb2lUeXBlIjoicHJlbWlzZTtzdHJlZXRfYWRkcmVzcyIsImNvdW50eUlkIjo1MjEwMDIwMSwiY291bnR5R3JvdXBJZCI6NTIxMDAyMDAwMDAxfQ%3D%3D">DiDi</a>
                             </div>
@@ -769,11 +830,16 @@
                     </div>
                 </div>
 
-                <a href="#" class="btn-outline">Reservar Mesa</a>
+                <div class="loc-block" id="display-promos-block">
+                    <strong>Promociones de la Semana</strong>
+                    <div id="display-promos"></div>
+                </div>
+
+                <a href="#" class="btn-outline" onclick="openReservationsForLocation(); return false;">Reservar Mesa</a>
             </div>
 
             <div class="loc-image-container reveal reveal-right">
-                <img id="display-image" src="https://placehold.co/800x1000/1a1a3a/f4ead6?text=Fachada+Politecnico" alt="Chiltepin Plaza Real">
+                <img id="display-image" src="img/imgPlazaReal/PlazaRealFachada.jpeg" alt="Chiltepin Plaza Real">
             </div>
         </div>
     </main>
@@ -784,43 +850,43 @@
 
     <div class="container">
         <footer>
+            <hr class="divider">
             <div class="footer-grid">
                 <div class="footer-col">
                     <h4>Ubicaciones</h4>
                     <a onclick="loadLocation('seafood')" style="cursor:pointer;">Chiltepin Plaza Real</a>
-                    <a onclick="loadLocation('450')" style="cursor:pointer;">Chiltepin 450</a>
+                    <a onclick="loadLocation('450')" style="cursor:pointer;">Chiltepin Plaza 450</a>
                 </div>
                 
                 <div class="footer-col">
                     <h4>Contacto</h4>
-                    <p>618.123.4567</p>
-                    <p>DURANGO – INFO@CHILTEPIN.COM</p>
+                    <p><strong>Teléfono:</strong></p>
+                    <p>618.200.3865</p>
                     <br>
-                    <a href="#">Instagram</a>
-                    <a href="#">Facebook</a>
+                    <p><strong>Correo:</strong></p>
+                    <p>info@chiltepin.com</p>
+                    <br>
+                    <a href="https://www.instagram.com/chiltepinseafood/" target="_blank" rel="noopener noreferrer">Instagram</a>
+                    <a href="https://www.facebook.com/Chiltepinseafood/?locale=es_LA" target="_blank" rel="noopener noreferrer">Facebook</a>
                 </div>
 
                 <div class="footer-col">
                     <h4>Reservaciones</h4>
-                    <a href="#">Restaurante Durango</a>
-                    <a href="#">Eventos Privados</a>
+                    <a href="eventos.html?tipo=catering">Catering &amp; Banquetes</a>
+                    <a href="eventos.html?tipo=privados">Eventos Privados</a>
                 </div>
 
                 <div class="footer-col">
                     <h4>Bolsa de Trabajo</h4>
-                    <a href="#">Únete a nuestro equipo</a>
+                    <a href="#" onclick="mostrarModal('Actualmente no estamos buscando empleados.'); return false;">Únete a nuestro equipo</a>
                 </div>
 
                 <div class="newsletter">
-                    <div class="newsletter-links">
-                        <a href="#">Accesibilidad</a>
-                        <a href="#">Contacto</a>
-                    </div>
-                    <button class="btn-newsletter">Suscríbete al Boletín</button>
+                    <a href="boletin.html" class="btn-newsletter">Suscríbete al Boletín</a>
                 </div>
             </div>
             
-            <p class="credits">Desarrollado para Chiltepin Plaza Real</p>
+            <p class="credits">Desarrollado para Chiltepin Seafood</p>
         </footer>
     </div>
 
@@ -828,6 +894,8 @@
         // ==========================================
         // 1. DATOS Y FUNCIONES GLOBALES (AFUERA DE LA CAJA)
         // ==========================================
+        let currentLocationId = 'seafood';
+
         const locationsData = {
             'seafood': {
                 title: 'CHILTEPIN PLAZA REAL',
@@ -837,7 +905,14 @@
                 hours: `
                     <div class="hours-row"><span>Lunes a Domingo</span><span>11:30 AM - 7:00 PM</span></div>
                 `,
-                image: 'https://placehold.co/800x1000/d32f2f/f4ead6?text=Fachada+Politecnico', 
+                image: 'img/imgPlazaReal/PlazaRealFachada.jpeg', 
+                promos: [
+                    { day: 'Lun', desc: 'Ceviche + agua del día', price: '$65' },
+                    { day: 'Mar', desc: 'Tacos 3x2', price: '' },
+                    { day: 'Mié', desc: 'Chicharrón', price: '$110' },
+                    { day: 'Jue', desc: 'Atún salsas negras', price: '$160' },
+                    { day: 'Vie', desc: 'Burro norteño', price: '$110' },
+                ],
                 mapUrl: 'https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3607.0499283099075!2d-104.65695134982525!3d24.004646701859894!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x869bb72a9cd96645%3A0xa72b972e2d936398!2sChiltepin%20SeaFood!5e0!3m2!1ses!2smx!4v1776994599450!5m2!1ses!2smx'
             },
             '450': {
@@ -848,13 +923,21 @@
                 hours: `
                     <div class="hours-row"><span>Lunes a Domingo</span><span>11:30 AM - 7:00 PM</span></div>
                 `,
-                image: 'https://placehold.co/800x1000/d32f2f/f4ead6?text=Fachada+Plaza+450', 
+                image: 'img/img450/fachada450.jpeg', 
+                promos: [
+                    { day: 'Lun', desc: 'Tostada ceviche + agua', price: '$65' },
+                    { day: 'Mar', desc: 'Tacos capeados 3x2', price: '' },
+                    { day: 'Mié', desc: 'Chicharrón', price: '$110' },
+                    { day: 'Jue', desc: 'Hamburguesa bucanera + papas', price: '$99' },
+                    { day: 'Vie', desc: 'Aguachiles gratis en compra de cubeta de cerveza', price: '' },
+                ],
                 mapUrl: 'https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3643.340741445057!2d-104.646585725027!3d24.05430247846428!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x869bb738f6f10615%3A0x7e423aadb19046ab!2sChiltepin%20450!5e0!3m2!1ses!2smx!4v1776994643801!5m2!1ses!2smx'
             }
         };
 
         // Al estar aquí afuera, el menú HTML sí la encuentra al hacer clic
         function loadLocation(locationId) {
+            currentLocationId = locationId;
             const data = locationsData[locationId];
             
             document.getElementById('display-title').innerHTML = data.title;
@@ -866,6 +949,18 @@
             emailEl.href = 'mailto:' + data.email;
 
             document.getElementById('display-hours').innerHTML = data.hours;
+            
+            // Render promos
+            const promosHtml = data.promos.map(p => 
+                `<div class="promo-row">
+                    <span class="promo-day">${p.day}</span>
+                    <span class="promo-desc">${p.desc}</span>
+                    <span class="promo-price">${p.price}</span>
+                    ${p.note ? `<div class="promo-note">${p.note}</div>` : ''}
+                </div>`
+            ).join('');
+            document.getElementById('display-promos').innerHTML = promosHtml;
+            
             document.getElementById('display-image').src = data.image;
             document.getElementById('display-image').alt = data.title;
             document.getElementById('display-map').src = data.mapUrl;
@@ -879,6 +974,22 @@
             document.getElementById('resStep1').classList.add('active');
             document.getElementById('resStep2').classList.remove('active');
             document.getElementById('resStep3').classList.remove('active');
+        }
+
+        function openReservationsForLocation() {
+            openReservations();
+            const pillValue = currentLocationId === 'seafood' ? 'Chiltepin Plaza Real' : 'Chiltepin Plaza 450';
+            document.querySelectorAll('.loc-pill').forEach(b => {
+                b.classList.toggle('selected', b.dataset.value === pillValue);
+            });
+        }
+
+        function mostrarModal(msg) {
+            document.getElementById('modalMsg').innerText = msg;
+            document.getElementById('modalOverlay').classList.add('active');
+        }
+        function cerrarModal() {
+            document.getElementById('modalOverlay').classList.remove('active');
         }
 
         function closeReservations() {
@@ -1037,6 +1148,11 @@
                 }, { threshold: 0.15 });
                 revealElements.forEach(el => observer.observe(el));
             }
+
+            // Scroll to top button
+            window.addEventListener('scroll', () => {
+                document.getElementById('scrollTopBtn')?.classList.toggle('visible', scrollY > 400);
+            });
         });
     </script>
 
@@ -1057,7 +1173,7 @@
                     <label>Sucursal</label>
                     <div class="res-location-pills" id="resLocation">
                         <button class="loc-pill selected" data-value="Chiltepin Plaza Real">Plaza Real</button>
-                        <button class="loc-pill" data-value="Chiltepin 450">Chiltepin 450</button>
+                        <button class="loc-pill" data-value="Chiltepin Plaza 450">Plaza 450</button>
                     </div>
                 </div>
 
@@ -1076,7 +1192,7 @@
 
                 <div class="res-field">
                     <label>Fecha</label>
-                    <input type="date" id="resDate">
+                    <input type="date" id="resDate" onchange="validateResDate(this)">
                 </div>
                 <span class="field-error" id="error-fecha"></span>
 
@@ -1138,7 +1254,7 @@
                 <div id="resContactInfo" class="res-contact" style="display: none;">
                     <h3>Grandes Grupos</h3>
                     <p>Para reservaciones de 7+ personas,<br>contáctanos directamente:</p>
-                    <p class="contact-phone">618.123.4567</p>
+                    <p class="contact-phone">618.200.3865</p>
                     <p class="contact-email">info@chiltepin.com</p>
                     <button class="btn-submit-event" onclick="closeReservations()" style="margin-top: 20px;">Cerrar</button>
                 </div>
@@ -1152,6 +1268,15 @@
 
         </div>
     </aside>
+
+    <div class="modal-overlay" id="modalOverlay" onclick="cerrarModal()">
+        <div class="modal-box" onclick="event.stopPropagation()">
+            <p id="modalMsg"></p>
+            <button class="btn-submit-event" onclick="cerrarModal()" style="margin-top:20px;">Aceptar</button>
+        </div>
+    </div>
+
+    <button class="scroll-top" id="scrollTopBtn" onclick="window.scrollTo({top:0,behavior:'smooth'})" aria-label="Volver arriba">↑</button>
 
 </body>
 </html>

@@ -3,7 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Chiltepin Plaza Real | Durango</title>
+    <title>Chiltepin Seafood | Inicio</title>
+    <meta name="description" content="Chiltepin Seafood — Mariscos frescos en Durango. Conoce nuestro menú, haz tu reservación y visita Plaza Real y Chiltepin Plaza 450.">
+    <link rel="icon" type="image/png" sizes="32x32" href="img/favicon.png?v=2">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Anton&family=Lora:ital,wght@0,400;0,600;1,400&family=Oswald:wght@400;600&display=swap" rel="stylesheet">
@@ -14,6 +16,7 @@
             --bg-color: #1a1a1a; /* Fondo Negro Oscuro */
             --accent-color: #d32f2f; /* Rojo Profundo y Vibrante */
             --text-color: #ffffff; /* Blanco */
+            --text-muted: #a0a0a0;
             
             --font-logo: 'Anton', sans-serif;
             --font-headings: 'Oswald', sans-serif;
@@ -27,13 +30,19 @@
             box-sizing: border-box;
         }
 
+        html {
+            scroll-behavior: smooth;
+        }
+
+        
+
         body {
             background-color: var(--bg-color);
             color: var(--text-color);
             font-family: var(--font-body);
             line-height: 1.6;
             overflow-x: hidden;
-        }
+                    }
 
         .container {
             max-width: 1200px;
@@ -258,7 +267,7 @@
         /* --- BARRA LATERAL DE RESERVACIONES (MULTI-STEP) --- */
         .res-overlay {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.7); backdrop-filter: blur(4px);
+            background: rgba(0,0,0,0.85);
             z-index: 999; display: none;
         }
         .res-overlay.active { display: block; }
@@ -610,13 +619,49 @@
             flex-direction: column;
         }
 
-        .location-img {
+
+        .loc-card-carousel {
             width: 100%;
             height: 350px;
-            background-color: #1a1a1a;
+            position: relative;
+            overflow: hidden;
+            margin-bottom: 25px;
+            border-radius: 4px;
+        }
+
+        .loc-card-track {
+            display: flex;
+            height: 100%;
+            transition: transform 0.5s ease-in-out;
+        }
+
+        .loc-card-slide {
+            min-width: 100%;
+            height: 100%;
             background-size: cover;
             background-position: center;
-            margin-bottom: 25px;
+        }
+
+        .loc-card-dots {
+            position: absolute;
+            bottom: 12px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 8px;
+        }
+
+        .loc-card-dots .dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.4);
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+
+        .loc-card-dots .dot.active {
+            background: var(--accent-color);
         }
 
         .location-title {
@@ -724,15 +769,6 @@
             gap: 15px;
         }
 
-        .newsletter-links {
-            display: flex;
-            gap: 15px;
-            color: var(--accent-color);
-        }
-
-        .newsletter-links a {
-            color: var(--accent-color);
-        }
 
         .btn-newsletter {
             background-color: var(--accent-color); /* Rojo de acento */
@@ -745,6 +781,9 @@
             text-transform: uppercase;
             width: 100%;
             max-width: 250px;
+            text-align: center;
+            text-decoration: none;
+            display: inline-block;
         }
 
         .credits {
@@ -754,6 +793,29 @@
             font-size: 0.9rem;
             margin-top: 60px;
         }
+
+        .scroll-top {
+            position: fixed; bottom: 24px; right: 24px; z-index: 99;
+            opacity: 0; pointer-events: none; width: 40px; height: 40px;
+            border-radius: 50%; border: 1px solid #555; background: #2a2a2a;
+            color: #fff; font-size: 1.2rem; cursor: pointer; transition: all 0.3s;
+        }
+        .scroll-top.visible { opacity: 0.6; pointer-events: auto; }
+        .scroll-top:hover { opacity: 1; background: var(--accent-color); border-color: var(--accent-color); }
+
+        .modal-overlay {
+            position: fixed; inset: 0; z-index: 9999;
+            background: rgba(0,0,0,0.85);
+            display: none; place-items: center;
+        }
+        .modal-overlay.active { display: grid; }
+        .modal-box {
+            background: #1a1a1a; padding: 40px; border-radius: 12px;
+            max-width: 400px; text-align: center; border: 1px solid #333;
+            animation: modalIn 0.3s ease;
+        }
+        .modal-box p { color: var(--text-muted); font-size: 1.1rem; line-height: 1.6; }
+        @keyframes modalIn { from { transform: scale(0.9); opacity: 0; } to { transform: scale(1); opacity: 1; } }
 
         /* --- ANIMACIONES REVEAL --- */
         .reveal {
@@ -852,12 +914,12 @@
     </style>
 </head>
 <body>
-<div id="splash"><img src="logo_chilte.png" alt="Chiltepin Plaza Real"></div>
+<div id="splash"><img src="img/logo_chilte.png" alt="Chiltepin Plaza Real"></div>
 
     <div class="container">
         <header>
             <a href="index.html" class="logo-link">
-                <img src="logo_chilte.png" alt="Chiltepin Plaza Real Logo" class="logo-img">
+                <img src="img/logo_chilte.png" alt="Chiltepin Plaza Real Logo" class="logo-img">
             </a>
             <nav>
                 <a href="index.html">Inicio</a>
@@ -866,12 +928,19 @@
                     <button class="dropbtn" onclick="window.location.href='horarioyubicacion.html'">Horarios & Ubicación</button>
                     <div class="dropdown-content">
                         <a href="horarioyubicacion.html?sucursal=seafood">Chiltepin Plaza Real</a>
-                        <a href="horarioyubicacion.html?sucursal=450">Chiltepin 450</a>
+                        <a href="horarioyubicacion.html?sucursal=450">Chiltepin Plaza 450</a>
                     </div>
                 </div>
 
-                <a href="menu.html">Menu</a>
-                <a href="acercade.html">Acerca de</a>
+                <a href="menu.html">Menú</a>
+
+                <div class="dropdown">
+                    <button class="dropbtn" onclick="window.location.href='acercade.html'">Acerca de</button>
+                    <div class="dropdown-content">
+                        <a href="acercade.html">Nuestra Historia</a>
+                        <a href="contacto.html">Contáctanos</a>
+                    </div>
+                </div>
                 
                 <div class="dropdown">
                     <button class="dropbtn" onclick="window.location.href='eventos.html'">Eventos</button>
@@ -887,14 +956,14 @@
                         <div class="sub-dropdown">
                             <button class="sub-dropbtn">Chiltepin Plaza Real</button>
                             <div class="sub-dropdown-content">
-                                <a href="https://www.rappi.com.mx/restaurantes/1930107511-chiltepin-seafood" target="_blank">Rappi</a>
-                                <a href="https://www.didi-food.com/es-MX/food/store/5764607524473670170/?channel=10&cityId=52100200&lat=24.004475&lng=-104.653983&ddlCode=16Qms8&area=MX&lang=es-MX&appKey=dlp&redirectType=2&params=&pl=eyJwb2lJZCI6IkNoSUpQOERrSndfSW00WVJESzFBN2NEVU5TMCIsImFkZHJlc3NBbGxEaXNwbGF5IjoiTWFudWVsIEdhcmPDrWEgT2Jlc28gMzEzLCBDb2wgZGVsIFZhbGxlLCAzNDEzMCBEdXJhbmdvLCBEZ28uLCBNw6l4aWNvIiwiY2l0eSI6IkR1cmFuZ28iLCJjaXR5SWQiOjUyMTAwMjAwLCJjb3VudHJ5Q29kZSI6Ik1YIiwiY291bnRyeUlkIjo1MiwibGF0IjoyNC4wMDcxMTI0LCJsbmciOi0xMDQuNjczMzA3NCwiZGlzcGxheU5hbWUiOiJNYW51ZWwgR2FyY8OtYSBPYmVzbywgMzEzIiwiYWRkcmVzcyI6Ik1hbnVlbCBHYXJjw61hIE9iZXNvIDMxMywgQ29sIGRlbCBWYWxsZSwgMzQxMzAgRHVyYW5nbywgRGdvLiwgTcOpeGljbyIsImFkZHJlc3NBbGwiOiJNYW51ZWwgR2FyY8OtYSBPYmVzbyAzMTMsIENvbCBkZWwgVmFsbGUsIDM0MTMwIER1cmFuZ28sIERnby4sIE3DqXhpY28iLCJjb29yZGluYXRlVHlwZSI6Indnczg0IiwicG9pU3JjVGFnIjoibWFudWFsX3JnZW8iLCJzcmNUYWciOiJyZXZlcnNlZ2VvdG9wIiwic2VhcmNoSWQiOiIwYTkzYjkzNjY5ZWFkZjIyOThiZDhkZGMyMjliMjQwMiIsImRpc3RTdHIiOiIxMG0iLCJwb2lUeXBlIjoicHJlbWlzZTtzdHJlZXRfYWRkcmVzcyIsImNvdW50eUlkIjo1MjEwMDIwMSwiY291bnR5R3JvdXBJZCI6NTIxMDAyMDAwMDAxfQ%3D%3D" target="_blank">DiDi</a>
+                                <a href="https://www.rappi.com.mx/restaurantes/1930107511-chiltepin-seafood" target="_blank" rel="noopener noreferrer">Rappi</a>
+                                <a href="https://www.didi-food.com/es-MX/food/store/5764607524473670170/?channel=10&cityId=52100200&lat=24.004475&lng=-104.653983&ddlCode=16Qms8&area=MX&lang=es-MX&appKey=dlp&redirectType=2&params=&pl=eyJwb2lJZCI6IkNoSUpQOERrSndfSW00WVJESzFBN2NEVU5TMCIsImFkZHJlc3NBbGxEaXNwbGF5IjoiTWFudWVsIEdhcmPDrWEgT2Jlc28gMzEzLCBDb2wgZGVsIFZhbGxlLCAzNDEzMCBEdXJhbmdvLCBEZ28uLCBNw6l4aWNvIiwiY2l0eSI6IkR1cmFuZ28iLCJjaXR5SWQiOjUyMTAwMjAwLCJjb3VudHJ5Q29kZSI6Ik1YIiwiY291bnRyeUlkIjo1MiwibGF0IjoyNC4wMDcxMTI0LCJsbmciOi0xMDQuNjczMzA3NCwiZGlzcGxheU5hbWUiOiJNYW51ZWwgR2FyY8OtYSBPYmVzbywgMzEzIiwiYWRkcmVzcyI6Ik1hbnVlbCBHYXJjw61hIE9iZXNvIDMxMywgQ29sIGRlbCBWYWxsZSwgMzQxMzAgRHVyYW5nbywgRGdvLiwgTcOpeGljbyIsImFkZHJlc3NBbGwiOiJNYW51ZWwgR2FyY8OtYSBPYmVzbyAzMTMsIENvbCBkZWwgVmFsbGUsIDM0MTMwIER1cmFuZ28sIERnby4sIE3DqXhpY28iLCJjb29yZGluYXRlVHlwZSI6Indnczg0IiwicG9pU3JjVGFnIjoibWFudWFsX3JnZW8iLCJzcmNUYWciOiJyZXZlcnNlZ2VvdG9wIiwic2VhcmNoSWQiOiIwYTkzYjkzNjY5ZWFkZjIyOThiZDhkZGMyMjliMjQwMiIsImRpc3RTdHIiOiIxMG0iLCJwb2lUeXBlIjoicHJlbWlzZTtzdHJlZXRfYWRkcmVzcyIsImNvdW50eUlkIjo1MjEwMDIwMSwiY291bnR5R3JvdXBJZCI6NTIxMDAyMDAwMDAxfQ%3D%3D" target="_blank" rel="noopener noreferrer">DiDi</a>
                             </div>
                         </div>
                         <div class="sub-dropdown">
-                            <button class="sub-dropbtn">Chiltepin 450</button>
+                            <button class="sub-dropbtn">Chiltepin Plaza 450</button>
                             <div class="sub-dropdown-content">
-                                <a href="https://www.didi-food.com/es-MX/food/store/5764610193128950278/?channel=10&cityId=52100200&lat=24.054347&lng=-104.643926&ddlCode=DGvdnr&area=MX&lang=es-MX&appKey=dlp&redirectType=2&params=&pl=eyJwb2lJZCI6IkNoSUpQOERrSndfSW00WVJESzFBN2NEVU5TMCIsImFkZHJlc3NBbGxEaXNwbGF5IjoiTWFudWVsIEdhcmPDrWEgT2Jlc28gMzEzLCBDb2wgZGVsIFZhbGxlLCAzNDEzMCBEdXJhbmdvLCBEZ28uLCBNw6l4aWNvIiwiY2l0eSI6IkR1cmFuZ28iLCJjaXR5SWQiOjUyMTAwMjAwLCJjb3VudHJ5Q29kZSI6Ik1YIiwiY291bnRyeUlkIjo1MiwibGF0IjoyNC4wMDcxMTI0LCJsbmciOi0xMDQuNjczMzA3NCwiZGlzcGxheU5hbWUiOiJNYW51ZWwgR2FyY8OtYSBPYmVzbywgMzEzIiwiYWRkcmVzcyI6Ik1hbnVlbCBHYXJjw61hIE9iZXNvIDMxMywgQ29sIGRlbCBWYWxsZSwgMzQxMzAgRHVyYW5nbywgRGdvLiwgTcOpeGljbyIsImFkZHJlc3NBbGwiOiJNYW51ZWwgR2FyY8OtYSBPYmVzbyAzMTMsIENvbCBkZWwgVmFsbGUsIDM0MTMwIER1cmFuZ28sIERnby4sIE3DqXhpY28iLCJjb29yZGluYXRlVHlwZSI6Indnczg0IiwicG9pU3JjVGFnIjoibWFudWFsX3JnZW8iLCJzcmNUYWciOiJyZXZlcnNlZ2VvdG9wIiwic2VhcmNoSWQiOiIwYTkzYjkzNjY5ZWFkZjIyOThiZDhkZGMyMjliMjQwMiIsImRpc3RTdHIiOiIxMG0iLCJwb2lUeXBlIjoicHJlbWlzZTtzdHJlZXRfYWRkcmVzcyIsImNvdW50eUlkIjo1MjEwMDIwMSwiY291bnR5R3JvdXBJZCI6NTIxMDAyMDAwMDAxfQ%3D%3D" target="_blank">DiDi</a>
+                                <a href="https://www.didi-food.com/es-MX/food/store/5764610193128950278/?channel=10&cityId=52100200&lat=24.054347&lng=-104.643926&ddlCode=DGvdnr&area=MX&lang=es-MX&appKey=dlp&redirectType=2&params=&pl=eyJwb2lJZCI6IkNoSUpQOERrSndfSW00WVJESzFBN2NEVU5TMCIsImFkZHJlc3NBbGxEaXNwbGF5IjoiTWFudWVsIEdhcmPDrWEgT2Jlc28gMzEzLCBDb2wgZGVsIFZhbGxlLCAzNDEzMCBEdXJhbmdvLCBEZ28uLCBNw6l4aWNvIiwiY2l0eSI6IkR1cmFuZ28iLCJjaXR5SWQiOjUyMTAwMjAwLCJjb3VudHJ5Q29kZSI6Ik1YIiwiY291bnRyeUlkIjo1MiwibGF0IjoyNC4wMDcxMTI0LCJsbmciOi0xMDQuNjczMzA3NCwiZGlzcGxheU5hbWUiOiJNYW51ZWwgR2FyY8OtYSBPYmVzbywgMzEzIiwiYWRkcmVzcyI6Ik1hbnVlbCBHYXJjw61hIE9iZXNvIDMxMywgQ29sIGRlbCBWYWxsZSwgMzQxMzAgRHVyYW5nbywgRGdvLiwgTcOpeGljbyIsImFkZHJlc3NBbGwiOiJNYW51ZWwgR2FyY8OtYSBPYmVzbyAzMTMsIENvbCBkZWwgVmFsbGUsIDM0MTMwIER1cmFuZ28sIERnby4sIE3DqXhpY28iLCJjb29yZGluYXRlVHlwZSI6Indnczg0IiwicG9pU3JjVGFnIjoibWFudWFsX3JnZW8iLCJzcmNUYWciOiJyZXZlcnNlZ2VvdG9wIiwic2VhcmNoSWQiOiIwYTkzYjkzNjY5ZWFkZjIyOThiZDhkZGMyMjliMjQwMiIsImRpc3RTdHIiOiIxMG0iLCJwb2lUeXBlIjoicHJlbWlzZTtzdHJlZXRfYWRkcmVzcyIsImNvdW50eUlkIjo1MjEwMDIwMSwiY291bnR5R3JvdXBJZCI6NTIxMDAyMDAwMDAxfQ%3D%3D" target="_blank" rel="noopener noreferrer">DiDi</a>
                             </div>
                         </div>
                     </div>
@@ -906,9 +975,9 @@
 
     <section class="carousel-section">
         <div class="carousel-track" id="carouselTrack">
-            <div class="carousel-slide" style="background-image: url('carousel1.jpg');"></div>
-            <div class="carousel-slide" style="background-image: url('carousel2.jpg');"></div>
-            <div class="carousel-slide" style="background-image: url('carousel3.jpg');"></div>
+            <div class="carousel-slide" style="background-image: url('img/carousel1.jpg');"></div>
+            <div class="carousel-slide" style="background-image: url('img/carousel2.jpg');"></div>
+            <div class="carousel-slide" style="background-image: url('img/carousel3.jpg');"></div>
         </div>
         
         <div class="carousel-dots" id="carouselDots">
@@ -945,7 +1014,18 @@
             <section id="locations">
                 <div class="locations-grid">
                     <div class="location-card reveal reveal-up">
-                        <div class="location-img" style="background-image: url('https://placehold.co/800x500/1a1a1a/f4ead6?text=Fachada+Centro');"></div>
+                        <div class="loc-card-carousel" data-carousel="plaza">
+                            <div class="loc-card-track">
+                                <div class="loc-card-slide" style="background-image: url('img/imgPlazaReal/PlazaRealFachada.jpeg');"></div>
+                                <div class="loc-card-slide" style="background-image: url('img/imgPlazaReal/PlazaRealInterior2doP.jpg');"></div>
+                                <div class="loc-card-slide" style="background-image: url('img/imgPlazaReal/PlazaRealInteriorEscaleras.HEIC');"></div>
+                            </div>
+                            <div class="loc-card-dots">
+                                <span class="dot active"></span>
+                                <span class="dot"></span>
+                                <span class="dot"></span>
+                            </div>
+                        </div>
                         <div>
                             <h2 class="location-title">CHILTEPIN PLAZA REAL</h2>
                         </div>
@@ -962,7 +1042,22 @@
                     </div>
 
                     <div class="location-card reveal reveal-up delay-2">
-                        <div class="location-img" style="background-image: url('https://placehold.co/800x500/d32f2f/f4ead6?text=Interior+Norte');"></div>
+                        <div class="loc-card-carousel" data-carousel="450">
+                            <div class="loc-card-track">
+                                <div class="loc-card-slide" style="background-image: url('img/img450/fachada450.jpeg');"></div>
+                                <div class="loc-card-slide" style="background-image: url('img/img450/450_1.jpeg');"></div>
+                                <div class="loc-card-slide" style="background-image: url('img/img450/450_2.jpeg');"></div>
+                                <div class="loc-card-slide" style="background-image: url('img/img450/450_3.jpeg');"></div>
+                                <div class="loc-card-slide" style="background-image: url('img/img450/450_4.jpeg');"></div>
+                            </div>
+                            <div class="loc-card-dots">
+                                <span class="dot active"></span>
+                                <span class="dot"></span>
+                                <span class="dot"></span>
+                                <span class="dot"></span>
+                                <span class="dot"></span>
+                            </div>
+                        </div>
                         <div>
                             <h2 class="location-title">CHILTEPIN 450</h2>
                         </div>
@@ -985,12 +1080,12 @@
             <section id="gallery">
                 <h2 class="section-title"></h2>
                 <div class="gallery-grid">
-                    <div class="gallery-card reveal reveal-up" style="background-image: url('https://placehold.co/600x400/1a1a1a/f4ead6?text=Mariscos+Frescos');"></div>
-                    <div class="gallery-card reveal reveal-up delay-1" style="background-image: url('https://placehold.co/600x400/d32f2f/f4ead6?text=Sabores+de+Durango');"></div>
-                    <div class="gallery-card reveal reveal-up delay-2" style="background-image: url('https://placehold.co/600x400/555/f4ead6?text=Ceviche+Especial');"></div>
-                    <div class="gallery-card reveal reveal-up delay-3" style="background-image: url('https://placehold.co/600x400/1a1a1a/f4ead6?text=Chef+en+Acci%C3%B3n');"></div>
-                    <div class="gallery-card reveal reveal-up delay-4" style="background-image: url('https://placehold.co/600x400/d32f2f/f4ead6?text=Ambiente+Acogedor');"></div>
-                    <div class="gallery-card reveal reveal-up delay-5" style="background-image: url('https://placehold.co/600x400/1a1a1a/f4ead6?text=Plato+Delicioso');"></div>
+                    <div class="gallery-card reveal reveal-up" style="background-image: url('img/galeria1.jpeg');"></div>
+                    <div class="gallery-card reveal reveal-up delay-1" style="background-image: url('img/galeria2.jpeg');"></div>
+                    <div class="gallery-card reveal reveal-up delay-2" style="background-image: url('img/galeria3.jpeg');"></div>
+                    <div class="gallery-card reveal reveal-up delay-3" style="background-image: url('img/galeria4.jpeg');"></div>
+                    <div class="gallery-card reveal reveal-up delay-4" style="background-image: url('img/galeria5.jpeg');"></div>
+                    <div class="gallery-card reveal reveal-up delay-5" style="background-image: url('img/galeria6.jpeg');"></div>
                 </div>
             </section>
         </main>
@@ -1001,40 +1096,37 @@
                 <div class="footer-col">
                     <h4>Ubicaciones</h4>
                     <a href="horarioyubicacion.html?sucursal=seafood">Chiltepin Plaza Real</a>
-                    <a href="horarioyubicacion.html?sucursal=450">Chiltepin 450</a>
-                    <a href="#">Delivery - Norte</a>
+                    <a href="horarioyubicacion.html?sucursal=450">Chiltepin Plaza 450</a>
                 </div>
                 
                 <div class="footer-col">
                     <h4>Contacto</h4>
-                    <p>618.123.4567</p>
-                    <p>DURANGO – INFO@CHILTEPIN.COM</p>
+                    <p><strong>Teléfono:</strong></p>
+                    <p>618.200.3865</p>
                     <br>
-                    <a href="#">Instagram</a>
-                    <a href="#">Facebook</a>
+                    <p><strong>Correo:</strong></p>
+                    <p>info@chiltepin.com</p>
+                    <a href="https://www.instagram.com/chiltepinseafood/" target="_blank" rel="noopener noreferrer">Instagram</a>
+                    <a href="https://www.facebook.com/Chiltepinseafood/?locale=es_LA" target="_blank" rel="noopener noreferrer">Facebook</a>
                 </div>
 
                 <div class="footer-col">
                     <h4>Reservaciones</h4>
-                    <a href="#" class="res-trigger">Restaurante Durango</a>
+                    <a href="eventos.html?tipo=catering">Catering &amp; Banquetes</a>
                     <a href="eventos.html?tipo=privados">Eventos Privados</a>
                 </div>
 
                 <div class="footer-col">
                     <h4>Bolsa de Trabajo</h4>
-                    <a href="#">Únete a nuestro equipo</a>
+                    <a href="#" onclick="mostrarModal('Actualmente no estamos buscando empleados.'); return false;">Únete a nuestro equipo</a>
                 </div>
 
                 <div class="newsletter">
-                    <div class="newsletter-links">
-                        <a href="#">Accesibilidad</a>
-                        <a href="#">Contacto</a>
-                    </div>
-                    <button class="btn-newsletter">Suscríbete al Boletín</button>
+                    <a href="boletin.html" class="btn-newsletter">Suscríbete al Boletín</a>
                 </div>
             </div>
             
-            <p class="credits">Desarrollado para Chiltepin Plaza Real</p>
+            <p class="credits">Desarrollado para Chiltepin Seafood</p>
         </footer>
     </div>
 
@@ -1065,6 +1157,14 @@
             document.getElementById('resStep3').classList.remove('active');
         }
 
+        function mostrarModal(msg) {
+            document.getElementById('modalMsg').innerText = msg;
+            document.getElementById('modalOverlay').classList.add('active');
+        }
+        function cerrarModal() {
+            document.getElementById('modalOverlay').classList.remove('active');
+        }
+
         function closeReservations() {
             document.getElementById('resSidebar').classList.remove('active');
             document.getElementById('resOverlay').classList.remove('active');
@@ -1091,6 +1191,18 @@
             const el = document.getElementById(id);
             el.textContent = msg;
             el.classList.add('visible');
+        }
+
+        function validateResDate(input) {
+            if (!input.value) return;
+            const day = new Date(input.value + 'T12:00:00').getDay();
+            if (day === 0 || day === 6) {
+                showError('error-fecha', 'Solo atendemos reservaciones entre semana. Los fines de semana te esperamos sin reservación.');
+                input.value = '';
+            } else {
+                const el = document.getElementById('error-fecha');
+                if (el) el.classList.remove('visible');
+            }
         }
 
         function confirmStep1() {
@@ -1165,10 +1277,21 @@
             });
 
             // Autoplay (cambia de imagen cada 8 segundos)
-            setInterval(() => {
+            let heroAutoplay = setInterval(() => {
                 currentIndex = (currentIndex + 1) % slides.length;
                 updateCarousel();
             }, 8000);
+
+            const carouselSection = document.querySelector('.carousel-section');
+            if (carouselSection) {
+                carouselSection.addEventListener('mouseenter', () => clearInterval(heroAutoplay));
+                carouselSection.addEventListener('mouseleave', () => {
+                    heroAutoplay = setInterval(() => {
+                        currentIndex = (currentIndex + 1) % slides.length;
+                        updateCarousel();
+                    }, 8000);
+                });
+            }
 
             // Eventos de la barra lateral
             const resTriggers = document.querySelectorAll('.res-trigger');
@@ -1210,6 +1333,44 @@
                         btnConfirm.textContent = 'Confirmar Horario';
                         btnConfirm.className = 'btn-submit-event';
                     }
+                });
+            });
+
+            // Carruseles de sucursales
+            document.querySelectorAll('.loc-card-carousel').forEach(carousel => {
+                const track = carousel.querySelector('.loc-card-track');
+                const slides = carousel.querySelectorAll('.loc-card-slide');
+                const dots = carousel.querySelectorAll('.loc-card-dots .dot');
+                if (!slides.length) return;
+
+                let idx = 0;
+                function update() {
+                    track.style.transform = `translateX(-${idx * 100}%)`;
+                    dots.forEach((d, i) => d.classList.toggle('active', i === idx));
+                }
+
+                dots.forEach(d => {
+                    d.addEventListener('click', () => {
+                        idx = parseInt(d.dataset.index);
+                        update();
+                    });
+                });
+
+                // Asignar índices a los dots
+                dots.forEach((d, i) => d.dataset.index = i);
+
+                // Autoplay
+                let locAuto = setInterval(() => {
+                    idx = (idx + 1) % slides.length;
+                    update();
+                }, 5000);
+
+                carousel.addEventListener('mouseenter', () => clearInterval(locAuto));
+                carousel.addEventListener('mouseleave', () => {
+                    locAuto = setInterval(() => {
+                        idx = (idx + 1) % slides.length;
+                        update();
+                    }, 5000);
                 });
             });
 
@@ -1269,6 +1430,14 @@
                 }, { threshold: 0.15 });
                 revealElements.forEach(el => observer.observe(el));
             }
+
+            // Scroll to top button
+            window.addEventListener('scroll', () => {
+                document.getElementById('scrollTopBtn')?.classList.toggle('visible', scrollY > 400);
+            });
+
+
+
         });
     </script>
 
@@ -1288,7 +1457,7 @@
                     <label>Sucursal</label>
                     <div class="res-location-pills" id="resLocation">
                         <button class="loc-pill selected" data-value="Chiltepin Plaza Real">Plaza Real</button>
-                        <button class="loc-pill" data-value="Chiltepin 450">Chiltepin 450</button>
+                        <button class="loc-pill" data-value="Chiltepin Plaza 450">Plaza 450</button>
                     </div>
                 </div>
 
@@ -1307,7 +1476,7 @@
 
                 <div class="res-field">
                     <label>Fecha</label>
-                    <input type="date" id="resDate">
+                    <input type="date" id="resDate" onchange="validateResDate(this)">
                 </div>
                 <span class="field-error" id="error-fecha"></span>
 
@@ -1369,7 +1538,7 @@
                 <div id="resContactInfo" class="res-contact" style="display: none;">
                     <h3>Grandes Grupos</h3>
                     <p>Para reservaciones de 7+ personas,<br>contáctanos directamente:</p>
-                    <p class="contact-phone">618.123.4567</p>
+                    <p class="contact-phone">618.200.3865</p>
                     <p class="contact-email">info@chiltepin.com</p>
                     <button class="btn-submit-event" onclick="closeReservations()" style="margin-top: 20px;">Cerrar</button>
                 </div>
@@ -1383,6 +1552,15 @@
 
         </div>
     </aside>
+
+    <div class="modal-overlay" id="modalOverlay" onclick="cerrarModal()">
+        <div class="modal-box" onclick="event.stopPropagation()">
+            <p id="modalMsg"></p>
+            <button class="btn-submit-event" onclick="cerrarModal()" style="margin-top:20px;">Aceptar</button>
+        </div>
+    </div>
+
+    <button class="scroll-top" id="scrollTopBtn" onclick="window.scrollTo({top:0,behavior:'smooth'})" aria-label="Volver arriba">↑</button>
 
 </body>
 </html>

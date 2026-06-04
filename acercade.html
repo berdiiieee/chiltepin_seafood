@@ -3,7 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Acerca de | Chiltepin Seafood</title>
+    <title>Chiltepin Seafood | Acerca de</title>
+    <meta name="description" content="Historia de Chiltepin Seafood — Conoce nuestra inspiración y origen en Durango.">
+    <link rel="icon" type="image/png" sizes="32x32" href="img/favicon.png?v=2">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Anton&family=Lora:ital,wght@0,400;0,600;1,400&family=Oswald:wght@400;600&display=swap" rel="stylesheet">
@@ -25,6 +27,7 @@
             scroll-behavior: smooth;
         }
 
+
         * {
             margin: 0;
             padding: 0;
@@ -37,7 +40,7 @@
             font-family: var(--font-body);
             line-height: 1.6;
             overflow-x: hidden;
-        }
+                    }
 
         .container {
             max-width: 1200px;
@@ -239,7 +242,7 @@
             margin: 60px 0 40px;
             padding: 140px 20px 120px;
             min-height: 450px;
-            background-image: linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.6)), url('https://placehold.co/1600x900/1a1a1a/d32f2f?text=Nuestra+Historia');
+            background-image: linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.6)), url('img/imgPlazaReal/PlazaRealInteriorEscaleras.HEIC');
             background-size: cover;
             background-position: center;
             border-radius: 18px;
@@ -300,7 +303,7 @@
 
         /* --- HISTORIA (SPLIT LAYOUT) --- */
         .story-section {
-            margin: 80px 0;
+            margin: 100px 0;
         }
 
         .story-grid {
@@ -311,8 +314,9 @@
         }
 
         .story-text p {
-            font-size: 1.15rem;
-            margin-bottom: 20px;
+            font-size: 1.2rem;
+            line-height: 1.8;
+            margin-bottom: 24px;
             color: var(--text-muted);
         }
 
@@ -340,178 +344,31 @@
         /* --- CITA DESTACADA --- */
         .quote-block {
             text-align: center;
-            padding: 60px 40px;
-            margin: 60px auto;
-            max-width: 800px;
+            padding: 70px 50px;
+            margin: 80px auto;
+            max-width: 1000px;
             border-top: 2px solid #333;
             border-bottom: 2px solid #333;
         }
 
         .quote-block blockquote {
             font-family: var(--font-logo);
-            font-size: 2.2rem;
+            font-size: 2.5rem;
             text-transform: uppercase;
-            letter-spacing: 1px;
+            letter-spacing: 2px;
             color: var(--accent-color);
             line-height: 1.2;
         }
 
         .quote-block cite {
             display: block;
-            margin-top: 20px;
+            margin-top: 25px;
             font-family: var(--font-body);
-            font-size: 1rem;
+            font-size: 1.1rem;
             color: var(--text-muted);
             font-style: normal;
         }
 
-        /* --- DIFERENCIADORES (PROPUESTA DE VALOR - HORIZONTAL SNAP) --- */
-        .diff-section {
-            margin: 80px 0;
-        }
-
-        .diff-scroll {
-            display: flex;
-            overflow-x: auto;
-            scroll-snap-type: x mandatory;
-            -webkit-overflow-scrolling: touch;
-            scrollbar-width: none;
-            width: 100vw;
-            margin-left: calc(-50vw + 50%);
-        }
-        .diff-scroll::-webkit-scrollbar { display: none; }
-
-        .pillar-block {
-            flex: 0 0 100%;
-            scroll-snap-align: start;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            min-height: 40vh;
-            padding: 40px 20px;
-            position: relative;
-        }
-
-        .pillar-block-inner {
-            text-align: center;
-            max-width: 600px;
-        }
-
-
-        .pillar-header {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 14px;
-            margin-bottom: 8px;
-            opacity: 0;
-            transform: translateY(12px);
-            transition: all 0.5s ease 0.15s;
-        }
-        .pillar-block.active .pillar-header {
-            opacity: 1;
-            transform: translateY(0);
-        }
-
-        .pillar-icon {
-            width: 32px;
-            height: 32px;
-            flex-shrink: 0;
-        }
-
-        .pillar-block h3 {
-            font-family: var(--font-headings);
-            font-size: 2.4rem;
-            text-transform: uppercase;
-            color: var(--text-color);
-            letter-spacing: 1.5px;
-            margin: 0;
-        }
-
-        .pillar-tagline {
-            font-family: var(--font-body);
-            font-size: 1rem;
-            font-style: italic;
-            color: var(--text-muted);
-            margin-bottom: 12px;
-            display: block;
-            opacity: 0;
-            transform: translateY(12px);
-            transition: all 0.5s ease 0.3s;
-        }
-        .pillar-block.active .pillar-tagline {
-            opacity: 1;
-            transform: translateY(0);
-        }
-
-        .pillar-block p {
-            color: var(--text-muted);
-            font-size: 1.05rem;
-            line-height: 1.7;
-            opacity: 0;
-            transform: translateY(12px);
-            transition: all 0.5s ease 0.45s;
-        }
-        .pillar-block.active p {
-            opacity: 1;
-            transform: translateY(0);
-        }
-
-        .pillar-dots {
-            display: flex;
-            justify-content: center;
-            gap: 12px;
-            margin-top: 30px;
-        }
-        .pillar-dots .dot {
-            width: 12px;
-            height: 12px;
-            border-radius: 50%;
-            border: 2px solid #555;
-            background: transparent;
-            cursor: pointer;
-            transition: all 0.3s;
-            padding: 0;
-        }
-        .pillar-dots .dot:hover {
-            background: rgba(255,255,255,0.1);
-        }
-        .pillar-dots .dot.active {
-            background: var(--accent-color);
-            border-color: var(--accent-color);
-            transform: scale(1.3);
-        }
-
-        /* --- ESTADÍSTICAS --- */
-        .stats-section {
-            margin: 80px 0;
-            padding: 60px 0;
-            border-top: 1px solid #333;
-            border-bottom: 1px solid #333;
-        }
-
-        .stats-grid {
-            display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 30px;
-            text-align: center;
-        }
-
-        .stat-item h3 {
-            font-family: var(--font-logo);
-            font-size: 3.5rem;
-            color: var(--accent-color);
-            line-height: 1;
-        }
-
-        .stat-item p {
-            font-family: var(--font-headings);
-            font-size: 0.9rem;
-            text-transform: uppercase;
-            color: var(--text-muted);
-            letter-spacing: 1px;
-            margin-top: 10px;
-        }
 
         /* --- SERVICIOS & EXPANSIÓN (CARRUSEL HORIZONTAL) --- */
         .services-section {
@@ -539,12 +396,7 @@
             min-height: 50vh;
             padding: 40px 20px;
         }
-        .service-snap:nth-child(odd) {
-            background: linear-gradient(135deg, #1a1a1a 0%, #1e1e1e 100%);
-        }
-        .service-snap:nth-child(even) {
-            background: linear-gradient(135deg, #1e1e1e 0%, #1a1a1a 100%);
-        }
+        .service-snap { background: transparent; }
 
         .service-snap-inner {
             text-align: center;
@@ -645,7 +497,7 @@
         /* --- BARRA LATERAL DE RESERVACIONES (MULTI-STEP) --- */
         .res-overlay {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.7); backdrop-filter: blur(4px);
+            background: rgba(0,0,0,0.85);
             z-index: 999; display: none;
         }
         .res-overlay.active { display: block; }
@@ -793,6 +645,37 @@
             letter-spacing: 1px;
         }
 
+        .credits {
+            text-align: center;
+            font-family: var(--font-body);
+            color: var(--accent-color);
+            font-size: 0.9rem;
+            margin-top: 60px;
+        }
+
+        .scroll-top {
+            position: fixed; bottom: 24px; right: 24px; z-index: 99;
+            opacity: 0; pointer-events: none; width: 40px; height: 40px;
+            border-radius: 50%; border: 1px solid #555; background: #2a2a2a;
+            color: #fff; font-size: 1.2rem; cursor: pointer; transition: all 0.3s;
+        }
+        .scroll-top.visible { opacity: 0.6; pointer-events: auto; }
+        .scroll-top:hover { opacity: 1; background: var(--accent-color); border-color: var(--accent-color); }
+
+        .modal-overlay {
+            position: fixed; inset: 0; z-index: 9999;
+            background: rgba(0,0,0,0.85);
+            display: none; place-items: center;
+        }
+        .modal-overlay.active { display: grid; }
+        .modal-box {
+            background: #1a1a1a; padding: 40px; border-radius: 12px;
+            max-width: 400px; text-align: center; border: 1px solid #333;
+            animation: modalIn 0.3s ease;
+        }
+        .modal-box p { color: var(--text-muted); font-size: 1.1rem; line-height: 1.6; }
+        @keyframes modalIn { from { transform: scale(0.9); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+
         .res-times-pills {
             display: flex; gap: 6px;
             overflow-x: auto;
@@ -890,7 +773,6 @@
         }
         .field-error.visible { display: block; }
 
-        /* --- FOOTER --- */
         footer {
             margin-top: 80px;
             padding-bottom: 60px;
@@ -931,16 +813,6 @@
             gap: 15px;
         }
 
-        .newsletter-links {
-            display: flex;
-            gap: 15px;
-            color: var(--accent-color);
-        }
-
-        .newsletter-links a {
-            color: var(--accent-color);
-        }
-
         .btn-newsletter {
             background-color: var(--accent-color);
             color: #fff;
@@ -952,14 +824,9 @@
             text-transform: uppercase;
             width: 100%;
             max-width: 250px;
-        }
-
-        .credits {
             text-align: center;
-            font-family: var(--font-body);
-            color: var(--accent-color);
-            font-size: 0.9rem;
-            margin-top: 60px;
+            text-decoration: none;
+            display: inline-block;
         }
 
         /* --- ANIMACIONES REVEAL --- */
@@ -996,13 +863,12 @@
         @media (max-width: 900px) {
             header, .footer-grid { flex-direction: column; text-align: center; }
             nav { flex-wrap: wrap; justify-content: center; margin-top: 20px; }
-            .story-grid, .services-grid, .stats-grid { grid-template-columns: 1fr; }
+            .story-grid, .services-grid { grid-template-columns: 1fr; }
             .story-image { height: 300px; }
             .story-image.right { order: 0; }
             .story-image.left { order: 0; }
             .newsletter { align-items: center; margin-top: 30px; }
             .quote-block blockquote { font-size: 1.6rem; }
-            .stats-grid { gap: 40px; }
         }
     </style>
 </head>
@@ -1011,7 +877,7 @@
     <div class="container">
         <header>
             <a href="index.html" class="logo-link">
-                <img src="logo_chilte.png" alt="Chiltepin Seafood Logo" class="logo-img">
+                <img src="img/logo_chilte.png" alt="Chiltepin Seafood Logo" class="logo-img">
             </a>
             <nav>
                 <a href="index.html">Inicio</a>
@@ -1019,13 +885,19 @@
                 <div class="dropdown">
                     <button class="dropbtn" onclick="window.location.href='horarioyubicacion.html'">Horarios & Ubicación</button>
                     <div class="dropdown-content">
-                        <a href="horarioyubicacion.html?sucursal=seafood">Chiltepin Seafood</a>
-                        <a href="horarioyubicacion.html?sucursal=450">Chiltepin 450</a>
+<a href="horarioyubicacion.html?sucursal=seafood">Chiltepin Plaza Real</a>
+                        <a href="horarioyubicacion.html?sucursal=450">Chiltepin Plaza 450</a>
                     </div>
                 </div>
 
-                <a href="menu.html">Menu</a>
-                <a href="acercade.html">Acerca de</a>
+                <a href="menu.html">Menú</a>
+                <div class="dropdown">
+                    <button class="dropbtn" onclick="window.location.href='acercade.html'">Acerca de</button>
+                    <div class="dropdown-content">
+                        <a href="acercade.html">Nuestra Historia</a>
+                        <a href="contacto.html">Contáctanos</a>
+                    </div>
+                </div>
 
                 <div class="dropdown">
                     <button class="dropbtn" onclick="window.location.href='eventos.html'">Eventos</button>
@@ -1039,16 +911,16 @@
                     <button class="dropbtn">Delivery</button>
                     <div class="dropdown-content">
                         <div class="sub-dropdown">
-                            <button class="sub-dropbtn">Chiltepin Seafood</button>
+                            <button class="sub-dropbtn">Chiltepin Plaza Real</button>
                             <div class="sub-dropdown-content">
-                                <a href="https://www.rappi.com.mx/restaurantes/1930107511-chiltepin-seafood" target="_blank">Rappi</a>
-                                <a href="https://www.didi-food.com/es-MX/food/store/5764607524473670170/?channel=10&cityId=52100200&lat=24.004475&lng=-104.653983&ddlCode=16Qms8&area=MX&lang=es-MX&appKey=dlp&redirectType=2&params=&pl=eyJwb2lJZCI6IkNoSUpQOERrSndfSW00WVJESzFBN2NEVU5TMCIsImFkZHJlc3NBbGxEaXNwbGF5IjoiTWFudWVsIEdhcmPDrWEgT2Jlc28gMzEzLCBDb2wgZGVsIFZhbGxlLCAzNDEzMCBEdXJhbmdvLCBEZ28uLCBNw6l4aWNvIiwiY2l0eSI6IkR1cmFuZ28iLCJjaXR5SWQiOjUyMTAwMjAwLCJjb3VudHJ5Q29kZSI6Ik1YIiwiY291bnRyeUlkIjo1MiwibGF0IjoyNC4wMDcxMTI0LCJsbmciOi0xMDQuNjczMzA3NCwiZGlzcGxheU5hbWUiOiJNYW51ZWwgR2FyY8OtYSBPYmVzbywgMzEzIiwiYWRkcmVzcyI6Ik1hbnVlbCBHYXJjw61hIE9iZXNvIDMxMywgQ29sIGRlbCBWYWxsZSwgMzQxMzAgRHVyYW5nbywgRGdvLiwgTcOpeGljbyIsImFkZHJlc3NBbGwiOiJNYW51ZWwgR2FyY8OtYSBPYmVzbyAzMTMsIENvbCBkZWwgVmFsbGUsIDM0MTMwIER1cmFuZ28sIERnby4sIE3DqXhpY28iLCJjb29yZGluYXRlVHlwZSI6Indnczg0IiwicG9pU3JjVGFnIjoibWFudWFsX3JnZW8iLCJzcmNUYWciOiJyZXZlcnNlZ2VvdG9wIiwic2VhcmNoSWQiOiIwYTkzYjkzNjY5ZWFkZjIyOThiZDhkZGMyMjliMjQwMiIsImRpc3RTdHIiOiIxMG0iLCJwb2lUeXBlIjoicHJlbWlzZTtzdHJlZXRfYWRkcmVzcyIsImNvdW50eUlkIjo1MjEwMDIwMSwiY291bnR5R3JvdXBJZCI6NTIxMDAyMDAwMDAxfQ%3D%3D" target="_blank">DiDi</a>
+                                <a href="https://www.rappi.com.mx/restaurantes/1930107511-chiltepin-seafood" target="_blank" rel="noopener noreferrer">Rappi</a>
+                                <a href="https://www.didi-food.com/es-MX/food/store/5764607524473670170/?channel=10&cityId=52100200&lat=24.004475&lng=-104.653983&ddlCode=16Qms8&area=MX&lang=es-MX&appKey=dlp&redirectType=2&params=&pl=eyJwb2lJZCI6IkNoSUpQOERrSndfSW00WVJESzFBN2NEVU5TMCIsImFkZHJlc3NBbGxEaXNwbGF5IjoiTWFudWVsIEdhcmPDrWEgT2Jlc28gMzEzLCBDb2wgZGVsIFZhbGxlLCAzNDEzMCBEdXJhbmdvLCBEZ28uLCBNw6l4aWNvIiwiY2l0eSI6IkR1cmFuZ28iLCJjaXR5SWQiOjUyMTAwMjAwLCJjb3VudHJ5Q29kZSI6Ik1YIiwiY291bnRyeUlkIjo1MiwibGF0IjoyNC4wMDcxMTI0LCJsbmciOi0xMDQuNjczMzA3NCwiZGlzcGxheU5hbWUiOiJNYW51ZWwgR2FyY8OtYSBPYmVzbywgMzEzIiwiYWRkcmVzcyI6Ik1hbnVlbCBHYXJjw61hIE9iZXNvIDMxMywgQ29sIGRlbCBWYWxsZSwgMzQxMzAgRHVyYW5nbywgRGdvLiwgTcOpeGljbyIsImFkZHJlc3NBbGwiOiJNYW51ZWwgR2FyY8OtYSBPYmVzbyAzMTMsIENvbCBkZWwgVmFsbGUsIDM0MTMwIER1cmFuZ28sIERnby4sIE3DqXhpY28iLCJjb29yZGluYXRlVHlwZSI6Indnczg0IiwicG9pU3JjVGFnIjoibWFudWFsX3JnZW8iLCJzcmNUYWciOiJyZXZlcnNlZ2VvdG9wIiwic2VhcmNoSWQiOiIwYTkzYjkzNjY5ZWFkZjIyOThiZDhkZGMyMjliMjQwMiIsImRpc3RTdHIiOiIxMG0iLCJwb2lUeXBlIjoicHJlbWlzZTtzdHJlZXRfYWRkcmVzcyIsImNvdW50eUlkIjo1MjEwMDIwMSwiY291bnR5R3JvdXBJZCI6NTIxMDAyMDAwMDAxfQ%3D%3D" target="_blank" rel="noopener noreferrer">DiDi</a>
                             </div>
                         </div>
                         <div class="sub-dropdown">
-                            <button class="sub-dropbtn">Chiltepin 450</button>
+                            <button class="sub-dropbtn">Chiltepin Plaza 450</button>
                             <div class="sub-dropdown-content">
-                                <a href="https://www.didi-food.com/es-MX/food/store/5764610193128950278/?channel=10&cityId=52100200&lat=24.054347&lng=-104.643926&ddlCode=DGvdnr&area=MX&lang=es-MX&appKey=dlp&redirectType=2&params=&pl=eyJwb2lJZCI6IkNoSUpQOERrSndfSW00WVJESzFBN2NEVU5TMCIsImFkZHJlc3NBbGxEaXNwbGF5IjoiTWFudWVsIEdhcmPDrWEgT2Jlc28gMzEzLCBDb2wgZGVsIFZhbGxlLCAzNDEzMCBEdXJhbmdvLCBEZ28uLCBNw6l4aWNvIiwiY2l0eSI6IkR1cmFuZ28iLCJjaXR5SWQiOjUyMTAwMjAwLCJjb3VudHJ5Q29kZSI6Ik1YIiwiY291bnRyeUlkIjo1MiwibGF0IjoyNC4wMDcxMTI0LCJsbmciOi0xMDQuNjczMzA3NCwiZGlzcGxheU5hbWUiOiJNYW51ZWwgR2FyY8OtYSBPYmVzbywgMzEzIiwiYWRkcmVzcyI6Ik1hbnVlbCBHYXJjw61hIE9iZXNvIDMxMywgQ29sIGRlbCBWYWxsZSwgMzQxMzAgRHVyYW5nbywgRGdvLiwgTcOpeGljbyIsImFkZHJlc3NBbGwiOiJNYW51ZWwgR2FyY8OtYSBPYmVzbyAzMTMsIENvbCBkZWwgVmFsbGUsIDM0MTMwIER1cmFuZ28sIERnby4sIE3DqXhpY28iLCJjb29yZGluYXRlVHlwZSI6Indnczg0IiwicG9pU3JjVGFnIjoibWFudWFsX3JnZW8iLCJzcmNUYWciOiJyZXZlcnNlZ2VvdG9wIiwic2VhcmNoSWQiOiIwYTkzYjkzNjY5ZWFkZjIyOThiZDhkZGMyMjliMjQwMiIsImRpc3RTdHIiOiIxMG0iLCJwb2lUeXBlIjoicHJlbWlzZTtzdHJlZXRfYWRkcmVzcyIsImNvdW50eUlkIjo1MjEwMDIwMSwiY291bnR5R3JvdXBJZCI6NTIxMDAyMDAwMDAxfQ%3D%3D" target="_blank">DiDi</a>
+                                <a href="https://www.didi-food.com/es-MX/food/store/5764610193128950278/?channel=10&cityId=52100200&lat=24.054347&lng=-104.643926&ddlCode=DGvdnr&area=MX&lang=es-MX&appKey=dlp&redirectType=2&params=&pl=eyJwb2lJZCI6IkNoSUpQOERrSndfSW00WVJESzFBN2NEVU5TMCIsImFkZHJlc3NBbGxEaXNwbGF5IjoiTWFudWVsIEdhcmPDrWEgT2Jlc28gMzEzLCBDb2wgZGVsIFZhbGxlLCAzNDEzMCBEdXJhbmdvLCBEZ28uLCBNw6l4aWNvIiwiY2l0eSI6IkR1cmFuZ28iLCJjaXR5SWQiOjUyMTAwMjAwLCJjb3VudHJ5Q29kZSI6Ik1YIiwiY291bnRyeUlkIjo1MiwibGF0IjoyNC4wMDcxMTI0LCJsbmciOi0xMDQuNjczMzA3NCwiZGlzcGxheU5hbWUiOiJNYW51ZWwgR2FyY8OtYSBPYmVzbywgMzEzIiwiYWRkcmVzcyI6Ik1hbnVlbCBHYXJjw61hIE9iZXNvIDMxMywgQ29sIGRlbCBWYWxsZSwgMzQxMzAgRHVyYW5nbywgRGdvLiwgTcOpeGljbyIsImFkZHJlc3NBbGwiOiJNYW51ZWwgR2FyY8OtYSBPYmVzbyAzMTMsIENvbCBkZWwgVmFsbGUsIDM0MTMwIER1cmFuZ28sIERnby4sIE3DqXhpY28iLCJjb29yZGluYXRlVHlwZSI6Indnczg0IiwicG9pU3JjVGFnIjoibWFudWFsX3JnZW8iLCJzcmNUYWciOiJyZXZlcnNlZ2VvdG9wIiwic2VhcmNoSWQiOiIwYTkzYjkzNjY5ZWFkZjIyOThiZDhkZGMyMjliMjQwMiIsImRpc3RTdHIiOiIxMG0iLCJwb2lUeXBlIjoicHJlbWlzZTtzdHJlZXRfYWRkcmVzcyIsImNvdW50eUlkIjo1MjEwMDIwMSwiY291bnR5R3JvdXBJZCI6NTIxMDAyMDAwMDAxfQ%3D%3D" target="_blank" rel="noopener noreferrer">DiDi</a>
                             </div>
                         </div>
                     </div>
@@ -1075,25 +947,25 @@
                     <p class="section-subtitle">Dónde empezó todo</p>
                     <h2 class="section-title">Inspiración</h2>
                     <p>
-                        <strong>Chiltepin Seafood abrió sus puertas el 3 de diciembre de 2022</strong>, pero su historia comenzó mucho antes. La inspiración nació del sueño de toda la vida de tener un restaurante propio, un anhelo que acompañó a sus fundadores durante años.
+                        <strong>Chiltepin Seafood abrió sus puertas el 3 de diciembre de 2022</strong>, pero su historia comenzó mucho antes. La inspiración nació del sueño de toda la vida de tener un restaurante propio, un anhelo que nos acompañó durante años.
                     </p>
                     <p>
-                        El proyecto se conceptualizó mientras trabajaban en el sector de la construcción en <strong>Canadá</strong>. Fue allí, lejos de casa, donde tomaron la decisión de regresar a <strong>Durango, México</strong>, para emprender y crear un concepto gastronómico completamente diferente a lo convencional.
+                        El proyecto se conceptualizó trabajabando en el sector de la construcción en <strong>Canadá</strong>. Fue allí, lejos de casa, donde tomamos la decisión de regresar a <strong>Durango, México</strong>, para emprender y crear un concepto gastronómico completamente diferente a lo convencional.
                     </p>
                 </div>
-                <div class="story-image right reveal reveal-right" style="background-image: url('https://placehold.co/800x600/1a1a1a/d32f2f?text=Fundadores');"></div>
+                <div class="story-image right reveal reveal-right" style="background-image: url('img/galeria2.jpeg');"></div>
             </div>
         </section>
 
         <!-- ORIGEN DEL NOMBRE -->
         <section class="story-section">
             <div class="story-grid">
-                <div class="story-image left reveal reveal-left" style="background-image: url('https://placehold.co/800x600/222/d32f2f?text=Chiltepin');"></div>
+                <div class="story-image left reveal reveal-left" style="background-image: url('img/origennombre.jpg');"></div>
                 <div class="story-text reveal reveal-right">
                     <p class="section-subtitle">El ingrediente estrella</p>
                     <h2 class="section-title">Origen del Nombre</h2>
                     <p>
-                        Durante el desarrollo del menú, los fundadores notaron que el sazonador principal de sus platillos se convirtió naturalmente en el ingrediente estrella de la casa. Este pequeño chile silvestre, originario de regiones como Sinaloa y Sonora, le da identidad a cada receta.
+                        Durante el desarrollo del menú, notamos que el sazonador principal de nuestros platillos se convirtió naturalmente en el ingrediente estrella de la casa. Este pequeño chile silvestre, originario de regiones como Sinaloa y Sonora, le da identidad a cada receta.
                     </p>
 
                 </div>
@@ -1103,90 +975,7 @@
         <!-- CITA DESTACADA -->
         <div class="quote-block reveal reveal-scale">
             <blockquote>“No solo creamos un restaurante, creamos un concepto que rompe con lo tradicional”</blockquote>
-            <cite>— Fundadores de Chiltepin Seafood</cite>
         </div>
-
-        <!-- DIFERENCIADORES -->
-        <section class="diff-section">
-            <div class="container" style="text-align:center; margin-bottom: 40px;">
-                <p class="section-subtitle" style="text-align: center;">¿Qué nos hace diferentes?</p>
-                <h2 class="section-title" style="display: block; text-align: center;">Nuestra Propuesta de Valor</h2>
-            </div>
-
-            <div class="diff-scroll" id="diffScroll">
-                <div class="pillar-block" data-index="0">
-                    <div class="pillar-block-inner">
-                        <div class="pillar-header">
-                            <svg class="pillar-icon" viewBox="0 0 48 48" fill="none">
-                                <path d="M24 8v14M16 16v10M32 16v10" stroke="var(--accent-color)" stroke-width="2.5" stroke-linecap="round"/>
-                                <path d="M16 38a8 8 0 0016 0" stroke="var(--accent-color)" stroke-width="2" stroke-linecap="round"/>
-                                <circle cx="24" cy="32" r="3" fill="var(--accent-color)"/>
-                            </svg>
-                            <h3>El Sazón</h3>
-                        </div>
-                        <span class="pillar-tagline">Sazón que enamora</span>
-                        <p>Es nuestra prioridad absoluta y el pilar fundamental del menú. Cada platillo se distingue por un sabor que no encontrarás en ningún otro lugar.</p>
-                    </div>
-                </div>
-                <div class="pillar-block" data-index="1">
-                    <div class="pillar-block-inner">
-                        <div class="pillar-header">
-                            <svg class="pillar-icon" viewBox="0 0 48 48" fill="none">
-                                <circle cx="18" cy="16" r="4" stroke="var(--accent-color)" stroke-width="2" fill="none"/>
-                                <circle cx="30" cy="16" r="4" stroke="var(--accent-color)" stroke-width="2" fill="none"/>
-                                <path d="M12 34c0-6 4-12 12-12s12 6 12 12v4H12v-4z" stroke="var(--accent-color)" stroke-width="2" fill="none"/>
-                            </svg>
-                            <h3>Ambiente Familiar</h3>
-                        </div>
-                        <span class="pillar-tagline">Para toda la familia</span>
-                        <p>Creamos un espacio pensado para toda la familia, donde la comodidad y la calidez son prioridad. Un lugar versátil donde grupos de amigos, parejas y familias pueden disfrutar de la mejor experiencia gastronómica en un ambiente relajado y acogedor.</p>
-                    </div>
-                </div>
-                <div class="pillar-block" data-index="2">
-                    <div class="pillar-block-inner">
-                        <div class="pillar-header">
-                            <svg class="pillar-icon" viewBox="0 0 48 48" fill="none">
-                                <path d="M24 6l8 8-8 8-8-8 8-8z" stroke="var(--accent-color)" stroke-width="2" fill="none"/>
-                                <path d="M16 22l8 8-8 8M32 22l-8 8 8 8" stroke="var(--accent-color)" stroke-width="2" stroke-linecap="round"/>
-                            </svg>
-                            <h3>Decoración &amp; Diseño</h3>
-                        </div>
-                        <span class="pillar-tagline">Diseño que inspira</span>
-                        <p>Dejamos de lado los tradicionales motivos marinos y colores típicos. Implementamos una identidad visual moderna y elegante basada en negro, blanco y rojo.</p>
-                    </div>
-                </div>
-            </div>
-
-            <div class="container">
-                <nav class="pillar-dots" id="pillarDots">
-                    <button class="dot active" data-index="0" aria-label="Ir a El Sazón"></button>
-                    <button class="dot" data-index="1" aria-label="Ir a Ambiente Familiar"></button>
-                    <button class="dot" data-index="2" aria-label="Ir a Decoración y Diseño"></button>
-                </nav>
-            </div>
-        </section>
-
-        <!-- ESTADÍSTICAS -->
-        <section class="stats-section">
-            <div class="stats-grid">
-                <div class="stat-item reveal reveal-up">
-                    <h3><span class="counter-value" data-target="2022">0</span></h3>
-                    <p>Año de Fundación</p>
-                </div>
-                <div class="stat-item reveal reveal-up delay-1">
-                    <h3><span class="counter-value" data-target="200">0</span>+</h3>
-                    <p>Clientes por Día</p>
-                </div>
-                <div class="stat-item reveal reveal-up delay-2">
-                    <h3><span class="counter-value" data-target="2">0</span></h3>
-                    <p>Sucursales</p>
-                </div>
-                <div class="stat-item reveal reveal-up delay-3">
-                    <h3><span class="counter-value" data-target="1">0</span></h3>
-                    <p>Ingrediente Estrella</p>
-                </div>
-            </div>
-        </section>
 
         <!-- SERVICIOS Y EXPANSIÓN -->
         <section class="services-section">
@@ -1223,11 +1012,14 @@
                 <div class="service-snap" data-index="2">
                     <div class="service-snap-inner">
                         <svg class="service-icon" viewBox="0 0 64 64" fill="none">
-                            <rect x="18" y="28" width="28" height="24" rx="3" stroke="var(--accent-color)" stroke-width="2"/>
-                            <path d="M18 34h28" stroke="var(--accent-color)" stroke-width="2"/>
-                            <path d="M32 28V16l8 4M32 16l-8 4" stroke="var(--accent-color)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                            <circle cx="26" cy="46" r="3" stroke="var(--accent-color)" stroke-width="2"/>
-                            <circle cx="38" cy="46" r="3" stroke="var(--accent-color)" stroke-width="2"/>
+                            <circle cx="22" cy="46" r="7" stroke="var(--accent-color)" stroke-width="2.5" fill="none"/>
+                            <circle cx="48" cy="46" r="7" stroke="var(--accent-color)" stroke-width="2.5" fill="none"/>
+                            <rect x="4" y="24" width="14" height="16" rx="2" stroke="var(--accent-color)" stroke-width="2" fill="none"/>
+                            <line x1="22" y1="38" x2="48" y2="38" stroke="var(--accent-color)" stroke-width="2.5" stroke-linecap="round"/>
+                            <line x1="48" y1="38" x2="52" y2="26" stroke="var(--accent-color)" stroke-width="2.5" stroke-linecap="round"/>
+                            <path d="M48 26 L54 24 M52 26 L56 28" stroke="var(--accent-color)" stroke-width="2.5" stroke-linecap="round"/>
+                            <line x1="30" y1="38" x2="30" y2="28" stroke="var(--accent-color)" stroke-width="2" stroke-linecap="round"/>
+                            <path d="M26 28 L34 28" stroke="var(--accent-color)" stroke-width="3" stroke-linecap="round"/>
                         </svg>
                         <h3>Delivery Propio</h3>
                         <div class="service-line"></div>
@@ -1240,7 +1032,6 @@
                             <rect x="24" y="12" width="16" height="6" rx="2" stroke="var(--accent-color)" stroke-width="2"/>
                             <path d="M24 18l-4 32a4 4 0 004 4h16a4 4 0 004-4l-4-32" stroke="var(--accent-color)" stroke-width="2" stroke-linecap="round"/>
                             <line x1="32" y1="30" x2="32" y2="46" stroke="var(--accent-color)" stroke-width="2" stroke-linecap="round"/>
-                            <circle cx="32" cy="52" r="2" fill="var(--accent-color)"/>
                         </svg>
                         <h3>Salsas Artesanales</h3>
                         <div class="service-line"></div>
@@ -1267,37 +1058,34 @@
             <div class="footer-grid">
                 <div class="footer-col">
                     <h4>Ubicaciones</h4>
-                    <a href="horarioyubicacion.html?sucursal=seafood">Chiltepin Seafood</a>
-                    <a href="horarioyubicacion.html?sucursal=450">Chiltepin 450</a>
-                    <a href="#">Delivery - Norte</a>
+                    <a href="horarioyubicacion.html?sucursal=seafood">Chiltepin Plaza Real</a>
+                    <a href="horarioyubicacion.html?sucursal=450">Chiltepin Plaza 450</a>
                 </div>
 
                 <div class="footer-col">
                     <h4>Contacto</h4>
-                    <p>618.123.4567</p>
-                    <p>DURANGO – INFO@CHILTEPIN.COM</p>
+                    <p><strong>Teléfono:</strong></p>
+                    <p>618.200.3865</p>
                     <br>
-                    <a href="#">Instagram</a>
-                    <a href="#">Facebook</a>
+                    <p><strong>Correo:</strong></p>
+                    <p>info@chiltepin.com</p>
+                    <a href="https://www.instagram.com/chiltepinseafood/" target="_blank" rel="noopener noreferrer">Instagram</a>
+                    <a href="https://www.facebook.com/Chiltepinseafood/?locale=es_LA" target="_blank" rel="noopener noreferrer">Facebook</a>
                 </div>
 
                 <div class="footer-col">
                     <h4>Reservaciones</h4>
-                    <a href="#" class="res-trigger">Restaurante Durango</a>
+                    <a href="eventos.html?tipo=catering">Catering &amp; Banquetes</a>
                     <a href="eventos.html?tipo=privados">Eventos Privados</a>
                 </div>
 
                 <div class="footer-col">
                     <h4>Bolsa de Trabajo</h4>
-                    <a href="#">Únete a nuestro equipo</a>
+                    <a href="#" onclick="mostrarModal('Actualmente no estamos buscando empleados.'); return false;">Únete a nuestro equipo</a>
                 </div>
 
                 <div class="newsletter">
-                    <div class="newsletter-links">
-                        <a href="#">Accesibilidad</a>
-                        <a href="#">Contacto</a>
-                    </div>
-                    <button class="btn-newsletter">Suscríbete al Boletín</button>
+                    <a href="boletin.html" class="btn-newsletter">Suscríbete al Boletín</a>
                 </div>
             </div>
 
@@ -1314,6 +1102,14 @@
             document.getElementById('resStep1').classList.add('active');
             document.getElementById('resStep2').classList.remove('active');
             document.getElementById('resStep3').classList.remove('active');
+        }
+
+        function mostrarModal(msg) {
+            document.getElementById('modalMsg').innerText = msg;
+            document.getElementById('modalOverlay').classList.add('active');
+        }
+        function cerrarModal() {
+            document.getElementById('modalOverlay').classList.remove('active');
         }
 
         function closeReservations() {
@@ -1342,6 +1138,18 @@
             const el = document.getElementById(id);
             el.textContent = msg;
             el.classList.add('visible');
+        }
+
+        function validateResDate(input) {
+            if (!input.value) return;
+            const day = new Date(input.value + 'T12:00:00').getDay();
+            if (day === 0 || day === 6) {
+                showError('error-fecha', 'Solo atendemos reservaciones entre semana. Los fines de semana te esperamos sin reservación.');
+                input.value = '';
+            } else {
+                const el = document.getElementById('error-fecha');
+                if (el) el.classList.remove('visible');
+            }
         }
 
         function confirmStep1() {
@@ -1443,20 +1251,6 @@
                 dateResInput.min = today;
             }
 
-            // Animación de contadores
-            function animateCounter(el, target) {
-                const duration = 1500;
-                const start = performance.now();
-                function update(now) {
-                    const elapsed = now - start;
-                    const progress = Math.min(elapsed / duration, 1);
-                    const eased = 1 - Math.pow(1 - progress, 3);
-                    el.textContent = Math.round(eased * target);
-                    if (progress < 1) requestAnimationFrame(update);
-                }
-                requestAnimationFrame(update);
-            }
-
             // Scroll reveal
             const revealElements = document.querySelectorAll('.reveal');
             if (revealElements.length > 0) {
@@ -1464,12 +1258,8 @@
                     entries.forEach(entry => {
                         if (entry.isIntersecting) {
                             entry.target.classList.add('visible');
+
                             observer.unobserve(entry.target);
-                            const counters = entry.target.querySelectorAll('.counter-value');
-                            counters.forEach(c => {
-                                const target = parseInt(c.dataset.target);
-                                animateCounter(c, target);
-                            });
                         }
                     });
                 }, { threshold: 0.15 });
@@ -1506,34 +1296,13 @@
                 serviceSnaps[0].classList.add('active');
             }
 
-            // Scroll-snap propuesta de valor
-            const pillarSnaps = document.querySelectorAll('.pillar-block');
-            const pillarDots = document.querySelectorAll('.pillar-dots .dot');
-            const pillarScroll = document.getElementById('diffScroll');
+            // Scroll to top button
+            window.addEventListener('scroll', () => {
+                document.getElementById('scrollTopBtn')?.classList.toggle('visible', scrollY > 400);
+            });
 
-            if (pillarScroll && pillarSnaps.length) {
-                const pillarObserver = new IntersectionObserver((entries) => {
-                    entries.forEach(entry => {
-                        if (entry.isIntersecting) {
-                            const idx = entry.target.dataset.index;
-                            pillarSnaps.forEach(s => s.classList.remove('active'));
-                            entry.target.classList.add('active');
-                            pillarDots.forEach(d => d.classList.toggle('active', d.dataset.index === idx));
-                        }
-                    });
-                }, { threshold: 0.5 });
 
-                pillarSnaps.forEach(snap => pillarObserver.observe(snap));
 
-                pillarDots.forEach(dot => {
-                    dot.addEventListener('click', () => {
-                        const idx = dot.dataset.index;
-                        pillarSnaps[idx].scrollIntoView({ behavior: 'smooth', inline: 'start' });
-                    });
-                });
-
-                pillarSnaps[0].classList.add('active');
-            }
         });
     </script>
 
@@ -1552,8 +1321,8 @@
                 <div class="res-field">
                     <label>Sucursal</label>
                     <div class="res-location-pills" id="resLocation">
-                        <button class="loc-pill selected" data-value="Chiltepin Seafood">Plaza Real</button>
-                        <button class="loc-pill" data-value="Chiltepin 450">Chiltepin 450</button>
+                        <button class="loc-pill selected" data-value="Chiltepin Plaza Real">Plaza Real</button>
+                        <button class="loc-pill" data-value="Chiltepin Plaza 450">Plaza 450</button>
                     </div>
                 </div>
 
@@ -1572,7 +1341,7 @@
 
                 <div class="res-field">
                     <label>Fecha</label>
-                    <input type="date" id="resDate">
+                    <input type="date" id="resDate" onchange="validateResDate(this)">
                 </div>
                 <span class="field-error" id="error-fecha"></span>
 
@@ -1606,7 +1375,7 @@
                 <button class="res-back" onclick="goBackToStep1()">❮ Cambiar Hora</button>
                 
                 <div class="res-summary">
-                    <p id="summaryLoc">Chiltepin Seafood</p>
+                    <p id="summaryLoc">Chiltepin Plaza Real</p>
                     <span id="summaryDetails">2 Personas • Hoy • 19:00</span>
                 </div>
 
@@ -1634,7 +1403,7 @@
                 <div id="resContactInfo" class="res-contact" style="display: none;">
                     <h3>Grandes Grupos</h3>
                     <p>Para reservaciones de 7+ personas,<br>contáctanos directamente:</p>
-                    <p class="contact-phone">618.123.4567</p>
+                    <p class="contact-phone">618.200.3865</p>
                     <p class="contact-email">info@chiltepin.com</p>
                     <button class="btn-submit-event" onclick="closeReservations()" style="margin-top: 20px;">Cerrar</button>
                 </div>
@@ -1648,6 +1417,15 @@
 
         </div>
     </aside>
+
+    <div class="modal-overlay" id="modalOverlay" onclick="cerrarModal()">
+        <div class="modal-box" onclick="event.stopPropagation()">
+            <p id="modalMsg"></p>
+            <button class="btn-submit-event" onclick="cerrarModal()" style="margin-top:20px;">Aceptar</button>
+        </div>
+    </div>
+
+    <button class="scroll-top" id="scrollTopBtn" onclick="window.scrollTo({top:0,behavior:'smooth'})" aria-label="Volver arriba">↑</button>
 
 </body>
 </html>
