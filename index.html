@@ -2,6 +2,7 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
+    <meta name="format-detection" content="telephone=no">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Chiltepin Seafood | Inicio</title>
     <meta name="description" content="Chiltepin Seafood — Mariscos frescos en Durango. Conoce nuestro menú, haz tu reservación y visita Plaza Real y Chiltepin Plaza 450.">
@@ -111,6 +112,7 @@
         nav a:hover {
             color: var(--accent-color); /* Rojo al pasar el cursor */
         }
+        a[href^="tel:"] { color: inherit !important; text-decoration: underline; }
 
         .btn-reservations {
             background-color: var(--accent-color); /* Rojo de acento */
@@ -550,8 +552,10 @@
 
         .carousel-slide {
             min-width: 100%;
+            flex-shrink: 0;
             height: 100%;
             background-size: cover;
+            background-repeat: no-repeat;
             background-position: center;
             background-color: #666;
         }
@@ -647,8 +651,10 @@
 
         .loc-card-slide {
             min-width: 100%;
+            flex-shrink: 0;
             height: 100%;
             background-size: cover;
+            background-repeat: no-repeat;
             background-position: center;
         }
 
@@ -914,13 +920,58 @@
         }
 
         /* Responsive básico */
+
+        .hamburger { display: none; background: none; border: none; color: var(--text-color); font-size: 2rem; cursor: pointer; padding: 4px 8px; line-height: 1; font-family: var(--font-headings); }
+        .hamburger:hover { color: var(--accent-color); }
+
         @media (max-width: 900px) {
-            header, .footer-grid { flex-direction: column; text-align: center; }
+            .hamburger { display: block; order: 3; margin-left: auto; flex-shrink: 0; font-size: 2.2rem; }
+            header { flex-wrap: wrap; align-items: center; justify-content: flex-start; }
+            .logo-link { order: 1; flex: 1; text-align: left; margin: 4px 0; }
+            .logo-link img { max-width: 150px; }
+            nav { display: none !important; width: 100%; flex-direction: column; align-items: stretch; gap: 0; margin-top: 8px; background: var(--bg-color); padding: 8px 0; border-top: 1px solid #333; order: 10; flex-basis: 100%; }
+            nav.open { display: flex !important; }
+            nav a, .dropbtn { width: 100%; text-align: left; padding: 12px 0; border-bottom: 1px solid rgba(255,255,255,0.05); border-radius: 0; font-size: 1rem; letter-spacing: 1px; }
+            .dropdown { width: 100%; display: block; }
+            .dropdown-content, .sub-dropdown-content { position: static !important; width: 100% !important; min-width: 0 !important; max-width: none !important; box-shadow: none !important; border: none !important; background: transparent !important; z-index: auto !important; }
+            .dropdown-content a, .sub-dropbtn { padding-left: 20px !important; font-size: 0.9rem; }
+            .sub-dropdown-content a { padding-left: 36px !important; font-size: 0.85rem; }
+            .sub-dropbtn::after { content: ''; }
+            nav .btn-reservations { width: 100%; margin-top: 12px; border-top: 1px solid #333; padding-top: 12px; text-align: center; }
+
+            .footer-grid { flex-direction: column; text-align: center; }
             nav { flex-wrap: wrap; justify-content: center; margin-top: 20px; }
-            .carousel-section { height: 40vh; }
+            .carousel-section { height: 55vh; }
+            .carousel-slide, .loc-card-slide { background-color: var(--bg-color); }
+            .carousel-slide { background-position-y: center !important; } /* desactiva parallax en móvil */
             .locations-grid, .gallery-grid, .footer-grid, .counter-grid { grid-template-columns: 1fr; }
             .newsletter { align-items: center; margin-top: 30px; }
+            .dropdown.open .dropdown-content { display: block; }
+            .sub-dropdown.open .sub-dropdown-content { display: block; }
+            .sub-dropdown-content { left: 0 !important; top: 100% !important; }
+        }        @media (max-width: 480px) {
+            .section-title, .section-heading, .page-title { font-size: 2rem !important; }
+            .location-title { font-size: 2rem !important; }
+            .page-header { min-height: 250px !important; padding: 80px 16px 60px !important; }
+            .res-header { padding: 20px !important; }
+            .res-body { padding: 15px 20px 30px !important; }
+            .modal-box { padding: 24px 16px !important; max-width: 90vw !important; }
+            .btn-reservations { padding: 10px 16px; font-size: 0.9rem; }
+            .carousel-section { height: 55vh; min-height: 280px !important; }
+            .dot { width: 14px; height: 14px; }
+            .locations-grid { gap: 30px; }
+            .counter-number { font-size: 2.4rem; }
+            .counter-item { padding: 10px 0; }
+            .intro-text { font-size: 1rem; }
         }
+
+        @media (prefers-reduced-motion: reduce) {
+            *, *::before, *::after { animation-duration: 0.01ms !important; animation-iteration-count: 1 !important; transition-duration: 0.01ms !important; scroll-behavior: auto !important; }
+            #splash { display: none !important; }
+            .carousel-track { transition: none !important; }
+            .carousel-slide, .loc-card-slide { background-attachment: scroll !important; }
+        }
+
     </style>
 </head>
 <body>
@@ -931,6 +982,7 @@
             <a href="index.html" class="logo-link">
                 <img src="img/logos/logo_chilte.png" alt="Chiltepin Plaza Real Logo" class="logo-img">
             </a>
+            <button class="hamburger" aria-label="Menú">☰</button>
             <nav>
                 <a href="index.html">Inicio</a>
 
@@ -1043,7 +1095,7 @@
                             <p>Politecnico Nacional 403<br>Huizache I, Durango, Dgo 34170</p>
                             
                             <strong>Teléfono:</strong>
-                            <p>618.200.3865</p>
+                            <p><a href="tel:6182003865">618.200.3865</a></p>
                             
                             <strong>Email:</strong>
                             <p>info@chiltepin.com</p>
@@ -1075,7 +1127,7 @@
                             <p>Local 77, Plaza 450<br>Los Cipreses, Durango, Dgo 34217</p>
                             
                             <strong>Teléfono:</strong>
-                            <p>618.200.3865</p>
+                            <p><a href="tel:6182003865">618.200.3865</a></p>
                             
                             <strong>Email:</strong>
                             <p>info@chiltepin.com</p>
@@ -1112,7 +1164,7 @@
                 <div class="footer-col">
                     <h4>Contacto</h4>
                     <p><strong>Teléfono:</strong></p>
-                    <p>618.200.3865</p>
+                    <p><a href="tel:6182003865">618.200.3865</a></p>
                     <br>
                     <p><strong>Correo:</strong></p>
                     <p>info@chiltepin.com</p>
@@ -1263,6 +1315,36 @@
         }
 
         document.addEventListener('DOMContentLoaded', () => {
+            // Hamburger menu toggle
+            var hamburger = document.querySelector('.hamburger');
+            var nav = document.querySelector('nav');
+            if (hamburger && nav) {
+                hamburger.addEventListener('click', function(e) {
+                    e.stopPropagation();
+                    nav.classList.toggle('open');
+                    hamburger.textContent = nav.classList.contains('open') ? '\u2715' : '\u2630';
+                });
+                nav.querySelectorAll('a, .dropbtn, .sub-dropbtn, .btn-reservations').forEach(function(link) {
+                    link.addEventListener('click', function() {
+                        if (window.innerWidth <= 900) nav.classList.remove('open');
+                        if (hamburger) hamburger.textContent = '\u2630';
+                    });
+                });
+                document.addEventListener('click', function(e) {
+                    if (!nav.contains(e.target) && !hamburger.contains(e.target)) {
+                        nav.classList.remove('open');
+                        hamburger.textContent = '\u2630';
+                    }
+                });
+                // Close menu on window resize to desktop
+                window.addEventListener('resize', function() {
+                    if (window.innerWidth > 900) {
+                        nav.classList.remove('open');
+                        hamburger.textContent = '\u2630';
+                    }
+                });
+            }
+
             const track = document.getElementById('carouselTrack');
             const slides = Array.from(track.children);
             const dots = document.querySelectorAll('.dot');
@@ -1301,6 +1383,20 @@
                         updateCarousel();
                     }, 8000);
                 });
+
+                // Touch swipe
+                let touchStartX = 0;
+                carouselSection.addEventListener('touchstart', e => { touchStartX = e.touches[0].clientX; }, {passive: true});
+                carouselSection.addEventListener('touchend', e => {
+                    const diff = touchStartX - e.changedTouches[0].clientX;
+                    if (Math.abs(diff) > 50) {
+                        clearInterval(heroAutoplay);
+                        if (diff > 0) currentIndex = (currentIndex + 1) % slides.length;
+                        else currentIndex = (currentIndex - 1 + slides.length) % slides.length;
+                        updateCarousel();
+                        heroAutoplay = setInterval(() => { currentIndex = (currentIndex + 1) % slides.length; updateCarousel(); }, 8000);
+                    }
+                }, {passive: true});
             }
 
             // Eventos de la barra lateral
@@ -1382,6 +1478,20 @@
                         update();
                     }, 5000);
                 });
+
+                // Touch swipe
+                let locTouchStartX = 0;
+                carousel.addEventListener('touchstart', e => { locTouchStartX = e.touches[0].clientX; }, {passive: true});
+                carousel.addEventListener('touchend', e => {
+                    const diff = locTouchStartX - e.changedTouches[0].clientX;
+                    if (Math.abs(diff) > 50) {
+                        clearInterval(locAuto);
+                        if (diff > 0) idx = (idx + 1) % slides.length;
+                        else idx = (idx - 1 + slides.length) % slides.length;
+                        update();
+                        locAuto = setInterval(() => { idx = (idx + 1) % slides.length; update(); }, 5000);
+                    }
+                }, {passive: true});
             });
 
             // Configurar fecha de hoy
@@ -1465,6 +1575,32 @@
             // Scroll to top button
             window.addEventListener('scroll', () => {
                 document.getElementById('scrollTopBtn')?.classList.toggle('visible', scrollY > 400);
+            // Dropdown touch toggle
+            document.querySelectorAll('.dropbtn').forEach(function(btn){
+                btn.addEventListener('click', function(e){
+                    if (window.innerWidth <= 900) {
+                        e.preventDefault(); e.stopPropagation();
+                        var dd = this.parentElement;
+                        var isOpen = dd.classList.contains('open');
+                        document.querySelectorAll('.dropdown.open,.sub-dropdown.open').forEach(function(d){d.classList.remove('open')});
+                        if (!isOpen) dd.classList.add('open');
+                    }
+                });
+            });
+            document.querySelectorAll('.sub-dropbtn').forEach(function(btn){
+                btn.addEventListener('click', function(e){
+                    if (window.innerWidth <= 900) {
+                        e.preventDefault(); e.stopPropagation();
+                        var sd = this.parentElement;
+                        var isOpen = sd.classList.contains('open');
+                        document.querySelectorAll('.sub-dropdown.open').forEach(function(d){d.classList.remove('open')});
+                        if (!isOpen) sd.classList.add('open');
+                    }
+                });
+            });
+            document.addEventListener('click', function(){
+                document.querySelectorAll('.dropdown.open,.sub-dropdown.open').forEach(function(d){d.classList.remove('open')});
+            });
             });
 
 
@@ -1569,7 +1705,7 @@
                 <div id="resContactInfo" class="res-contact" style="display: none;">
                     <h3>Grandes Grupos</h3>
                     <p>Para reservaciones de 7+ personas,<br>contáctanos directamente:</p>
-                    <p class="contact-phone">618.200.3865</p>
+                    <p class="contact-phone"><a href="tel:6182003865">618.200.3865</a></p>
                     <p class="contact-email">info@chiltepin.com</p>
                     <button class="btn-submit-event" onclick="closeReservations()" style="margin-top: 20px;">Cerrar</button>
                 </div>
