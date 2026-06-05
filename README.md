@@ -11,11 +11,12 @@ Proyecto del sitio web de Chiltepin Seafood (restaurante de mariscos, 2 sucursal
 |---|---|
 | Estructura | HTML5 semántico |
 | Estilos | CSS3 vanilla — variables, flexbox, grid, animaciones, media queries |
+| Responsive | Menú hamburguesa con acordeón, breakpoints 900px/480px, `prefers-reduced-motion`, touch events (swipe carruseles + dropdown táctil), `format-detection` para teléfonos |
 | Lógica | JavaScript ES6+ vanilla — sin frameworks, sin dependencias |
 | Fuentes | Google Fonts — Anton (logo), Oswald (headings/nav), Lora (body) |
 | SEO | Open Graph, Twitter Cards, canonical URLs |
 | Rendimiento | Imágenes redimensionadas/optimizadas, lazy loading nativo, cache-busting vía API |
-| Compatibilidad | Chrome, Firefox, Safari, Edge, iOS Safari, Android Chrome |
+| Compatibilidad | Chrome, Firefox, Safari, Edge, iOS Safari, Android Chrome — probado en móvil (375px+) |
 
 ### Backend (servidor temporal de referencia)
 | Capa | Tecnología |
@@ -182,3 +183,14 @@ Las URLs en los meta tags SEO usan `https://chiltepin.com` como base. Cambiar po
 4. **Auth robusta:** Reemplazar cookie simple por JWT o sesiones con bcrypt
 5. **Optimización de imágenes:** Agregar `sharp` para redimensionar/comprimir al subir
 6. **CDN:** Servir imágenes desde S3/Cloudinary en vez del filesystem local
+
+---
+
+## Changelog
+
+| Versión | Cambios |
+|---|---|
+| **v3.1** | Menú hamburguesa, responsive móvil (breakpoints 900px/480px), swipe táctil en carruseles, dropdowns touch, teléfonos clickeables sin azul, `prefers-reduced-motion`, correcciones visuales |
+| **v3.0** | Panel admin oculto (`/panel`), API REST (Express), `data/menu.json` con 93 precios editables, SEO (Open Graph + Twitter Cards), optimización imágenes (11MB → 4.3MB), bugs corregidos |
+| **v2.0** | Sitio web completo — 7 páginas estáticas (inicio, menú, horarios, acerca, eventos, contacto, boletín) |
+| **v1.0** | Commit inicial — Chiltepin Plaza Real |
