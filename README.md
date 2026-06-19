@@ -1,39 +1,32 @@
-# Chiltepin Seafood — Guía para Backend
+# Chiltepin Seafood — Web App
 
-Proyecto del sitio web de Chiltepin Seafood (restaurante de mariscos, 2 sucursales en Durango). Actualmente usa un servidor Express ligero como backend temporal. El objetivo es migrar a un backend definitivo.
+Sitio web del restaurante **Chiltepin Seafood** (2 sucursales en Durango, México).  
+Migrado exitosamente de Vanilla HTML mult-page a una **Single Page Application (SPA)** con React, manteniendo cero cambios visuales respecto al diseño original.
 
 ---
 
 ## Stack Tecnológico
 
-### Sitio público (7 páginas)
+### Frontend
+
 | Capa | Tecnología |
 |---|---|
-| Estructura | HTML5 semántico |
-| Estilos | CSS3 vanilla — variables, flexbox, grid, animaciones, media queries |
-| Responsive | Menú hamburguesa con acordeón, breakpoints 900px/480px, `prefers-reduced-motion`, touch events (swipe carruseles + dropdown táctil), `format-detection` para teléfonos |
-| Lógica | JavaScript ES6+ vanilla — sin frameworks, sin dependencias |
+| Framework | React 18+ |
+| Bundler | Vite |
+| Estilos | CSS Vanilla puro — variables, flexbox, grid, animaciones, media queries, sin frameworks |
+| Enrutamiento | Nativo por estado (`currentPage` + `switch`) — sin react-router-dom |
+| Estado | Hooks (`useState`, `useEffect`, `useRef`, `useCallback`) |
 | Fuentes | Google Fonts — Anton (logo), Oswald (headings/nav), Lora (body) |
-| SEO | Open Graph, Twitter Cards, canonical URLs |
-| Rendimiento | Imágenes redimensionadas/optimizadas, lazy loading nativo, cache-busting vía API |
-| Compatibilidad | Chrome, Firefox, Safari, Edge, iOS Safari, Android Chrome — probado en móvil (375px+) |
+| SEO | Open Graph, Twitter Cards, meta tags por página |
 
-### Backend (servidor temporal de referencia)
+### Backend (referencia)
+
 | Capa | Tecnología |
 |---|---|
 | Entorno | Node.js ≥ 18 |
 | Servidor | Express.js 4.x |
-| Autenticación | Cookie simple con contraseña compartida (sin usuarios/roles) |
-| Uploads | Multer (multipart/form-data) |
+| Autenticación | Cookie simple con contraseña compartida (provisional) |
 | Datos | JSON en filesystem (`data/menu.json`, `data/version.json`) |
-| Dependencias | `express`, `multer`, `cookie-parser` — 3 paquetes total |
-
-### Panel Admin
-| Capa | Tecnología |
-|---|---|
-| UI | HTML5 + CSS3 + JavaScript vanilla — mismo stack visual del sitio público |
-| Comunicación | Fetch API contra los endpoints REST del servidor |
-| Acceso | URL oculta `/panel` sin enlaces desde el sitio público, protegida por cookie |
 
 ---
 
@@ -41,33 +34,100 @@ Proyecto del sitio web de Chiltepin Seafood (restaurante de mariscos, 2 sucursal
 
 ```bash
 npm install
-ADMIN_PASSWORD=tucontraseña node server.js
+npm run dev
 ```
 
-- Sitio público: `http://localhost:3000`
-- Panel admin: `http://localhost:3000/panel` (acceso oculto, solo con contraseña)
+- Dev server: `http://localhost:5173`
+- Build producción: `npm run build` → `dist/`
 
 ---
 
-## API contratada
+## Hitos Arquitectónicos y UX
 
-La API actual (`server.js`) define los endpoints que el nuevo backend debe implementar:
+### Refactorización y Componentización
+
+- **Header/Footer compartidos** — eliminadas ~100 líneas de HTML duplicado en las 7 páginas originales.
+- **MenuItem, MenuSection, NavArrow** — componentes reutilizables que eliminan cientos de líneas de JSX repetitivo.
+- **Menu data-driven** — los platillos y bebidas se definen como arreglos de datos y se renderizan con `.map()`.
+
+### Eliminación de manipulación directa del DOM
+
+- **Custom Hooks**: `useIntersectionObserver` (scroll reveal), `usePreloadImages` (precarga de imágenes).
+- **Estado React** reemplaza `document.getElementById`, `document.querySelectorAll`, `classList.toggle/add/remove`.
+- **Modal y page-loaded** gestionados mediante estado (`useState`) en lugar de manipular clases en `<body>`.
+
+### Menú móvil premium
+
+- Overlay fullscreen con `backdrop-filter: blur(12px)` y fondo `rgba(12,12,12,0.95)`.
+- Scroll lock nativo del navegador al abrir el menú.
+- Acordeón con transiciones `max-height` para submenús y sub-submenús.
+- Touch targets uniformes (`min-height: 52px`) siguiendo la Ley de Fitts.
+
+### Carruseles de imágenes interactivos
+
+- Carrusel hero, tarjetas de sucursales y galería de ubicaciones con **auto-play inteligente** (5000ms).
+- El temporizador se reinicia al hacer clic manual (flechas, dots, cambio de sucursal).
+- Prev/post mediante `setInterval` + `clearInterval` con dependencias en `useEffect`.
+- Sin fugas de memoria: todos los efectos retornan `clearInterval`/`clearTimeout`.
+
+---
+
+## Estructura de archivos
+
+```
+Proyecto/
+├── index.html                 ← Entry point Vite (solo <div id="root">)
+├── vite.config.js             ← Configuración de Vite + React plugin
+├── package.json
+├── src/
+│   ├── main.jsx               ← Monta React en #root
+│   ├── App.jsx                ← Shell SPA: 7 rutas por estado, modal, page-loaded
+│   ├── css/styles.css         ← CSS global (~1270 líneas, 3 @media max-width:1100px)
+│   ├── components/
+│   │   ├── Header.jsx         ← Navegación + dropdowns + hamburguesa
+│   │   ├── Footer.jsx         ← Grid de footer + enlaces internos/externos
+│   │   ├── NavArrow.jsx       ← Flecha de navegación entre páginas
+│   │   ├── MenuItem.jsx       ← Item individual de menú (nombre, precio, desc)
+│   │   ├── MenuSection.jsx    ← Sección de menú (id, título, grid de items)
+│   │   └── ReservationSidebar.jsx  ← Sidebar de reservas (3 pasos)
+│   ├── hooks/
+│   │   ├── useIntersectionObserver.js  ← Scroll reveal con IntersectionObserver
+│   │   └── usePreloadImages.js         ← Precarga de imágenes vía new Image()
+│   └── pages/
+│       ├── HomePage.jsx       ← Inicio: splash, carrusel hero, contadores, galería
+│       ├── MenuPage.jsx       ← Menú: scroll spy, 9 secciones, precios dinámicos
+│       ├── LocationPage.jsx   ← Horarios/Ubicación: selector sucursal, mapa
+│       ├── AboutPage.jsx      ← Acerca de: historia, servicios, ingrediente estrella
+│       ├── ContactPage.jsx    ← Contacto: formulario, info sucursales
+│       ├── EventsPage.jsx     ← Eventos: tabs (privados/catering), formulario
+│       └── NewsletterPage.jsx ← Boletín: formulario de suscripción
+├── public/
+│   └── img/                   ← Imágenes estáticas (~4.3 MB, rutas absolutas /img/...)
+├── server.js                  ← Express temporal (referencia de API)
+├── data/menu.json             ← Datos del menú (93 precios para migrar a BD)
+├── data/version.json          ← Cache-busting (generado automático)
+└── panel/index.html           ← Admin panel (autónomo, no integrado en SPA)
+```
+
+---
+
+## API de Referencia
+
+La API (`server.js`) define los endpoints que el backend definitivo debe implementar:
 
 | Método | Ruta | Auth | Descripción |
 |--------|------|------|-------------|
 | `POST` | `/api/auth` | No | Recibe `{ password }`, devuelve `{ ok: true }` y setea cookie `auth` |
 | `POST` | `/api/logout` | No | Borra la cookie de sesión |
-| `GET` | `/api/menu` | No | Devuelve `data/menu.json` |
+| `GET` | `/api/menu` | No | Devuelve `data/menu.json` (consumido por MenuPage para precios dinámicos) |
 | `PATCH` | `/api/menu` | Sí | Recibe `{ sections: [...], promos: [...] }`, actualiza solo precios |
-| `GET` | `/api/images` | Sí | Devuelve array de imágenes en `img/` con path, name, size |
-| `POST` | `/api/images/upload` | Sí | Recibe multipart `image` + `subPath` + `targetName` + `originalName`, sobreescribe archivo |
-| `GET` | `/api/version` | No | Devuelve `{ version: N }` para cache-busting de imágenes |
+| `GET` | `/api/images` | Sí | Devuelve array de imágenes en `img/` |
+| `POST` | `/api/images/upload` | Sí | Multipart — sobreescribe archivo de imagen |
+| `GET` | `/api/version` | No | Devuelve `{ version: N }` para cache-busting |
 
 ---
 
-## Modelo de datos
-
-### `data/menu.json`
+## Modelo de datos (`data/menu.json`)
 
 ```json
 {
@@ -85,104 +145,26 @@ La API actual (`server.js`) define los endpoints que el nuevo backend debe imple
 }
 ```
 
-93 precios en total (86 platillos + 7 promos). `price: null` significa sin precio fijo (ej. "Tacos 3x2").
+93 precios en total (86 platillos + 7 promos). `price: null` = sin precio fijo.
 
 ---
 
-## Estructura de archivos
+## Próximos pasos para el Backend
 
-```
-Proyecto/
-├── server.js              ← Express temporal (referencia de API)
-├── package.json           ← express, multer, cookie-parser
-├── css/styles.css         ← CSS compartido (103 reglas) — usa como base
-├── js/main.js             ← JS compartido (12 funciones) — usa como base
-├── data/menu.json         ← Datos del menú (migrar a BD)
-├── data/version.json      ← Cache-busting (generado automático)
-├── panel/index.html       ← Admin panel (autónomo, solo consume APIs)
-├── index.html             ← Inicio
-├── menu.html              ← Menú
-├── acercade.html          ← Acerca de
-├── eventos.html           ← Eventos / Catering
-├── contacto.html          ← Contacto
-├── horarioyubicacion.html ← Horarios y ubicación
-├── boletin.html           ← Boletín / Newsletter
-└── img/                   ← Imágenes (22 únicas, ~4.3 MB total)
-```
+1. **API REST Pura:** El backend debe actuar únicamente como proveedor de datos JSON (sin motores de templates — React ya renderiza).
+2. **Base de Datos:** Migrar `data/menu.json` a PostgreSQL, MongoDB o SQLite para alimentar los componentes de React de forma dinámica.
+3. **Endpoints de Formularios:** Crear endpoints POST reales para procesar solicitudes de Contacto, Eventos, Boletín y Reservaciones (actualmente simulados en el frontend).
+4. **Autenticación:** Implementar JWT (JSON Web Tokens) para proteger el panel de administración, reemplazando las cookies simples.
+5. **CDN:** Servir assets estáticos e imágenes subidas a través de S3 o Cloudinary.
 
 ---
 
-## CSS y JS compartido vs específico
+## Notas técnicas
 
-### `css/styles.css` (compartido por las 7 páginas)
-
-103 reglas: `:root`, reset, `header`, `nav`, dropdowns, footer, `.res-*` (sidebar reservas), `.modal-*`, `.scroll-top`, `.reveal`, `.divider`, `.btn-*`, `.input-group`, `@media` base.
-
-### `js/main.js` (compartido por las 7 páginas)
-
-12 funciones + listener `DOMContentLoaded`: `openReservations`, `closeReservations`, `mostrarModal`, `cerrarModal`, `showError`, `clearError`, `validateResDate`, `confirmStep1`, `goBackToStep1`, `submitReservation`, wiring de pills, scroll reveal, scroll-top.
-
-### CSS/JS específico por página
-
-Cada `.html` tiene un `<style>` mínimo y un `<script>` mínimo con solo lo propio de esa página:
-- `index.html`: carrusel hero, splash screen, contadores, parallax, galería
-- `menu.html`: estilos del menú, scroll spy
-- `acercade.html`: página hero, story grid, services carousel
-- `eventos.html`: página hero, event view, formulario cotización, eventData
-- `contacto.html`: página hero, contact grid, validación
-- `horarioyubicacion.html`: página hero, location view, mapa, loadLocation
-- `boletin.html`: página hero, newsletter section, validación boletín
-
-### Duplicados que eliminar al crear templates
-
-- **Header + nav** (incluyendo dropdowns de delivery) — ~60 líneas HTML idénticas en las 7 páginas
-- **Footer** — ~40 líneas HTML idénticas
-- **Reservation sidebar** — ~90 líneas HTML (`.res-overlay` + `.res-sidebar` con Step 1/2/3)
-- **Modal overlay** — ~5 líneas HTML
-- **Scroll-top button** — 1 línea
-
-Con un motor de templates (EJS, Handlebars, Pug), se reduce a:
-```
-layout.html → header + footer + sidebar + modal
-index.html  → solo contenido específico
-menu.html   → solo contenido específico
-...
-```
-
----
-
-## Panel admin
-
-`panel/index.html` es completamente autónomo. Mismo estilo visual (tema oscuro, mismas fuentes). Dos pestañas:
-
-- **Precios:** tabla agrupada por sección con input para cambiar precio → llama `PATCH /api/menu`
-- **Imágenes:** grid con preview de las 22 imágenes → llama `POST /api/images/upload`
-
-Se accede escribiendo `tudominio.com/panel` directo en el navegador. No hay link desde el sitio público. Protegido por contraseña vía cookie.
-
----
-
-## Scripts agregados al final de cada página
-
-- **Cache-busting:** `<script>` al final de cada HTML que hace `fetch('/api/version')` y appendea `?v=N` a todas las URLs de imágenes para invalidar cache.
-- **Menú dinámico:** solo en `menu.html` — `fetch('/api/menu')` para cargar precios desde el JSON y actualizar los `.dish-price` en el DOM.
-
----
-
-## URLs base configurable
-
-Las URLs en los meta tags SEO usan `https://chiltepin.com` como base. Cambiar por el dominio real en producción.
-
----
-
-## Próximos pasos para el backend
-
-1. **Motor de templates:** Extraer header/footer/sidebar/modal a un layout base (EJS o Handlebars)
-2. **Base de datos:** Migrar `data/menu.json` a PostgreSQL/SQLite/MongoDB — misma estructura
-3. **Formularios reales:** Agregar endpoints POST para contacto, cotización, boletín, reservas
-4. **Auth robusta:** Reemplazar cookie simple por JWT o sesiones con bcrypt
-5. **Optimización de imágenes:** Agregar `sharp` para redimensionar/comprimir al subir
-6. **CDN:** Servir imágenes desde S3/Cloudinary en vez del filesystem local
+- **display: contents** en `#root` — evita que el wrapper de React altere la jerarquía visual del CSS original.
+- **Precios dinámicos** — `MenuPage.jsx` hace `fetch('/api/menu')` y sobreescribe los precios hardcodeados con los de la API.
+- **Cache-busting** — los componentes de React usan rutas absolutas `/img/...`; el servidor provee `GET /api/version` para forzar refresco de imágenes.
+- **3 breakpoints responsive** — `@media (max-width: 1100px)` para móvil, manteniendo la estructura original intacta.
 
 ---
 
@@ -190,7 +172,8 @@ Las URLs en los meta tags SEO usan `https://chiltepin.com` como base. Cambiar po
 
 | Versión | Cambios |
 |---|---|
-| **v3.1** | Menú hamburguesa, responsive móvil (breakpoints 900px/480px), swipe táctil en carruseles, dropdowns touch, teléfonos clickeables sin azul, `prefers-reduced-motion`, correcciones visuales |
-| **v3.0** | Panel admin oculto (`/panel`), API REST (Express), `data/menu.json` con 93 precios editables, SEO (Open Graph + Twitter Cards), optimización imágenes (11MB → 4.3MB), bugs corregidos |
-| **v2.0** | Sitio web completo — 7 páginas estáticas (inicio, menú, horarios, acerca, eventos, contacto, boletín) |
+| **v4.0** | Migración a React SPA (Vite + React 18). Componentización (Header, Footer, MenuItem, MenuSection, NavArrow). Custom Hooks (useIntersectionObserver, usePreloadImages). Menú móvil premium con backdrop-filter y scroll lock. Carruseles con auto-play inteligente. Eliminación completa de manipulación directa del DOM. |
+| **v3.1** | Menú hamburguesa, responsive móvil (breakpoints 900px/480px), swipe táctil en carruseles, dropdowns touch, `prefers-reduced-motion` |
+| **v3.0** | Panel admin oculto (`/panel`), API REST (Express), `data/menu.json` con 93 precios editables, SEO (Open Graph + Twitter Cards), optimización imágenes |
+| **v2.0** | Sitio web completo — 7 páginas estáticas |
 | **v1.0** | Commit inicial — Chiltepin Plaza Real |

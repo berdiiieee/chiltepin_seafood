@@ -17,6 +17,7 @@ const VERSION_FILE = path.join(DATA_DIR, 'version.json');
 
 const sessions = {};
 
+// limpia sesiones vencidas cada hora
 setInterval(() => {
     const now = Date.now();
     for (const token in sessions) {
@@ -24,6 +25,7 @@ setInterval(() => {
     }
 }, 60 * 60 * 1000);
 
+// lee el contador de version para cache busting de imagenes
 function getVersion() {
     try {
         return JSON.parse(fs.readFileSync(VERSION_FILE, 'utf8')).version;
@@ -34,6 +36,7 @@ function getVersion() {
     }
 }
 
+// incrementa la version al subir/reemplazar imagenes
 function bumpVersion() {
     const v = getVersion();
     const next = { version: v + 1 };
@@ -41,6 +44,7 @@ function bumpVersion() {
     return next.version;
 }
 
+// middleware: verifica cookie de autenticacion para rutas de admin
 function requireAuth(req, res, next) {
     const token = req.cookies && req.cookies.auth;
     const session = token && sessions[token];
@@ -57,6 +61,7 @@ app.get('/panel', (req, res) => {
     res.sendFile(path.join(ROOT_DIR, 'panel', 'index.html'));
 });
 
+// archivos estaticos con cache largo para imagenes (1 año) y css/js (1 semana)
 app.use(express.static(ROOT_DIR, {
     index: false,
     setHeaders: (res, filePath) => {
@@ -69,6 +74,7 @@ app.use(express.static(ROOT_DIR, {
     }
 }));
 
+// multer: configura destino y nombre para subida de imagenes (max 10MB)
 const upload = multer({
     storage: multer.diskStorage({
         destination: (req, file, cb) => {

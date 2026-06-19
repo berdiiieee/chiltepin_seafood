@@ -1048,6 +1048,7 @@
         const step2 = document.getElementById('resStep2');
         const step3 = document.getElementById('resStep3');
 
+        // abre sidebar, arranca en paso 1
         function openReservations() {
             resSidebar.classList.add('active');
             resOverlay.classList.add('active');
@@ -1057,14 +1058,17 @@
             step3.classList.remove('active');
         }
 
+        // muestra modal generico
         function mostrarModal(msg) {
             document.getElementById('modalMsg').innerText = msg;
             document.getElementById('modalOverlay').classList.add('active');
         }
+        // oculta modal generico
         function cerrarModal() {
             document.getElementById('modalOverlay').classList.remove('active');
         }
 
+        // cierra sidebar y resetea formulario
         function closeReservations() {
             resSidebar.classList.remove('active');
             resOverlay.classList.remove('active');
@@ -1082,10 +1086,12 @@
             if (btn) { btn.textContent = 'Confirmar Horario'; btn.className = 'btn-submit-event'; }
         }
 
-function clearError(id) {
+        // oculta mensaje de error
+        function clearError(id) {
             document.getElementById(id).classList.remove('visible');
         }
 
+        // muestra mensaje de error
         function showError(id, msg) {
             const el = document.getElementById(id);
             if (!el) return;
@@ -1093,6 +1099,7 @@ function clearError(id) {
             el.classList.add('visible');
         }
 
+        // bloquea fines de semana como fecha valida
         function validateResDate(input) {
             if (!input.value) return;
             const day = new Date(input.value + 'T12:00:00').getDay();
@@ -1105,6 +1112,7 @@ function clearError(id) {
             }
         }
 
+        // valida formulario de cotizacion de eventos
         function validarCotizacion(e) {
             e.preventDefault();
             document.querySelectorAll('#cotizacionForm .field-error').forEach(el => el.classList.remove('visible'));
@@ -1128,6 +1136,7 @@ function clearError(id) {
             return false;
         }
 
+        // paso 1: arma resumen y pasa a formulario de contacto
         function confirmStep1() {
             document.querySelectorAll('#resStep1 .field-error').forEach(e => e.classList.remove('visible'));
             const selectedTimeEl = document.querySelector('.time-pill.selected');
@@ -1155,11 +1164,13 @@ function clearError(id) {
             step2.classList.add('active');
         }
 
+        // retrocede al paso 1
         function goBackToStep1() {
             step2.classList.remove('active');
             step1.classList.add('active');
         }
 
+        // paso 2: valida datos y muestra confirmacion
         function submitReservation(e) {
             e.preventDefault();
             document.querySelectorAll('#resStep2 .field-error').forEach(e => e.classList.remove('visible'));

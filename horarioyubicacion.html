@@ -1021,6 +1021,7 @@
         }
 
         // --- Funciones para la nueva Barra de Reservaciones ---
+        // abre sidebar, arranca en paso 1
         function openReservations() {
             document.getElementById('resSidebar').classList.add('active');
             document.getElementById('resOverlay').classList.add('active');
@@ -1030,6 +1031,7 @@
             document.getElementById('resStep3').classList.remove('active');
         }
 
+        // abre sidebar con sucursal preseleccionada
         function openReservationsForLocation() {
             openReservations();
             const pillValue = currentLocationId === 'seafood' ? 'Chiltepin Plaza Real' : 'Chiltepin Plaza 450';
@@ -1038,14 +1040,17 @@
             });
         }
 
+        // muestra modal generico
         function mostrarModal(msg) {
             document.getElementById('modalMsg').innerText = msg;
             document.getElementById('modalOverlay').classList.add('active');
         }
+        // oculta modal generico
         function cerrarModal() {
             document.getElementById('modalOverlay').classList.remove('active');
         }
 
+        // cierra sidebar y resetea formulario
         function closeReservations() {
             document.getElementById('resSidebar').classList.remove('active');
             document.getElementById('resOverlay').classList.remove('active');
@@ -1063,10 +1068,12 @@
             if (btn) { btn.textContent = 'Confirmar Horario'; btn.className = 'btn-submit-event'; }
         }
 
+        // oculta mensaje de error
         function clearError(id) {
             document.getElementById(id).classList.remove('visible');
         }
 
+        // muestra mensaje de error
         function showError(id, msg) {
             const el = document.getElementById(id);
             if (!el) return;
@@ -1074,6 +1081,7 @@
             el.classList.add('visible');
         }
 
+        // paso 1: arma resumen y pasa a formulario de contacto
         function confirmStep1() {
             document.querySelectorAll('#resStep1 .field-error').forEach(e => e.classList.remove('visible'));
             const selectedTimeEl = document.querySelector('.time-pill.selected');
@@ -1101,11 +1109,13 @@
             document.getElementById('resStep2').classList.add('active');
         }
 
+        // retrocede al paso 1
         function goBackToStep1() {
             document.getElementById('resStep2').classList.remove('active');
             document.getElementById('resStep1').classList.add('active');
         }
 
+        // paso 2: valida datos y muestra confirmacion
         function submitReservation(e) {
             e.preventDefault();
             document.querySelectorAll('#resStep2 .field-error').forEach(e => e.classList.remove('visible'));
