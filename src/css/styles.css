@@ -755,6 +755,10 @@ footer {
 .location-card {
     display: flex;
     flex-direction: column;
+    height: 100%;
+}
+.location-card .btn-outline {
+    margin-top: auto;
 }
 .loc-card-carousel {
     width: 100%;
@@ -948,6 +952,8 @@ footer {
     width: 100%;
     height: calc(100vh - 100% - 2px);
     overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+    overscroll-behavior: contain;
     z-index: 10000;
   }
   body.mobile-menu-open header {
@@ -1048,7 +1054,6 @@ footer {
     .res-header { padding: 20px !important; }
     .res-body { padding: 15px 20px 30px !important; }
     .modal-box { padding: 24px 16px !important; max-width: 90vw !important; }
-    .btn-reservations { padding: 10px 16px; font-size: 0.9rem; }
     .carousel-section { height: 55vh; min-height: 280px !important; }
     .carousel-arrow { width: 28px; height: 28px; font-size: 1rem; }
     .carousel-arrow.prev { left: 4px; }

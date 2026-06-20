@@ -68,16 +68,32 @@ const Header = ({ onReservationClick, onNavigate }) => {
 
   useEffect(() => {
     if (isMenuOpen) {
-      document.body.style.overflow = 'hidden';
+      const scrollY = window.scrollY;
+      document.body.style.position = 'fixed';
+      document.body.style.top = `-${scrollY}px`;
+      document.body.style.left = '0';
+      document.body.style.right = '0';
+      document.body.style.width = '100%';
       document.body.classList.add('mobile-menu-open');
-      window.scrollTo({ top: 0 });
     } else {
-      document.body.style.overflow = '';
+      const scrollY = parseInt(document.body.style.top || '0', 10) * -1;
+      document.body.style.position = '';
+      document.body.style.top = '';
+      document.body.style.left = '';
+      document.body.style.right = '';
+      document.body.style.width = '';
       document.body.classList.remove('mobile-menu-open');
+      window.scrollTo({ top: scrollY });
     }
     return () => {
-      document.body.style.overflow = '';
+      const scrollY = parseInt(document.body.style.top || '0', 10) * -1;
+      document.body.style.position = '';
+      document.body.style.top = '';
+      document.body.style.left = '';
+      document.body.style.right = '';
+      document.body.style.width = '';
       document.body.classList.remove('mobile-menu-open');
+      if (scrollY) window.scrollTo({ top: scrollY });
     };
   }, [isMenuOpen]);
 
