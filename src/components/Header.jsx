@@ -1,11 +1,49 @@
 import { useState, useEffect, useRef } from 'react';
+import { useLocation } from 'react-router-dom';
+import { toPath } from '../routes';
+import { SUCURSALES } from '../config/negocio';
+import { useT } from '../context/Preferencias';
 
 const Header = ({ onReservationClick, onNavigate }) => {
+  const { t } = useT();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [openDropdown, setOpenDropdown] = useState(null);
   const [openSubDropdown, setOpenSubDropdown] = useState(null);
   const navRef = useRef(null);
   const hamburgerRef = useRef(null);
+  const { pathname } = useLocation();
+  const [pasadoHero, setPasadoHero] = useState(false);
+  const [oculta, setOculta] = useState(false);
+  const ultimaY = useRef(0);
+
+  // En el inicio el hero ya trae "Reservar mesa"; el botón de la barra aparece al bajar.
+  // La barra se esconde al bajar y vuelve en cuanto subes un poco (con un margen para no parpadear).
+  useEffect(() => {
+    ultimaY.current = window.scrollY;
+    const onScroll = () => {
+      const y = window.scrollY;
+      setPasadoHero(y > window.innerHeight * 0.55);
+      if (document.body.classList.contains('mobile-menu-open') || y < 10) {
+        setOculta(false);
+        ultimaY.current = y;
+        return;
+      }
+      const delta = y - ultimaY.current;
+      if (Math.abs(delta) < 10) return;
+      setOculta(delta > 0);
+      ultimaY.current = y;
+    };
+    onScroll();
+    window.addEventListener('scroll', onScroll, { passive: true });
+    return () => window.removeEventListener('scroll', onScroll);
+  }, []);
+  const ocultarCta = pathname === '/' && !pasadoHero;
+  const barraOculta = oculta && !isMenuOpen;
+
+  // La clase en <html> deja que otras barras fijas (chips del menú) suban a ocupar su lugar
+  useEffect(() => {
+    document.documentElement.classList.toggle('nav-oculta', barraOculta);
+  }, [barraOculta]);
 
   const closeAll = () => {
     setIsMenuOpen(false);
@@ -84,6 +122,7 @@ const Header = ({ onReservationClick, onNavigate }) => {
       document.body.style.width = '';
       document.body.classList.remove('mobile-menu-open');
       window.scrollTo({ top: scrollY });
+      ultimaY.current = scrollY; // regresar a la posición no cuenta como "bajar"
     }
     return () => {
       const scrollY = parseInt(document.body.style.top || '0', 10) * -1;
@@ -98,71 +137,64 @@ const Header = ({ onReservationClick, onNavigate }) => {
   }, [isMenuOpen]);
 
   return (
-    <header>
-      <div className="logo-link" style={{cursor:'pointer'}} onClick={() => { if (onNavigate) onNavigate('home'); }}>
+    <header className={barraOculta ? 'oculta' : ''} onFocus={() => setOculta(false)}>
+      <a className="logo-link" href="/" aria-label={t('nav.logoAria')} onClick={e => handleNavClick(e, 'home')}>
         <img
           src="/img/logos/logo_chilte.png"
-          alt="Chiltepin Plaza Real Logo"
+          alt="Chiltepin Seafood"
           className="logo-img"
         />
-      </div>
+      </a>
       <button
         className="hamburger"
-        aria-label="Menú"
+        aria-label={t('nav.abrirMenu')}
+        aria-expanded={isMenuOpen}
         ref={hamburgerRef}
         onClick={toggleMenu}
       >
         {isMenuOpen ? '\u2715' : '\u2630'}
       </button>
       <nav ref={navRef} className={isMenuOpen ? 'open' : ''}>
-        <a href="#" onClick={e => handleNavClick(e, 'home')}>Inicio</a>
-        <a href="#" onClick={e => handleNavClick(e, 'menu')}>Menú</a>
+        <a href={toPath('home')} onClick={e => handleNavClick(e, 'home')}>{t('nav.inicio')}</a>
+        <a href={toPath('menu')} onClick={e => handleNavClick(e, 'menu')}>{t('nav.menu')}</a>
 
         <div className={`dropdown${openDropdown === 'horarios' ? ' open' : ''}`}>
-          <button className="dropbtn" onClick={e => handleDropbtnClick(e, 'horarioyubicacion', 'horarios')}>Horarios & Ubicación</button>
+          <button className="dropbtn" onClick={e => handleDropbtnClick(e, 'horarioyubicacion', 'horarios')}>{t('nav.sucursales')}</button>
           <div className="dropdown-content">
-            <a href="#" onClick={e => handleNavClick(e, 'horarioyubicacion?sucursal=seafood')}>Chiltepin Plaza Real</a>
-            <a href="#" onClick={e => handleNavClick(e, 'horarioyubicacion?sucursal=450')}>Chiltepin Plaza 450</a>
+            <a href={toPath('horarioyubicacion?sucursal=seafood')} onClick={e => handleNavClick(e, 'horarioyubicacion?sucursal=seafood')}>Chiltepin Plaza Real</a>
+            <a href={toPath('horarioyubicacion?sucursal=450')} onClick={e => handleNavClick(e, 'horarioyubicacion?sucursal=450')}>Chiltepin Plaza 450</a>
           </div>
         </div>
 
         <div className={`dropdown${openDropdown === 'delivery' ? ' open' : ''}`}>
-          <button className="dropbtn" onClick={e => handleDropbtnClick(e, null, 'delivery')}>Delivery</button>
+          <button className="dropbtn" onClick={e => handleDropbtnClick(e, 'delivery', 'delivery')}>{t('nav.domicilio')}</button>
           <div className="dropdown-content">
-            <div className={`sub-dropdown${openSubDropdown === 'real' ? ' open' : ''}`}>
-              <button className="sub-dropbtn" onClick={e => handleSubDropbtnClick(e, 'real')}>Chiltepin Plaza Real</button>
-              <div className="sub-dropdown-content">
-                <a href="https://www.rappi.com.mx/restaurantes/1930107511-chiltepin-seafood" target="_blank" rel="noopener noreferrer">Rappi</a>
-                <a href="https://www.didi-food.com/es-MX/food/store/5764607524473670170/?channel=10&cityId=52100200&lat=24.004475&lng=-104.653983&ddlCode=16Qms8&area=MX&lang=es-MX&appKey=dlp&redirectType=2&params=&pl=eyJwb2lJZCI6IkNoSUpQOERrSndfSW00WVJESzFBN2NEVU5TMCIsImFkZHJlc3NBbGxEaXNwbGF5IjoiTWFudWVsIEdhcmPDrWEgT2Jlc28gMzEzLCBDb2wgZGVsIFZhbGxlLCAzNDEzMCBEdXJhbmdvLCBEZ28uLCBNw6l4aWNvIiwiY2l0eSI6IkR1cmFuZ28iLCJjaXR5SWQiOjUyMTAwMjAwLCJjb3VudHJ5Q29kZSI6Ik1YIiwiY291bnRyeUlkIjo1MiwibGF0IjoyNC4wMDcxMTI0LCJsbmciOi0xMDQuNjczMzA3NCwiZGlzcGxheU5hbWUiOiJNYW51ZWwgR2FyY8OtYSBPYmVzbywgMzEzIiwiYWRkcmVzcyI6Ik1hbnVlbCBHYXJjw61hIE9iZXNvIDMxMywgQ29sIGRlbCBWYWxsZSwgMzQxMzAgRHVyYW5nbywgRGdvLiwgTcOpeGljbyIsImFkZHJlc3NBbGwiOiJNYW51ZWwgR2FyY8OtYSBPYmVzbyAzMTMsIENvbCBkZWwgVmFsbGUsIDM0MTMwIER1cmFuZ28sIERnby4sIE3DqXhpY28iLCJjb29yZGluYXRlVHlwZSI6Indnczg0IiwicG9pU3JjVGFnIjoibWFudWFsX3JnZW8iLCJzcmNUYWciOiJyZXZlcnNlZ2VvdG9wIiwic2VhcmNoSWQiOiIwYTkzYjkzNjY5ZWFkZjIyOThiZDhkZGMyMjliMjQwMiIsImRpc3RTdHIiOiIxMG0iLCJwb2lUeXBlIjoicHJlbWlzZTtzdHJlZXRfYWRkcmVzcyIsImNvdW50eUlkIjo1MjEwMDIwMSwiY291bnR5R3JvdXBJZCI6NTIxMDAyMDAwMDAxfQ%3D%3D" target="_blank" rel="noopener noreferrer">DiDi</a>
-              </div>
-            </div>
-            <div className={`sub-dropdown${openSubDropdown === '450' ? ' open' : ''}`}>
-              <button className="sub-dropbtn" onClick={e => handleSubDropbtnClick(e, '450')}>Chiltepin Plaza 450</button>
-              <div className="sub-dropdown-content">
-                <a href="https://www.didi-food.com/es-MX/food/store/5764610193128950278/?channel=10&cityId=52100200&lat=24.054347&lng=-104.643926&ddlCode=DGvdnr&area=MX&lang=es-MX&appKey=dlp&redirectType=2&params=&pl=eyJwb2lJZCI6IkNoSUpQOERrSndfSW00WVJESzFBN2NEVU5TMCIsImFkZHJlc3NBbGxEaXNwbGF5IjoiTWFudWVsIEdhcmPDrWEgT2Jlc28gMzEzLCBDb2wgZGVsIFZhbGxlLCAzNDEzMCBEdXJhbmdvLCBEZ28uLCBNw6l4aWNvIiwiY2l0eSI6IkR1cmFuZ28iLCJjaXR5SWQiOjUyMTAwMjAwLCJjb3VudHJ5Q29kZSI6Ik1YIiwiY291bnRyeUlkIjo1MiwibGF0IjoyNC4wMDcxMTI0LCJsbmciOi0xMDQuNjczMzA3NCwiZGlzcGxheU5hbWUiOiJNYW51ZWwgR2FyY8OtYSBPYmVzbywgMzEzIiwiYWRkcmVzcyI6Ik1hbnVlbCBHYXJjw61hIE9iZXNvIDMxMywgQ29sIGRlbCBWYWxsZSwgMzQxMzAgRHVyYW5nbywgRGdvLiwgTcOpeGljbyIsImFkZHJlc3NBbGwiOiJNYW51ZWwgR2FyY8OtYSBPYmVzbyAzMTMsIENvbCBkZWwgVmFsbGUsIDM0MTMwIER1cmFuZ28sIERnby4sIE3DqXhpY28iLCJjb29yZGluYXRlVHlwZSI6Indnczg0IiwicG9pU3JjVGFnIjoibWFudWFsX3JnZW8iLCJzcmNUYWciOiJyZXZlcnNlZ2VvdG9wIiwic2VhcmNoSWQiOiIwYTkzYjkzNjY5ZWFkZjIyOThiZDhkZGMyMjliMjQwMiIsImRpc3RTdHIiOiIxMG0iLCJwb2lUeXBlIjoicHJlbWlzZTtzdHJlZXRfYWRkcmVzcyIsImNvdW50eUlkIjo1MjEwMDIwMSwiY291bnR5R3JvdXBJZCI6NTIxMDAyMDAwMDAxfQ%3D%3D" target="_blank" rel="noopener noreferrer">DiDi</a>
-              </div>
-            </div>
+            {SUCURSALES.flatMap(s => s.delivery.map(d => (
+              <a key={`${s.id}-${d.app}`} href={d.url} target="_blank" rel="noopener noreferrer" onClick={closeAll}>
+                {s.nombreCorto} · {d.app}
+              </a>
+            )))}
           </div>
         </div>
 
         <div className={`dropdown${openDropdown === 'eventos' ? ' open' : ''}`}>
-          <button className="dropbtn" onClick={e => handleDropbtnClick(e, 'eventos', 'eventos')}>Eventos</button>
+          <button className="dropbtn" onClick={e => handleDropbtnClick(e, 'eventos', 'eventos')}>{t('nav.eventos')}</button>
           <div className="dropdown-content">
-            <a href="#" onClick={e => handleNavClick(e, 'eventos?tipo=privados')}>Eventos Privados</a>
-            <a href="#" onClick={e => handleNavClick(e, 'eventos?tipo=catering')}>Catering & Banquetes</a>
+            <a href={toPath('eventos?tipo=privados')} onClick={e => handleNavClick(e, 'eventos?tipo=privados')}>{t('nav.eventosPrivados')}</a>
+            <a href={toPath('eventos?tipo=catering')} onClick={e => handleNavClick(e, 'eventos?tipo=catering')}>{t('nav.catering')}</a>
           </div>
         </div>
 
         <div className={`dropdown${openDropdown === 'acerca' ? ' open' : ''}`}>
-          <button className="dropbtn" onClick={e => handleDropbtnClick(e, 'acercade', 'acerca')}>Acerca de</button>
+          <button className="dropbtn" onClick={e => handleDropbtnClick(e, 'acercade', 'acerca')}>{t('nav.acerca')}</button>
           <div className="dropdown-content">
-            <a href="#" onClick={e => handleNavClick(e, 'acercade')}>Nuestra Historia</a>
-            <a href="#" onClick={e => handleNavClick(e, 'contacto')}>Contáctanos</a>
-            <a href="#" onClick={e => handleNavClick(e, 'boletin')}>Boletín</a>
+            <a href={toPath('acercade')} onClick={e => handleNavClick(e, 'acercade')}>{t('nav.historiaMenu')}</a>
+            <a href={toPath('contacto')} onClick={e => handleNavClick(e, 'contacto')}>{t('nav.contactanos')}</a>
+            <a href={toPath('boletin')} onClick={e => handleNavClick(e, 'boletin')}>{t('nav.boletin')}</a>
           </div>
         </div>
 
-        <button className="btn-reservations res-trigger" onClick={() => { setIsMenuOpen(false); if (onReservationClick) onReservationClick(); }}>Reservaciones</button>
+        <button className={`btn-reservations res-trigger${ocultarCta ? ' cta-oculto' : ''}`} onClick={() => { setIsMenuOpen(false); if (onReservationClick) onReservationClick(); }}>{t('nav.reservar')}</button>
       </nav>
     </header>
   );

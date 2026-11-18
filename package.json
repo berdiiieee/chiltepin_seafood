@@ -5,6 +5,8 @@
   "description": "Chiltepin Seafood website with admin panel",
   "scripts": {
     "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview",
     "start": "node server.js"
   },
   "dependencies": {
@@ -12,7 +14,8 @@
     "express": "^4.18.2",
     "multer": "^1.4.5-lts.1",
     "react": "^19.2.7",
-    "react-dom": "^19.2.7"
+    "react-dom": "^19.2.7",
+    "react-router-dom": "^6.30.6"
   },
   "devDependencies": {
     "@vitejs/plugin-react": "^6.0.2",

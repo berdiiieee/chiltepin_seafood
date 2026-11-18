@@ -1,325 +1,205 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useLayoutEffect, useRef } from 'react';
 import MenuItem from '../components/MenuItem';
 import MenuSection from '../components/MenuSection';
+import CabeceraPagina from '../components/CabeceraPagina';
+import BloqueReserva from '../components/BloqueReserva';
+import { useMenu } from '../hooks/useMenu';
+import { useT } from '../context/Preferencias';
+import { traductorMenu } from '../i18n/menu';
 
-const categories = [
-  { id: 'all', label: 'Todo' },
-  { id: 'entradas', label: 'Entradas' },
-  { id: 'aguachile', label: 'Aguachile' },
-  { id: 'coctel', label: 'Cóctel' },
-  { id: 'kids', label: 'Kids' },
-  { id: 'tostadas', label: 'Tostadas' },
-  { id: 'lonuevo', label: 'Lo Nuevo' },
-  { id: 'tacosburros', label: 'Tacos & Burros' },
-  { id: 'bebidas', label: 'Bebidas' },
-  { id: 'promos', label: 'Promociones' },
-];
+// El contenido (secciones, platillos, precios y promos) viene del panel: ver src/hooks/useMenu.js.
+// Aquí solo vive el diseño: iconos por sección y cómo se pinta cada parte.
 
-const foodSections = [
-  {
-    id: 'entradas', title: 'Entradas', delay: '',
-    items: [
-      { name: 'Callo de hacha', price: '$145', desc: 'Laminado bañado de nuestra salsa.' },
-      { name: 'Guacamole', price: '$65', desc: '100 g de guacamole acompañado de chicharrón de cuero y salsa majada.' },
-      { name: 'Shot de ostión', price: '$85', desc: 'Ostión, camarón cocido, callo de almeja acompañado de pepino, cebolla morada, cilantro y leche de tigre.' },
-      { name: 'Shot de camarón', price: '$80', desc: 'Camarón, pepino, cebolla morada, cilantro y leche de tigre.' },
-      { name: 'Shot mix', price: '$90', desc: 'Camarón, ceviche, pulpo, pepino, cebolla morada, cilantro, leche de tigre y carne seca.' },
-    ],
-  },
-  {
-    id: 'aguachile', title: 'Aguachile', delay: '1',
-    items: [
-      { name: 'Aguachile chiltepín', price: '$199', desc: 'Camarón curtido en limón, acompañado de salsa chiltepín.' },
-      { name: 'Aguachile de temporada', price: '$199', desc: 'Camarón curtido en limón, salsa de temporada y piña.' },
-      { name: 'Aguachile mixto', price: '$199', desc: 'Combinación perfecta de la casa.' },
-      { name: 'Aguachile verde', price: '$199', desc: 'Camarón curtido en limón, bañado en salsa de chile serrano - habanero.' },
-      { name: 'Aguachile con atún', price: '$260', desc: 'Camarón cocido, atún fresco. Puede ser cocido o aguachileado.' },
-      { name: 'Aguachile con pulpo', price: '$330', desc: '' },
-    ],
-  },
-  {
-    id: 'coctel', title: 'Cóctel', delay: '2',
-    items: [
-      { name: 'Cóctel de camarón', price: '$130', desc: 'Camarón cocido, aguacate y salsa coctelera.' },
-      { name: 'Cóctel combinado', price: '$180', desc: 'Camarón cocido, camarón aguachile y ceviche de pescado.' },
-      { name: 'Cóctel chiltepín premium', price: '$240', desc: 'Camarón cocido, camarón aguachile, ceviche de pescado, atún fresco y pulpo.' },
-      { name: 'Tostada vaciada', price: '$100', desc: 'Ceviche de pescado, salsa coctelera.' },
-    ],
-  },
-  {
-    id: 'kids', title: 'Kids', delay: '3',
-    items: [
-      { name: 'Mini burger', price: '$94', desc: 'Carne de res y papas a la francesa.' },
-      { name: 'Chicken tenders', price: '$84', desc: 'Pollo frito con papas a la francesa y aderezo.' },
-      { name: 'Papas chiltepín', price: '$114', desc: 'Papas crisscut, carne asada y aguacate.' },
-      { name: 'Postre', price: '$100', desc: '' },
-    ],
-  },
-  {
-    id: 'tostadas', title: 'Tostadas', delay: '',
-    items: [
-      { name: 'Combinada especial', price: '$135', desc: 'Ceviche de pescado, camarón aguachileado y cocido.' },
-      { name: 'Tostada chiltepín premium', price: '$230', desc: 'Ceviche de pescado acompañado de camarón aguachile, camarón cocido, atún y pulpo.' },
-      { name: 'Tostada de aguachile', price: '$145', desc: 'Camarón aguachile en salsa a elegir: verde, temporada o chiltepín.' },
-      { name: 'Tosticeviches', price: '$165', desc: 'Ceviche de pescado, aguacate, leche de tigre. Camarón cocido y aguachile.' },
-      { name: 'Trilogía de camarón', price: '$175', desc: 'Ceviche de camarón cocido, camarón aguachile y camarón seco, bañados en salsa a elegir: verde, temporada o chiltepín.' },
-      { name: 'Sample mini tostadas', price: '$204', desc: '3 tipos de mini tostadas, ceviche, camarón y atún.' },
-      { name: 'Ceviche chiltepín', price: '$75', desc: 'Pescado curtido en limón acompañado de chiltepín, cebolla morada, tomate, pepino, aguacate, bañados en salsa de la casa.' },
-      { name: 'Atún en salsas negras', price: '$184', desc: 'Atún en láminas, pepino, cebolla, aguacate, bañados en leche de tigre y salsas negras.' },
-      { name: 'Chicharrón', price: '$150', desc: 'Ceviche de pescado con camarón, sobre chicharrón de cerdo.' },
-    ],
-  },
-  {
-    id: 'lonuevo', title: 'Lo Nuevo', delay: '1',
-    items: [
-      { name: 'Tacos de asada', price: '$105', desc: '4 tacos de asada con una tostada llena de queso con guacamole y salsa majada.' },
-      { name: 'Dobladita', price: '$70', desc: 'Taco dorado de chicharrón o frijoles con un topping de camarón aguachileado o ceviche de pescado.' },
-      { name: 'Taco harina', price: '$80', desc: 'Camarón zarandeado sobre una cama de frijol con queso en tortilla de harina.' },
-      { name: 'Taco caribe', price: '$70', desc: 'Chile caribe relleno de marlín ahumado.' },
-      { name: 'Sopa marinera', price: '$204', desc: 'Pescado, camarón, papa, zanahoria y apio.' },
-    ],
-  },
-  {
-    id: 'tacosburros', title: 'Tacos, Burros y Más', delay: '2',
-    items: [
-      { name: 'Taco camarón capeado', price: '$45', desc: '' },
-      { name: 'Taco pescado capeado', price: '$45', desc: '' },
-      { name: 'Taco de atún', price: '$84', desc: 'Carnitas de atún, aguacate y cebolla curtida.' },
-      { name: 'Taco güero', price: '$135', desc: 'Carne asada, camarón, queso y chile güero.' },
-      { name: 'Burro norteño', price: '$135', desc: 'Carne asada, camarón capeado y aguacate. 30 cm tortilla.' },
-      { name: 'Volcán marino', price: '$104', desc: 'Carne asada, camarón, queso y aguacate.' },
-      { name: 'Hamburguesa bucanera', price: '$150', desc: 'Carne de res, camarón capeado, queso y tocino.' },
-      { name: 'Pescado empanizado', price: '$204', desc: 'Pescado y arroz.' },
-      { name: 'Ensalada chiltepín', price: '$145', desc: 'Col morada, zanahoria, tomate, pepino, arándanos, aguacate, chicharrón de atún y aderezos.' },
-    ],
-  },
-];
-
-const bebidaSubs = [
-  {
-    title: 'Bebidas sin Alcohol',
-    items: [
-      { name: 'Refresco', price: '$39' },
-      { name: 'Limonada', price: '$45' },
-      { name: 'Agua del día', price: '$35' },
-      { name: 'Clamato Mineral', price: '$95' },
-      { name: 'Botella Agua', price: '$30' },
-      { name: 'Agua Mineral', price: '$40' },
-    ],
-  },
-  {
-    title: 'Coctelería',
-    items: [
-      { name: 'Carajillo', price: '$130', desc: 'Licor 43, café expreso, guarnitura naranja, canela.' },
-      { name: 'Mi Viaje', price: '$130', desc: 'Tequila, jugo de guayaba natural, miel de agave, romero y limón.' },
-      { name: 'Chiltepino', price: '$130', desc: 'Mezcal, endulzante, limón y pepino.' },
-      { name: 'Tritón', price: '$130', desc: 'Ginebra, jugo de piña natural, arándano y un toque de limón.' },
-    ],
-  },
-  {
-    title: 'Cervezas',
-    items: [
-      { name: 'Corona', price: '$43' },
-      { name: 'Victoria', price: '$43' },
-      { name: 'Pacífico', price: '$43' },
-      { name: 'Modelo Negra', price: '$48' },
-      { name: 'Ultra', price: '$45' },
-      { name: 'Michelado', price: '$30' },
-      { name: 'Clamato', price: '$35' },
-      { name: 'Chelado', price: '$25' },
-    ],
-  },
-  {
-    title: 'Licores - Tequila',
-    items: [
-      { name: 'Tradicional', price: '$110' },
-      { name: 'José Cuervo', price: '$110' },
-      { name: 'Don Julio 70', price: '$150' },
-      { name: 'Maestro Dobel', price: '$150' },
-      { name: 'Gran Malo', price: '$110' },
-    ],
-  },
-  {
-    title: 'Licores - Whiskey',
-    items: [
-      { name: 'Red Label', price: '$120' },
-      { name: "Jack Daniel's", price: '$310' },
-      { name: "Buchanan's", price: '$140' },
-      { name: 'Black Label', price: '$140' },
-    ],
-  },
-  {
-    title: 'Licores - Mezcal',
-    items: [
-      { name: 'De la Casa', price: '$60' },
-      { name: 'Apaluz', price: '$110' },
-      { name: 'Boscal', price: '$140' },
-    ],
-  },
-  {
-    title: 'Licores - Vodka',
-    items: [
-      { name: 'Absolut 70', price: '$120' },
-      { name: 'Smirnoff de Tamarindo', price: '$120' },
-    ],
-  },
-  {
-    title: 'Licores - Gin',
-    items: [
-      { name: "Gibson's", price: '$90' },
-      { name: 'Tanqueray', price: '$140' },
-      { name: 'Bombay', price: '$140' },
-      { name: 'Hendricks', price: '$130' },
-    ],
-  },
-  {
-    title: 'Licores - Ron',
-    items: [
-      { name: 'Bacardi', price: '$100' },
-      { name: 'Kraken', price: '$90' },
-      { name: 'Bacardi Solera', price: '$100' },
-      { name: 'Havana', price: '$130' },
-    ],
-  },
-  {
-    title: 'Otros Licores',
-    items: [
-      { name: 'Jager', price: '$110' },
-      { name: 'Licor 43', price: '$110' },
-      { name: 'Aperol', price: '$120' },
-      { name: 'Hipnótic', price: '$130' },
-    ],
-  },
-];
-
-const subHeadingStyle = {
-  fontFamily: 'var(--font-headings)',
-  fontSize: '1.8rem',
-  color: 'var(--accent-color)',
-  textTransform: 'uppercase',
-  letterSpacing: '1px',
-  marginBottom: 30,
+const t = { fill: 'none', stroke: 'currentColor', strokeWidth: 1.6, strokeLinecap: 'round', strokeLinejoin: 'round' };
+const ICONOS = {
+  entradas: <><path d="M4 17h16M5 17a7 7 0 0 1 14 0" {...t} /><path d="M12 8V6M10.5 6h3" {...t} /></>,
+  aguachile: <><path d="M4 14a8 8 0 0 0 16 0z" {...t} /><path d="M12 14V8M8 14l2-5M16 14l-2-5" {...t} /></>,
+  coctel: <><path d="M5 5h14l-7 8zM12 13v6M8.5 19h7" {...t} /><path d="M15 3l-2 4" {...t} /></>,
+  kids: <><circle cx="12" cy="12" r="8" {...t} /><path d="M9 10v.5M15 10v.5M8.5 14c2 2.5 5 2.5 7 0" {...t} /></>,
+  tostadas: <><circle cx="12" cy="12" r="8" {...t} /><path d="M9 10h.01M14 9h.01M15 14h.01M10 15h.01" {...t} strokeWidth="2.4" /></>,
+  lonuevo: <><path d="M12 3l1.8 5.2L19 10l-5.2 1.8L12 17l-1.8-5.2L5 10l5.2-1.8zM19 16l.7 1.8L21.5 18.5l-1.8.7L19 21l-.7-1.8-1.8-.7 1.8-.7z" {...t} /></>,
+  tacosburros: <><path d="M3 16a9 9 0 0 1 18 0z" {...t} /><path d="M8 12c1-1.5 2.5-1.5 3.5 0M13 11c1-1.5 2.5-1.5 3.5 0" {...t} /></>,
+  bebidas: <><path d="M7 4h10l-1 16H8z" {...t} /><path d="M7.5 10h9" {...t} /></>,
+  promos: <><path d="M3 12V4h8l10 10-8 8z" {...t} /><circle cx="7.5" cy="8.5" r="1.2" {...t} /></>,
 };
+// Para secciones nuevas que agregue el panel: un plato sencillo
+const ICONO_GENERICO = <><circle cx="12" cy="12" r="8" {...t} /><circle cx="12" cy="12" r="4.5" {...t} /></>;
+const icono = id => ICONOS[id] || ICONO_GENERICO;
 
-const MenuPage = () => {
-  const [activeCategory, setActiveCategory] = useState('all');
-  const [prices, setPrices] = useState({});
-  const sectionRefs = useRef({});
+const Icono = ({ id, className, size }) => (
+  <svg className={className} viewBox="0 0 24 24" width={size} height={size} aria-hidden="true">{icono(id)}</svg>
+);
 
+const precio = n => (n > 0 ? `$${n}` : '');
+
+const MenuPage = ({ onReservationClick }) => {
+  const { secciones, promos, estado, actualizado } = useMenu();
+  const { t, idioma } = useT();
+  const tr = traductorMenu(idioma);
+  const comida = secciones.filter(s => s.id !== 'bebidas');
+  const bebidas = secciones.find(s => s.id === 'bebidas');
+
+  // Chips en el orden en que se pintan: comida, bebidas, promociones
+  const chips = [
+    ...comida.map(s => ({ id: s.id, label: tr.chip(s) })),
+    ...(bebidas ? [{ id: bebidas.id, label: tr.chip(bebidas) }] : []),
+    ...(promos.length ? [{ id: 'promos', label: t('menu.promosChip') }] : []),
+  ];
+  const ids = chips.map(c => c.id);
+  const idsClave = ids.join('|');
+  const [activeCategory, setActiveCategory] = useState(ids[0]);
+
+  // Línea roja que se desliza de una categoría a otra (en vez de saltar)
+  const barraRef = useRef(null);
+  const [linea, setLinea] = useState(null);
+  useLayoutEffect(() => {
+    const medir = () => {
+      const barra = barraRef.current;
+      const a = barra?.querySelector('.menu-nav a.active');
+      if (!barra || !a) return;
+      const rb = barra.getBoundingClientRect(), ra = a.getBoundingClientRect();
+      setLinea({ x: ra.left - rb.left, y: ra.bottom - rb.top - 2, w: ra.width });
+    };
+    medir();
+    const lista = barraRef.current?.querySelector('.menu-nav');
+    window.addEventListener('resize', medir);
+    lista?.addEventListener('scroll', medir, { passive: true });
+    // Si cambia el tamaño de alguna categoría (llega la tipografía, cambia el idioma), se vuelve a medir
+    const ro = typeof ResizeObserver !== 'undefined' ? new ResizeObserver(medir) : null;
+    lista?.querySelectorAll('a').forEach(a => ro?.observe(a));
+    document.fonts?.addEventListener?.('loadingdone', medir);
+    return () => {
+      window.removeEventListener('resize', medir);
+      lista?.removeEventListener('scroll', medir);
+      ro?.disconnect();
+      document.fonts?.removeEventListener?.('loadingdone', medir);
+    };
+  }, [activeCategory, idsClave, idioma]);
+
+  // Resalta la categoría que se está leyendo: la última sección cuyo borde superior ya pasó
+  // por debajo de la barra fija (header + chips).
   useEffect(() => {
-    fetch('/api/menu')
-      .then(r => r.json())
-      .then(data => {
-        const map = {};
-        data.sections.forEach(s => {
-          s.items.forEach(i => {
-            map[i.name] = i.price;
-          });
-        });
-        setPrices(map);
-      })
-      .catch(() => {});
-  }, []);
-
-  useEffect(() => {
-    const ids = ['entradas','aguachile','coctel','kids','tostadas','lonuevo','tacosburros','bebidas','promos'];
-    const observer = new IntersectionObserver(entries => {
-      const visible = entries
-        .filter(e => e.isIntersecting)
-        .sort((a, b) => a.boundingClientRect.top - b.boundingClientRect.top);
-      if (visible.length > 0) {
-        setActiveCategory(visible[0].target.id);
+    const lista = idsClave.split('|');
+    let pendiente = false;
+    const calcular = () => {
+      pendiente = false;
+      // Borde inferior real de los chips (sube cuando la navbar se esconde)
+      const base = (document.querySelector('.menu-nav-wrapper')?.getBoundingClientRect().bottom || 160) + 48;
+      let actual = lista[0];
+      for (const id of lista) {
+        const el = document.getElementById(id);
+        if (el && el.getBoundingClientRect().top <= base) actual = id;
       }
-    }, {
-      rootMargin: '-80px 0px -60% 0px',
-      threshold: 0,
-    });
-    ids.forEach(id => {
-      const el = document.getElementById(id);
-      if (el) observer.observe(el);
-    });
-    return () => observer.disconnect();
-  }, []);
+      if (window.innerHeight + window.scrollY >= document.documentElement.scrollHeight - 4) actual = lista[lista.length - 1];
+      setActiveCategory(actual);
+    };
+    const onScroll = () => { if (!pendiente) { pendiente = true; requestAnimationFrame(calcular); } };
+    calcular();
+    window.addEventListener('scroll', onScroll, { passive: true });
+    window.addEventListener('resize', onScroll);
+    return () => { window.removeEventListener('scroll', onScroll); window.removeEventListener('resize', onScroll); };
+  }, [idsClave]);
 
-  const handleNavClick = (e, catId) => {
+  const irA = (e, id) => {
     e.preventDefault();
-    document.getElementById(catId)?.scrollIntoView({ behavior: 'smooth', block: 'start' });
-  };
-
-  const p = (hardcoded, dishName) => {
-    if (prices[dishName] !== undefined) return '$' + prices[dishName];
-    return hardcoded;
+    setActiveCategory(id);
+    const el = document.getElementById(id);
+    if (!el) return;
+    // Deja el título de la sección visible debajo de la barra fija. Al bajar, la navbar se esconde
+    // y solo quedan los chips; al subir, vuelve a aparecer encima de ellos.
+    const alto = document.querySelector('.menu-nav-wrapper')?.offsetHeight || 56;
+    const navbar = parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--header-h')) || 100;
+    const destino = el.getBoundingClientRect().top + window.scrollY;
+    const baja = destino - alto - 28 > window.scrollY;
+    window.scrollTo({ top: destino - alto - 28 - (baja ? 0 : navbar), behavior: 'smooth' });
   };
 
   return (
     <>
-      <div className="page-header" style={{ backgroundImage: "linear-gradient(rgba(0,0,0,0.52), rgba(0,0,0,0.52)), url('/img/menu/img_menu.jpg')" }}>
-        <h1 className="page-title">Nuestro Menú</h1>
-      </div>
+      <CabeceraPagina eyebrow={t('menu.eyebrow')} titulo={t('menu.titulo')} intro={t('menu.intro')} />
 
-      <div className="menu-nav-wrapper">
+      <div className={`menu-nav-wrapper${linea ? ' con-linea' : ''}`} ref={barraRef}>
+        {linea && <span className="menu-nav-linea" aria-hidden="true" style={{ width: linea.w, transform: `translate(${linea.x}px, ${linea.y}px)` }} />}
         <ul className="menu-nav">
-          {categories.map(cat => (
+          {chips.map(cat => (
             <li key={cat.id}>
-              <a
-                href="#"
-                className={activeCategory === cat.id ? 'active' : ''}
-                onClick={e => handleNavClick(e, cat.id)}
-              >
-                {cat.label}
+              <a href={`#${cat.id}`} className={activeCategory === cat.id ? 'active' : ''} onClick={e => irA(e, cat.id)}>
+                <Icono id={cat.id} className="menu-nav-ico" size="24" />
+                <span>{cat.label}</span>
               </a>
             </li>
           ))}
         </ul>
       </div>
 
-      <main className="menu-container">
-        {foodSections.map(section => (
-          <MenuSection key={section.id} id={section.id} title={section.title} delay={section.delay}>
+      {/* Aviso de precios: consultando / del panel con fecha / copia guardada (sujetos a cambios) */}
+      <p key={estado} className={`menu-estado menu-estado-${estado}`} role="status">
+        <span className="menu-estado-punto" aria-hidden="true" />
+        {estado === 'ok'
+          ? t('menu.estado.ok', { fecha: new Intl.DateTimeFormat(idioma === 'en' ? 'en-US' : 'es-MX', { day: 'numeric', month: 'long', year: 'numeric' }).format(actualizado) })
+          : t(estado === 'loading' ? 'menu.estado.cargando' : 'menu.estado.respaldo')}
+      </p>
+
+      <main className="menu-container carta">
+        {comida.map(section => (
+          <MenuSection key={section.id} id={section.id} title={tr.seccion(section)} icono={icono(section.id)}>
             {section.items.map(item => (
-              <MenuItem key={item.name} name={item.name} price={p(item.price, item.name)} desc={item.desc} />
+              <MenuItem key={item.id ?? item.nombre} name={item.nombre} price={precio(item.precio)} desc={tr.descripcion(item) || undefined} />
             ))}
           </MenuSection>
         ))}
 
-        <section id="bebidas" className="menu-section reveal reveal-up delay-3">
-          <h2 className="section-heading">Bebidas</h2>
-          {bebidaSubs.map(sub => (
-            <div key={sub.title} style={{ marginBottom: 80 }}>
-              <h3 style={subHeadingStyle}>{sub.title}</h3>
-              <div className="menu-grid">
-                {sub.items.map(item => (
-                  <MenuItem key={item.name} name={item.name} price={p(item.price, item.name)} desc={item.desc} />
-                ))}
-              </div>
+        {bebidas && (
+          <section id="bebidas" className="menu-section">
+            <h2 className="section-heading">
+              <Icono id="bebidas" className="seccion-ico" size="30" />
+              {tr.seccion(bebidas)}
+            </h2>
+            <div className="bebidas-cols">
+              {bebidas.subgrupos.map(sub => (
+                <div key={sub.titulo} className="bebida-sub">
+                  <h3 className="bebida-titulo">{tr.subgrupo(sub)}</h3>
+                  <div className="menu-grid">
+                    {sub.items.map(item => (
+                      <MenuItem key={item.id ?? item.nombre} name={item.nombre} price={precio(item.precio)} desc={tr.descripcion(item) || undefined} />
+                    ))}
+                  </div>
+                </div>
+              ))}
             </div>
-          ))}
-        </section>
+          </section>
+        )}
 
-        <section className="promos-section menu-section" id="promos">
-          <div className="container">
-            <h2 className="section-heading">Promociones de la Semana</h2>
+        {promos.length > 0 && (
+          <section className="promos-section menu-section" id="promos">
+            <h2 className="section-heading">
+              <Icono id="promos" className="seccion-ico" size="30" />
+              {t('menu.promosTitulo')}
+            </h2>
             <div className="promos-grid">
-              <div className="promo-col">
-                <h3 className="promo-loc-title">Plaza Real</h3>
-                <div className="promo-row"><span className="promo-day">Lun</span><span className="promo-desc">Ceviche + agua del día</span><span className="promo-price">$65</span></div>
-                <div className="promo-row"><span className="promo-day">Mar</span><span className="promo-desc">Tacos 3x2</span><span className="promo-price"></span></div>
-                <div className="promo-row"><span className="promo-day">Mié</span><span className="promo-desc">Chicharrón</span><span className="promo-price">$110</span></div>
-                <div className="promo-row"><span className="promo-day">Jue</span><span className="promo-desc">Atún salsas negras</span><span className="promo-price">$160</span></div>
-                <div className="promo-row"><span className="promo-day">Vie</span><span className="promo-desc">Burro norteño</span><span className="promo-price">$110</span></div>
-              </div>
-              <div className="promo-col">
-                <h3 className="promo-loc-title">Plaza 450</h3>
-                <div className="promo-row"><span className="promo-day">Lun</span><span className="promo-desc">Tostada ceviche + agua</span><span className="promo-price">$65</span></div>
-                <div className="promo-row"><span className="promo-day">Mar</span><span className="promo-desc">Tacos capeados 3x2</span><span className="promo-price"></span></div>
-                <div className="promo-row"><span className="promo-day">Mié</span><span className="promo-desc">Chicharrón</span><span className="promo-price">$110</span></div>
-                <div className="promo-row"><span className="promo-day">Jue</span><span className="promo-desc">Hamburguesa bucanera + papas</span><span className="promo-price">$99</span></div>
-                <div className="promo-row"><span className="promo-day">Vie</span><span className="promo-desc">Aguachiles gratis en compra de cubeta de cerveza</span><span className="promo-price"></span></div>
-              </div>
+              {promos.map(col => (
+                <div className="promo-col" key={col.location}>
+                  <h3 className="promo-loc-title">{col.location}</h3>
+                  {col.rows.map(r => (
+                    <div className="promo-row" key={r.day + r.desc}>
+                      <span className="promo-day">{tr.dia(r.day)}</span>
+                      <span className="promo-desc">{tr.promo(r)}</span>
+                      <span className="promo-price">{precio(r.price)}</span>
+                    </div>
+                  ))}
+                </div>
+              ))}
             </div>
-          </div>
-        </section>
+          </section>
+        )}
       </main>
+
+      <BloqueReserva
+        onReservationClick={onReservationClick}
+        titulo={t('menu.antojoTitulo')}
+        texto={t('menu.antojoTexto')}
+        secundario={{ pregunta: t('menu.salirPregunta'), texto: t('menu.salirTexto'), to: '/delivery' }}
+      />
     </>
   );
 };

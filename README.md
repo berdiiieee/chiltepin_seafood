@@ -1,179 +1,174 @@
-# Chiltepin Seafood — Web App
+# Chiltepin Seafood: sitio web
 
-Sitio web del restaurante **Chiltepin Seafood** (2 sucursales en Durango, México).  
-Migrado exitosamente de Vanilla HTML mult-page a una **Single Page Application (SPA)** con React, manteniendo cero cambios visuales respecto al diseño original.
+Sitio del restaurante **Chiltepin Seafood**, mariscos del Pacífico en Durango, con dos sucursales: Plaza Real y Plaza 450.
+Es una SPA en React. El menú, las imágenes administrables y todos los formularios están conectados al backend del
+proyecto (`https://backend-chiltepin.onrender.com`).
+
+- **Idiomas:** español (predeterminado) e inglés.
+- **Temas:** oscuro (predeterminado) y claro "crema".
+- **Versión:** escritorio terminada. La versión móvil funciona, pero su diseño fino es la siguiente fase.
 
 ---
 
-## Stack Tecnológico
-
-### Frontend
+## Stack
 
 | Capa | Tecnología |
 |---|---|
-| Framework | React 18+ |
+| Framework | React 19, JavaScript (sin TypeScript) |
 | Bundler | Vite |
-| Estilos | CSS Vanilla puro — variables, flexbox, grid, animaciones, media queries, sin frameworks |
-| Enrutamiento | Nativo por estado (`currentPage` + `switch`) — sin react-router-dom |
-| Estado | Hooks (`useState`, `useEffect`, `useRef`, `useCallback`) |
-| Fuentes | Google Fonts — Anton (logo), Oswald (headings/nav), Lora (body) |
-| SEO | Open Graph, Twitter Cards, meta tags por página |
-
-### Backend (referencia)
-
-| Capa | Tecnología |
-|---|---|
-| Entorno | Node.js ≥ 18 |
-| Servidor | Express.js 4.x |
-| Autenticación | Cookie simple con contraseña compartida (provisional) |
-| Datos | JSON en filesystem (`data/menu.json`, `data/version.json`) |
-
----
+| Rutas | `react-router-dom` v6 (`BrowserRouter`) |
+| Estilos | CSS plano con variables (`src/css/styles.css` + `src/css/components.css`) |
+| Tipografías | Google Fonts: Anton (títulos), Oswald (navegación), Lora (texto) |
+| Animaciones | CSS + View Transitions API (cambio de página, tema e idioma) |
+| Backend | API externa en Render (ver [`docs/BACKEND.md`](docs/BACKEND.md)) |
+| Hosting | Vercel (`vercel.json`) |
 
 ## Arranque rápido
 
 ```bash
 npm install
-npm run dev
+npm run dev        # http://localhost:5173 (en desarrollo /api se reenvía al backend, sin CORS)
+npm run build      # compila a dist/
+npm run preview    # sirve dist/ para probar la versión de producción
 ```
 
-- Dev server: `http://localhost:5173`
-- Build producción: `npm run build` → `dist/`
+**Variables de entorno** (copiar `.env.example` a `.env`):
+
+| Variable | Para qué |
+|---|---|
+| `VITE_API_URL` | URL del backend, sin `/` al final. Por defecto `https://backend-chiltepin.onrender.com` |
+| `VITE_HERO_DESDE_PANEL` | `true` para que el carrusel del Inicio use las fotos del panel (sección `carrusel`). Por defecto usa las fotos locales |
+
+`npm start` levanta `server.js`, la API Express antigua de referencia. El sitio actual no la usa.
+
+## Despliegue (Vercel)
+
+- **Build:** `npm run build`. **Salida:** `dist/`.
+- `vercel.json` manda todas las rutas a `index.html` (SPA) y define caché larga para `/assets` e imágenes.
+- **Variable en Vercel:** `VITE_API_URL`.
+- **CORS:** el backend debe permitir el dominio del sitio, porque en producción el navegador lo llama directo.
 
 ---
 
-## Hitos Arquitectónicos y UX
+## Páginas
 
-### Refactorización y Componentización
+| Ruta | Página |
+|---|---|
+| `/` | Inicio: hero con carrusel, sucursales, banda de foto, "Del mar a tu mesa", Instagram |
+| `/menu` | Carta completa (viene del panel) con categorías fijas y promociones de la semana |
+| `/horarios` | Sucursales (resumen) |
+| `/horarios/plaza-real`, `/horarios/plaza-450` | Detalle: datos, fotos, mapa y promociones de la sucursal |
+| `/delivery` | A domicilio (Rappi / DiDi Food por sucursal) |
+| `/eventos?tipo=privados` · `/eventos?tipo=catering` | Eventos privados y catering, con formulario de cotización |
+| `/acerca` | Nuestra historia |
+| `/contacto` | Contacto, con formulario |
+| `/boletin` | Suscripción al boletín |
+| `/aviso-de-privacidad` | Aviso de privacidad (LFPDPPP) |
+| `*` | 404 |
 
-- **Header/Footer compartidos** — eliminadas ~100 líneas de HTML duplicado en las 7 páginas originales.
-- **MenuItem, MenuSection, NavArrow** — componentes reutilizables que eliminan cientos de líneas de JSX repetitivo.
-- **Menu data-driven** — los platillos y bebidas se definen como arreglos de datos y se renderizan con `.map()`.
+La reservación de mesa es un panel lateral que se abre desde cualquier página.
 
-### Eliminación de manipulación directa del DOM
-
-- **Custom Hooks**: `useIntersectionObserver` (scroll reveal), `usePreloadImages` (precarga de imágenes).
-- **Estado React** reemplaza `document.getElementById`, `document.querySelectorAll`, `classList.toggle/add/remove`.
-- **Modal y page-loaded** gestionados mediante estado (`useState`) en lugar de manipular clases en `<body>`.
-
-### Menú móvil premium
-
-- Overlay fullscreen con `backdrop-filter: blur(12px)` y fondo `rgba(12,12,12,0.95)`.
-- Scroll lock nativo del navegador al abrir el menú.
-- Acordeón con transiciones `max-height` para submenús y sub-submenús.
-- Touch targets uniformes (`min-height: 52px`) siguiendo la Ley de Fitts.
-
-### Carruseles de imágenes interactivos
-
-- Carrusel hero, tarjetas de sucursales y galería de ubicaciones con **auto-play inteligente** (5000ms).
-- El temporizador se reinicia al hacer clic manual (flechas, dots, cambio de sucursal).
-- Prev/post mediante `setInterval` + `clearInterval` con dependencias en `useEffect`.
-- Sin fugas de memoria: todos los efectos retornan `clearInterval`/`clearTimeout`.
-
----
-
-## Estructura de archivos
+## Estructura
 
 ```
-Proyecto/
-├── index.html                 ← Entry point Vite (solo <div id="root">)
-├── vite.config.js             ← Configuración de Vite + React plugin
-├── package.json
+├── index.html               Punto de entrada (aplica el tema guardado antes de pintar)
+├── vercel.json · vite.config.js · .env.example
+├── docs/BACKEND.md          Contrato con el backend: endpoints, validaciones, campos opcionales
+├── public/img/              Fotos (rutas absolutas /img/...)
 ├── src/
-│   ├── main.jsx               ← Monta React en #root
-│   ├── App.jsx                ← Shell SPA: 7 rutas por estado, modal, page-loaded
-│   ├── css/styles.css         ← CSS global (~1270 líneas, 3 @media max-width:1100px)
-│   ├── components/
-│   │   ├── Header.jsx         ← Navegación + dropdowns + hamburguesa
-│   │   ├── Footer.jsx         ← Grid de footer + enlaces internos/externos
-│   │   ├── NavArrow.jsx       ← Flecha de navegación entre páginas
-│   │   ├── MenuItem.jsx       ← Item individual de menú (nombre, precio, desc)
-│   │   ├── MenuSection.jsx    ← Sección de menú (id, título, grid de items)
-│   │   └── ReservationSidebar.jsx  ← Sidebar de reservas (3 pasos)
-│   ├── hooks/
-│   │   ├── useIntersectionObserver.js  ← Scroll reveal con IntersectionObserver
-│   │   └── usePreloadImages.js         ← Precarga de imágenes vía new Image()
-│   └── pages/
-│       ├── HomePage.jsx       ← Inicio: splash, carrusel hero, contadores, galería
-│       ├── MenuPage.jsx       ← Menú: scroll spy, 9 secciones, precios dinámicos
-│       ├── LocationPage.jsx   ← Horarios/Ubicación: selector sucursal, mapa
-│       ├── AboutPage.jsx      ← Acerca de: historia, servicios, ingrediente estrella
-│       ├── ContactPage.jsx    ← Contacto: formulario, info sucursales
-│       ├── EventsPage.jsx     ← Eventos: tabs (privados/catering), formulario
-│       └── NewsletterPage.jsx ← Boletín: formulario de suscripción
-├── public/
-│   └── img/                   ← Imágenes estáticas (~4.3 MB, rutas absolutas /img/...)
-├── server.js                  ← Express temporal (referencia de API)
-├── data/menu.json             ← Datos del menú (93 precios para migrar a BD)
-├── data/version.json          ← Cache-busting (generado automático)
-└── panel/index.html           ← Admin panel (autónomo, no integrado en SPA)
+│   ├── main.jsx · App.jsx   Montaje, rutas, transición entre páginas, panel de reservas
+│   ├── routes.js            Claves antiguas de página → URLs reales
+│   ├── api/                 client.js (get/post, 60 s, errores tipados) · errores.js (mensajes)
+│   ├── config/              negocio.js (datos del negocio) · api.js (qué se manda al backend)
+│   ├── context/             Preferencias.jsx (tema e idioma + traducción t())
+│   ├── i18n/                es.js · en.js (textos del sitio) · menu-en.js · menu.js (contenido del panel en inglés)
+│   ├── data/                menuRespaldo.js · menuNormalizar.js · bebidasSubgrupos.js · promos.js · instagram.js
+│   ├── hooks/               useMenu · useImagenes · useIntersectionObserver · usePreloadImages
+│   ├── utils/               horario.js (abierto/cerrado, horas) · transicion.js (View Transitions)
+│   ├── components/          Header, Footer, ReservationSidebar, Carousel, Galeria, CabeceraPagina, Campo, …
+│   ├── pages/               Una por ruta
+│   └── css/                 styles.css (base) · components.css (todo lo nuevo, al final)
+├── legacy/                  Sitio HTML anterior (solo referencia; no se edita)
+└── server.js · panel/ · data/   API Express y panel antiguos (solo referencia)
 ```
 
 ---
 
-## API de Referencia
+## Cómo funciona
 
-La API (`server.js`) define los endpoints que el backend definitivo debe implementar:
+### Datos del negocio
+Todo lo que se repite en varias páginas vive en **`src/config/negocio.js`**: horario, sucursales (dirección,
+teléfono, mapa, apps de delivery, fotos), reglas de reservación, correo, redes y datos del aviso de privacidad.
+`WHATSAPP` está vacío: el botón de WhatsApp aparece solo cuando tiene un número.
 
-| Método | Ruta | Auth | Descripción |
-|--------|------|------|-------------|
-| `POST` | `/api/auth` | No | Recibe `{ password }`, devuelve `{ ok: true }` y setea cookie `auth` |
-| `POST` | `/api/logout` | No | Borra la cookie de sesión |
-| `GET` | `/api/menu` | No | Devuelve `data/menu.json` (consumido por MenuPage para precios dinámicos) |
-| `PATCH` | `/api/menu` | Sí | Recibe `{ sections: [...], promos: [...] }`, actualiza solo precios |
-| `GET` | `/api/images` | Sí | Devuelve array de imágenes en `img/` |
-| `POST` | `/api/images/upload` | Sí | Multipart — sobreescribe archivo de imagen |
-| `GET` | `/api/version` | No | Devuelve `{ version: N }` para cache-busting |
+### Menú (desde el panel)
+`src/hooks/useMenu.js` pide `GET /api/menu` una vez por visita. La primera vez se pide al abrir el sitio, lo que
+además "despierta" al backend de Render. Con esa respuesta se pintan secciones, platillos, precios y
+promociones; no hay platillos fijos en la página.
+
+- Si el backend no responde, se muestra la copia guardada (`src/data/menuRespaldo.js`) con el aviso
+  *"Precios y platillos sujetos a cambios; confírmalos en tu sucursal."*
+- Si responde, el aviso dice *"Precios actualizados al …"*.
+- Las secciones nuevas del panel aparecen solas, con un icono genérico.
+- Los subgrupos de Bebidas salen de `src/data/bebidasSubgrupos.js` o del campo `subcategoria`, si el panel lo manda.
+
+### Formularios
+Reservaciones, contacto, eventos/catering y boletín envían a `POST /api/reservas | contacto | catering | boletin`.
+
+- Cada campo tiene los mismos límites que el backend.
+- Los errores se muestran según su tipo: datos, duplicado, límite de intentos, servidor o red.
+- Si un envío tarda más de 5 s, aparece un aviso de que el servidor está despertando.
+- Formatos exactos y reglas: [`docs/BACKEND.md`](docs/BACKEND.md).
+
+### Idioma y tema
+Los controles están en la línea legal del pie: **ES · EN** y el sol/luna. Se guardan en el navegador
+(`localStorage`).
+
+- **Textos:** todo el texto visible sale de `src/i18n/es.js` y `src/i18n/en.js`, con las mismas claves.
+  En los componentes se usan con `const { t } = useT(); t('menu.titulo')`.
+  **Para agregar o cambiar un texto, edítalo en los dos archivos.** Las partes entre `**` salen en negritas.
+- **Contenido del panel en inglés:** se toma el campo `*_en` del panel si existe; si no, `src/i18n/menu-en.js`; si no, se queda en español.
+  Los nombres de los platillos no se traducen.
+- **Valores fijos en español:** los que valida el backend se envían siempre en español
+  (`tipoMensaje`, `tipoEvento`, nombre de la sucursal).
+- **Aviso de privacidad:** el texto legal se queda en español. En inglés solo se muestra una nota.
+- **Modo claro:** los grises son variables con nombre de su valor oscuro (`--g-333`, `--g-cfcfcf`…), definidas en
+  `styles.css` y redefinidas en `:root[data-tema="claro"]` al final de `components.css`. En estilos nuevos usa esas
+  variables en lugar de colores fijos. El blanco fijo (`#fff`) solo va sobre rojo o sobre fotos.
+
+### Imágenes administrables
+`useImagenes(seccion, respaldo)` combina las fotos subidas al panel (`GET /api/imagenes?seccion=`) con las fotos
+locales. Lo usan las fotos de cada sucursal.
+
+### Movimiento
+Hay una sola curva de animación para todo el sitio (`--curva`). Animaciones que existen hoy:
+
+- **Cambio de página:** View Transition, en `App.jsx#irA`.
+- **Cambio de tema:** un círculo que crece desde el botón del pie.
+- **Cambio de idioma:** fundido cruzado.
+- **Barra de arriba:** se esconde al bajar y vuelve al subir.
+- **Menú:** la línea de las categorías se desliza de una a otra.
+- **Carruseles:** responden a teclado, swipe, trackpad horizontal y arrastre con mouse.
+
+Todo respeta *"reducir movimiento"* del sistema.
 
 ---
 
-## Modelo de datos (`data/menu.json`)
+## Pendientes conocidos
 
-```json
-{
-  "sections": [
-    {
-      "name": "Entradas",
-      "items": [
-        { "name": "Callo de hacha", "price": 145 }
-      ]
-    }
-  ],
-  "promos": [
-    { "location": "Plaza Real", "day": "Lun", "desc": "Ceviche + agua", "price": 65 }
-  ]
-}
-```
+- **Datos del dueño:** número de WhatsApp, responsable legal y fecha final del aviso de privacidad, logos de
+  Rappi/DiDi, fotos en alta resolución (las actuales son de baja resolución) y confirmar cifras ("200+ clientes por día").
+- **Versión móvil:** diseño fino (fase aparte).
+- **Backend:** CORS para el dominio final, validar en el servidor las reglas de reservación (lunes a viernes,
+  horario) y aceptar `idioma` en los formularios (ver `docs/BACKEND.md`).
 
-93 precios en total (86 platillos + 7 promos). `price: null` = sin precio fijo.
-
----
-
-## Próximos pasos para el Backend
-
-1. **API REST Pura:** El backend debe actuar únicamente como proveedor de datos JSON (sin motores de templates — React ya renderiza).
-2. **Base de Datos:** Migrar `data/menu.json` a PostgreSQL, MongoDB o SQLite para alimentar los componentes de React de forma dinámica.
-3. **Endpoints de Formularios:** Crear endpoints POST reales para procesar solicitudes de Contacto, Eventos, Boletín y Reservaciones (actualmente simulados en el frontend).
-4. **Autenticación:** Implementar JWT (JSON Web Tokens) para proteger el panel de administración, reemplazando las cookies simples.
-5. **CDN:** Servir assets estáticos e imágenes subidas a través de S3 o Cloudinary.
-
----
-
-## Notas técnicas
-
-- **display: contents** en `#root` — evita que el wrapper de React altere la jerarquía visual del CSS original.
-- **Precios dinámicos** — `MenuPage.jsx` hace `fetch('/api/menu')` y sobreescribe los precios hardcodeados con los de la API.
-- **Cache-busting** — los componentes de React usan rutas absolutas `/img/...`; el servidor provee `GET /api/version` para forzar refresco de imágenes.
-- **3 breakpoints responsive** — `@media (max-width: 1100px)` para móvil, manteniendo la estructura original intacta.
-
----
-
-## Changelog
+## Historial
 
 | Versión | Cambios |
 |---|---|
-| **v4.0** | Migración a React SPA (Vite + React 18). Componentización (Header, Footer, MenuItem, MenuSection, NavArrow). Custom Hooks (useIntersectionObserver, usePreloadImages). Menú móvil premium con backdrop-filter y scroll lock. Carruseles con auto-play inteligente. Eliminación completa de manipulación directa del DOM. |
-| **v3.1** | Menú hamburguesa, responsive móvil (breakpoints 900px/480px), swipe táctil en carruseles, dropdowns touch, `prefers-reduced-motion` |
-| **v3.0** | Panel admin oculto (`/panel`), API REST (Express), `data/menu.json` con 93 precios editables, SEO (Open Graph + Twitter Cards), optimización imágenes |
-| **v2.0** | Sitio web completo — 7 páginas estáticas |
-| **v1.0** | Commit inicial — Chiltepin Plaza Real |
+| **v5.0** | Rediseño completo de escritorio. Rutas reales (`react-router-dom`). Menú 100 % desde el panel, con respaldo y aviso de precios. Formularios conectados al backend con validaciones iguales a las del servidor. Inglés y modo claro. Transiciones entre páginas, tema e idioma. Barra que se esconde al bajar. Carruseles con trackpad y arrastre. |
+| **v4.0** | Migración a React SPA (Vite). Componentes y hooks; sin manipulación directa del DOM. |
+| **v3.1** | Menú hamburguesa, responsive móvil, swipe en carruseles, `prefers-reduced-motion`. |
+| **v3.0** | Panel admin (`/panel`), API REST Express, `data/menu.json` editable, SEO. |
+| **v2.0** | Sitio completo: 7 páginas estáticas. |
+| **v1.0** | Commit inicial: Chiltepin Plaza Real. |

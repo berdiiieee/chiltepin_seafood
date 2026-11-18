@@ -8,7 +8,24 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Anton&family=Lora:ital,wght@0,400;0,600;1,400&family=Oswald:wght@400;600&display=swap" rel="stylesheet">
-  <title>Chiltepin Seafood</title>
+  <meta name="description" content="Chiltepin Seafood — Mariscos del Pacífico en Durango. Consulta el menú, reserva tu mesa y visita Plaza Real o Plaza 450.">
+  <meta name="theme-color" content="#1a1a1a">
+  <meta property="og:title" content="Chiltepin Seafood — Mariscos del Pacífico en Durango">
+  <meta property="og:description" content="Aguachiles, ceviches y cocina del mar. Menú, reservaciones y sucursales.">
+  <meta property="og:image" content="/img/logos/logo_chilte.png">
+  <meta property="og:type" content="website">
+  <title>Chiltepin Seafood — Mariscos del Pacífico en Durango</title>
+  <script>
+    /* Aplica el modo claro antes de pintar (sin destello oscuro al recargar). Ver src/context/Preferencias.jsx */
+    try {
+      if (localStorage.getItem('chiltepin-tema') === 'claro') {
+        document.documentElement.dataset.tema = 'claro';
+        document.querySelector('meta[name="theme-color"]').setAttribute('content', '#f6f1e8');
+      }
+      var idioma = localStorage.getItem('chiltepin-idioma');
+      if (idioma === 'en') document.documentElement.lang = 'en';
+    } catch (e) { /* sin almacenamiento */ }
+  </script>
 </head>
 <body>
   <div id="root"></div>

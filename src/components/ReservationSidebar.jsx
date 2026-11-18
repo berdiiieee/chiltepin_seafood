@@ -1,271 +1,322 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef, useMemo } from 'react';
+import { post } from '../api/client';
+import { mensajeError } from '../api/errores';
+import { conIdioma } from '../config/api';
+import Campo from './Campo';
+import AvisoFormulario from './AvisoFormulario';
+import AvisoEspera from './AvisoEspera';
+import { SUCURSALES, RESERVACIONES, TELEFONO, TELEFONO_LINK, CORREO_CONTACTO, buscarSucursal } from '../config/negocio';
+import { ahoraEnDurango, aMinutos, formatoHora, formatoFechaLarga, horasDeReservacion, hoyLocal } from '../utils/horario';
+import { useT } from '../context/Preferencias';
+
+const PERSONAS = [1, 2, 3, 4, 5, 6];
 
 const ReservationSidebar = ({ isOpen, onClose, initialData }) => {
   const [step, setStep] = useState(1);
-  const [selectedLocation, setSelectedLocation] = useState('');
-  const [selectedGuests, setSelectedGuests] = useState('');
-  const [selectedDate, setSelectedDate] = useState('');
-  const [selectedTime, setSelectedTime] = useState('');
-  const [formName, setFormName] = useState('');
-  const [formPhone, setFormPhone] = useState('');
-  const [formEmail, setFormEmail] = useState('');
+  const [sucursal, setSucursal] = useState('');
+  const [personas, setPersonas] = useState('');
+  const [fecha, setFecha] = useState('');
+  const [hora, setHora] = useState('');
+  const [nombre, setNombre] = useState('');
+  const [telefono, setTelefono] = useState('');
+  const [email, setEmail] = useState('');
   const [errors, setErrors] = useState({});
+  const [enviando, setEnviando] = useState(false);
+  const [errorEnvio, setErrorEnvio] = useState('');
+  const panelRef = useRef(null);
+  const focoPrevio = useRef(null);
+  const { t, idioma } = useT();
 
+  const grupoGrande = personas === '7+';
+  const horas = useMemo(() => horasDeReservacion(), []);
+  const ahora = ahoraEnDurango();
+
+  // Al abrir: precarga sucursal, guarda el foco previo y lo devuelve al cerrar
   useEffect(() => {
-    if (isOpen) {
-      if (initialData?.location) {
-        setSelectedLocation(initialData.location);
-      }
-    }
-  }, [isOpen]);
-
-  const isLargeGroup = selectedGuests === '7+ Personas';
-
-  useEffect(() => {
-    if (isOpen) {
-      document.body.style.overflow = 'hidden';
-    } else {
+    if (!isOpen) return;
+    if (initialData?.location) setSucursal(initialData.location);
+    focoPrevio.current = document.activeElement;
+    document.body.style.overflow = 'hidden';
+    const espera = setTimeout(() => panelRef.current?.querySelector('button, input')?.focus(), 50);
+    return () => {
+      clearTimeout(espera);
       document.body.style.overflow = '';
-    }
-    return () => { document.body.style.overflow = ''; };
+      focoPrevio.current?.focus?.();
+    };
   }, [isOpen]);
 
-  const clearError = (id) => {
-    setErrors(prev => ({ ...prev, [id]: '' }));
-  };
+  // Esc cierra y el Tab queda atrapado dentro del panel
+  useEffect(() => {
+    if (!isOpen) return;
+    const onKey = (e) => {
+      if (e.key === 'Escape') { handleClose(); return; }
+      if (e.key !== 'Tab' || !panelRef.current) return;
+      const focusables = panelRef.current.querySelectorAll('button:not([disabled]), input, select, textarea, a[href]');
+      if (!focusables.length) return;
+      const first = focusables[0];
+      const last = focusables[focusables.length - 1];
+      if (e.shiftKey && document.activeElement === first) { e.preventDefault(); last.focus(); }
+      else if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); first.focus(); }
+    };
+    document.addEventListener('keydown', onKey);
+    return () => document.removeEventListener('keydown', onKey);
+  });
 
-  const showError = (id, msg) => {
-    setErrors(prev => ({ ...prev, [id]: msg }));
-  };
+  // Cerrado: fuera del orden de tabulación y de lectores de pantalla
+  useEffect(() => {
+    const el = panelRef.current;
+    if (!el) return;
+    if (isOpen) el.removeAttribute('inert'); else el.setAttribute('inert', '');
+  }, [isOpen]);
 
-  const validateResDate = (value) => {
-    if (!value) return;
-    const day = new Date(value + 'T12:00:00').getDay();
-    if (day === 0 || day === 6) {
-      showError('error-fecha', 'Solo atendemos reservaciones entre semana. Los fines de semana te esperamos sin reservación.');
-      setSelectedDate('');
-    } else {
-      clearError('error-fecha');
-    }
-  };
+  const setError = (id, msg) => setErrors(prev => ({ ...prev, [id]: msg }));
+  const clearError = (id) => setErrors(prev => ({ ...prev, [id]: '' }));
 
-  const isWeekend = (dateStr) => {
-    if (!dateStr) return false;
-    const day = new Date(dateStr + 'T12:00:00').getDay();
-    return day === 0 || day === 6;
-  };
+  const esDiaValido = (iso) => RESERVACIONES.dias.includes(new Date(iso + 'T12:00:00').getDay());
+  const horaDisponible = (h) => fecha !== ahora.fecha || aMinutos(h) > ahora.minutos;
 
-  const confirmStep1 = () => {
-    setErrors({});
-    if (!selectedDate) {
-      showError('error-fecha', 'Selecciona una fecha');
+  const onFecha = (value) => {
+    setFecha(value);
+    clearError('fecha');
+    if (value && !esDiaValido(value)) {
+      setError('fecha', t('reservas.finDeSemana'));
+      setFecha('');
       return;
     }
-    if (!selectedTime) {
-      showError('error-horario', 'Selecciona un horario');
-      return;
-    }
-    if (isWeekend(selectedDate)) {
-      showError('error-fecha', 'Solo atendemos reservaciones entre semana. Los fines de semana te esperamos sin reservación.');
-      return;
-    }
-    setStep(2);
+    if (value === ahora.fecha && hora && aMinutos(hora) <= ahora.minutos) setHora('');
   };
 
-  const goBackToStep1 = () => {
-    setStep(1);
+  const continuar = () => {
+    const e = {};
+    if (!sucursal) e.sucursal = t('reservas.errSucursal');
+    if (!personas) e.personas = t('reservas.errPersonas');
+    if (!grupoGrande) {
+      if (!fecha) e.fecha = t('reservas.errFecha');
+      if (!hora) e.hora = t('reservas.errHora');
+    }
+    setErrors(e);
+    if (Object.keys(e).length === 0) setStep(2);
   };
 
-  const submitReservation = (e) => {
-    e.preventDefault();
-    setErrors({});
-    let valid = true;
-    if (!formName.trim()) {
-      showError('error-name', 'Ingresa tu nombre completo');
-      valid = false;
+  const enviar = async (ev) => {
+    ev.preventDefault();
+    const digitos = telefono.replace(/\D/g, '');
+    const e = {};
+    // El backend acepta letras (con acentos), espacios y . ' - ; el apóstrofo tipográfico (’, el del iPhone) lo rechaza,
+    // así que se cambia por el simple antes de validar y enviar.
+    const nombreLimpio = nombre.trim().replace(/[’‘]/g, "'").replace(/\s+/g, ' ');
+    if (nombreLimpio.length < 3) e.nombre = t('reservas.errNombre');
+    else if (/[^\p{L}\s.'-]/u.test(nombreLimpio)) e.nombre = t('reservas.errNombreLetras');
+    if (!/^\d{10}$/.test(digitos)) e.telefono = t('reservas.errTelefono');
+    if (email.trim() && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim())) e.email = t('reservas.errCorreo');
+    setErrors(e);
+    if (Object.keys(e).length > 0) return;
+
+    setEnviando(true);
+    setErrorEnvio('');
+    try {
+      await post('/api/reservas', conIdioma({
+        nombre: nombreLimpio,
+        telefono: digitos,
+        email: email.trim() || undefined,
+        fecha,
+        hora,
+        personas: Number(personas),
+        sucursal,
+      }, idioma));
+      setStep(3);
+    } catch (err) {
+      setErrorEnvio(mensajeError(err, t, idioma, { telefono: buscarSucursal(sucursal)?.telefono || TELEFONO }));
+    } finally {
+      setEnviando(false);
     }
-    if (!/^\d{10}$/.test(formPhone)) {
-      showError('error-phone', 'Ingresa un teléfono válido de 10 dígitos');
-      valid = false;
-    }
-    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formEmail)) {
-      showError('error-email', 'Ingresa un correo electrónico válido');
-      valid = false;
-    }
-    if (!valid) return;
-    setStep(3);
   };
 
   const handleClose = () => {
     setStep(1);
-    setSelectedLocation('');
-    setSelectedGuests('');
-    setSelectedDate('');
-    setSelectedTime('');
-    setFormName('');
-    setFormPhone('');
-    setFormEmail('');
+    setSucursal('');
+    setPersonas('');
+    setFecha('');
+    setHora('');
+    setNombre('');
+    setTelefono('');
+    setEmail('');
     setErrors({});
+    setErrorEnvio('');
     if (onClose) onClose();
   };
 
-  if (!isOpen) return null;
+  const elegida = buscarSucursal(sucursal);
+  const nombreCorto = elegida?.nombreCorto || sucursal;
+  // Teléfono de la sucursal elegida; si aún no eligen, los dos con su nombre
+  const telefonos = elegida ? [elegida] : SUCURSALES;
 
   return (
     <>
-      <div className="res-overlay active" id="resOverlay" onClick={handleClose}></div>
-      <aside className="res-sidebar active" id="resSidebar">
+      <div className={`res-overlay${isOpen ? ' active' : ''}`} onClick={handleClose} aria-hidden="true"></div>
+      <aside
+        ref={panelRef}
+        className={`res-sidebar${isOpen ? ' active' : ''}`}
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="res-titulo"
+      >
         <div className="res-header">
-          <h2 className="res-title-bar">Reservaciones</h2>
-          <button className="res-close" id="resClose" onClick={handleClose}>✕</button>
+          <h2 className="res-title-bar" id="res-titulo">{t('reservas.titulo')}</h2>
+          <button className="res-close" onClick={handleClose} aria-label={t('reservas.cerrarAria')}>✕</button>
         </div>
 
         <div className="res-body">
-          <div id="resStep1" className={`res-step${step === 1 ? ' active' : ''}`}>
-            <div className="res-field">
-              <label>Sucursal</label>
-              <div className="res-location-pills" id="resLocation">
-                {['Chiltepin Plaza Real', 'Chiltepin Plaza 450'].map(loc => (
-                  <button
-                    key={loc}
-                    className={`loc-pill${selectedLocation === loc ? ' selected' : ''}`}
-                    data-value={loc}
-                    onClick={() => setSelectedLocation(loc)}
-                  >
-                    {loc === 'Chiltepin Plaza Real' ? 'Plaza Real' : 'Plaza 450'}
-                  </button>
-                ))}
-              </div>
-            </div>
+          {step === 1 && (
+            <div className="res-step active">
+              <p className="res-regla">{t('reservas.regla')}</p>
 
-            <div className="res-field">
-              <label>Huéspedes</label>
-              <div className="guest-pills" id="resGuests">
-                {['1 Persona', '2 Personas', '3 Personas', '4 Personas', '5 Personas', '6 Personas', '7+ Personas'].map(g => (
-                  <button
-                    key={g}
-                    className={`guest-pill${selectedGuests === g ? ' selected' : ''}`}
-                    data-value={g}
-                    onClick={() => setSelectedGuests(g)}
-                  >
-                    {g === '7+ Personas' ? '7+' : g.charAt(0)}
-                  </button>
-                ))}
-              </div>
-            </div>
-
-            <div className="res-field">
-              <label>Fecha</label>
-              <input
-                type="date"
-                id="resDate"
-                value={selectedDate}
-                onChange={e => { setSelectedDate(e.target.value); validateResDate(e.target.value); }}
-              />
-            </div>
-            <span className={`field-error${errors['error-fecha'] ? ' visible' : ''}`} id="error-fecha">
-              {errors['error-fecha'] || ''}
-            </span>
-
-            <div className="res-field">
-              <label>Horario</label>
-              <div className="res-times-pills" id="resTimePills">
-                {['11:30','12:00','12:30','13:00','13:30','14:00','14:30','15:00','15:30','16:00','16:30','17:00','17:30','18:00','18:30','19:00'].map(t => (
-                  <button
-                    key={t}
-                    className={`time-pill${selectedTime === t ? ' selected' : ''}`}
-                    data-value={t}
-                    onClick={() => setSelectedTime(t)}
-                  >
-                    {t}
-                  </button>
-                ))}
-              </div>
-              <span className={`field-error${errors['error-horario'] ? ' visible' : ''}`} id="error-horario">
-                {errors['error-horario'] || ''}
-              </span>
-            </div>
-
-            <button
-              id="btnStep1Confirm"
-              className={`btn-submit-event${isLargeGroup ? ' btn-contact' : ''}`}
-              onClick={confirmStep1}
-              style={{ marginTop: 20 }}
-            >
-              {isLargeGroup ? 'Contáctanos' : 'Confirmar Horario'}
-            </button>
-          </div>
-
-          <div id="resStep2" className={`res-step${step === 2 ? ' active' : ''}`}>
-            <button className="res-back" onClick={goBackToStep1}>❮ Cambiar Hora</button>
-
-            <div className="res-summary">
-              <p id="summaryLoc">{selectedLocation}</p>
-              <span id="summaryDetails">{selectedGuests} • {selectedDate} • {selectedTime}</span>
-            </div>
-
-            {!isLargeGroup ? (
-              <form className="event-form" onSubmit={submitReservation}>
-                <div className="input-group full-width">
-                  <label>Nombre Completo</label>
-                  <input
-                    type="text"
-                    placeholder="Ej. Juan Pérez"
-                    value={formName}
-                    onChange={e => { setFormName(e.target.value); clearError('error-name'); }}
-                  />
-                  <span className={`field-error${errors['error-name'] ? ' visible' : ''}`} id="error-name">
-                    {errors['error-name'] || ''}
-                  </span>
+              <div className="res-field">
+                <label>{t('reservas.sucursal')}</label>
+                <div className="res-location-pills" role="group" aria-label={t('reservas.sucursal')}>
+                  {SUCURSALES.map(s => (
+                    <button
+                      type="button"
+                      key={s.id}
+                      className={`loc-pill${sucursal === s.nombre ? ' selected' : ''}`}
+                      aria-pressed={sucursal === s.nombre}
+                      onClick={() => { setSucursal(s.nombre); clearError('sucursal'); }}
+                    >
+                      {s.nombreCorto}
+                    </button>
+                  ))}
                 </div>
-                <div className="input-group full-width">
-                  <label>Teléfono</label>
-                  <input
-                    type="tel"
-                    placeholder="618..."
-                    value={formPhone}
-                    onChange={e => { setFormPhone(e.target.value); clearError('error-phone'); }}
-                  />
-                  <span className={`field-error${errors['error-phone'] ? ' visible' : ''}`} id="error-phone">
-                    {errors['error-phone'] || ''}
-                  </span>
-                </div>
-                <div className="input-group full-width">
-                  <label>Correo Electrónico</label>
-                  <input
-                    type="email"
-                    placeholder="correo@ejemplo.com"
-                    value={formEmail}
-                    onChange={e => { setFormEmail(e.target.value); clearError('error-email'); }}
-                  />
-                  <span className={`field-error${errors['error-email'] ? ' visible' : ''}`} id="error-email">
-                    {errors['error-email'] || ''}
-                  </span>
-                </div>
-                <div className="full-width">
-                  <button type="submit" className="btn-submit-event" style={{ marginTop: 20 }}>Confirmar Reserva</button>
-                </div>
-              </form>
-            ) : (
-              <div id="resContactInfo" className="res-contact" style={{ display: 'block' }}>
-                <h3>Grandes Grupos</h3>
-                <p>Para reservaciones de 7+ personas,<br />contáctanos directamente:</p>
-                <p className="contact-phone"><a href="tel:6182003865">618.200.3865</a></p>
-                <p className="contact-email">info@chiltepin.com</p>
-                <button className="btn-submit-event" onClick={handleClose} style={{ marginTop: 20 }}>Cerrar</button>
+                <span className={`field-error${errors.sucursal ? ' visible' : ''}`}>{errors.sucursal || ''}</span>
               </div>
-            )}
-          </div>
 
-          <div id="resStep3" className={`res-step${step === 3 ? ' active' : ''}`} style={{ textAlign: 'center', marginTop: 50 }}>
-            <h2 style={{ fontFamily: 'var(--font-logo)', fontSize: '3rem', color: 'var(--accent-color)', marginBottom: 20 }}>
-              ¡Reserva Confirmada!
-            </h2>
-            <p style={{ fontSize: '1.1rem', color: 'var(--text-muted)', marginBottom: 30 }}>
-              Te hemos enviado un correo con los detalles de tu reservación.
-            </p>
-            <button className="btn-submit-event" onClick={handleClose}>Cerrar</button>
-          </div>
+              <div className="res-field">
+                <label>{t('reservas.personas')}</label>
+                <div className="guest-pills" role="group" aria-label={t('reservas.personasAria')}>
+                  {[...PERSONAS.map(String), '7+'].map(g => (
+                    <button
+                      type="button"
+                      key={g}
+                      className={`guest-pill${personas === g ? ' selected' : ''}`}
+                      aria-pressed={personas === g}
+                      aria-label={g === '7+' ? t('reservas.sieteOMas') : `${g} ${g === '1' ? t('reservas.persona1') : t('reservas.personasN')}`}
+                      onClick={() => { setPersonas(g); clearError('personas'); }}
+                    >
+                      {g}
+                    </button>
+                  ))}
+                </div>
+                <span className={`field-error${errors.personas ? ' visible' : ''}`}>{errors.personas || ''}</span>
+              </div>
+
+              {!grupoGrande && (
+                <>
+                  <div className="res-field">
+                    <label htmlFor="resDate">{t('reservas.fecha')}</label>
+                    <input
+                      type="date"
+                      id="resDate"
+                      min={hoyLocal()}
+                      value={fecha}
+                      onChange={e => onFecha(e.target.value)}
+                    />
+                    <span className={`field-error${errors.fecha ? ' visible' : ''}`}>{errors.fecha || ''}</span>
+                  </div>
+
+                  <div className="res-field">
+                    <label>{t('reservas.hora')}</label>
+                    <div className="res-times-pills" role="group" aria-label={t('reservas.hora')}>
+                      {horas.map(h => (
+                        <button
+                          type="button"
+                          key={h}
+                          className={`time-pill${hora === h ? ' selected' : ''}`}
+                          aria-pressed={hora === h}
+                          disabled={!horaDisponible(h)}
+                          onClick={() => { setHora(h); clearError('hora'); }}
+                        >
+                          {formatoHora(h, idioma)}
+                        </button>
+                      ))}
+                    </div>
+                    <span className={`field-error${errors.hora ? ' visible' : ''}`}>{errors.hora || ''}</span>
+                  </div>
+                </>
+              )}
+
+              <button
+                type="button"
+                className={`btn-submit-event${grupoGrande ? ' btn-contact' : ''}`}
+                onClick={continuar}
+                style={{ marginTop: 20 }}
+              >
+                {grupoGrande ? t('reservas.verComo') : t('reservas.continuar')}
+              </button>
+            </div>
+          )}
+
+          {step === 2 && (
+            <div className="res-step active">
+              <button type="button" className="res-back" onClick={() => setStep(1)}>{t('reservas.cambiar')}</button>
+
+              {grupoGrande ? (
+                <div className="res-contact" style={{ display: 'block' }}>
+                  <h3>{t('reservas.gruposGrandes')}</h3>
+                  <p>{t('reservas.gruposTexto')}</p>
+                  {telefonos.map(s => (
+                    <p key={s.id} className="contact-phone">
+                      {telefonos.length > 1 && <span className="contact-phone-suc">{s.nombreCorto} </span>}
+                      <a href={s.telefonoLink}>{s.telefono}</a>
+                    </p>
+                  ))}
+                  <p className="contact-email"><a href={`mailto:${CORREO_CONTACTO}`}>{CORREO_CONTACTO}</a></p>
+                  <button type="button" className="btn-submit-event" onClick={handleClose} style={{ marginTop: 20 }}>{t('comun.cerrar')}</button>
+                </div>
+              ) : (
+                <>
+                  <div className="res-summary">
+                    <p>{nombreCorto}</p>
+                    <span>{personas} {personas === '1' ? t('reservas.persona1') : t('reservas.personasN')} • {formatoFechaLarga(fecha, idioma)} • {formatoHora(hora, idioma)}</span>
+                  </div>
+
+                  <form className="event-form" onSubmit={enviar} noValidate>
+                    <Campo id="res-nombre" label={t('formularios.nombreCompleto')} completo error={errors.nombre}>
+                      <input type="text" maxLength={100} autoComplete="name" placeholder={t('reservas.placeholderNombre')} value={nombre}
+                        onChange={e => { setNombre(e.target.value); clearError('nombre'); }} />
+                    </Campo>
+                    <Campo id="res-tel" label={t('formularios.telefono')} completo error={errors.telefono}>
+                      <input type="tel" inputMode="numeric" maxLength={20} autoComplete="tel" placeholder="618 123 4567" value={telefono}
+                        onChange={e => { setTelefono(e.target.value); clearError('telefono'); }} />
+                    </Campo>
+                    <Campo id="res-email" label={t('formularios.correo')} opcional completo error={errors.email}>
+                      <input type="email" maxLength={255} autoComplete="email" placeholder={t('reservas.placeholderCorreo')} value={email}
+                        onChange={e => { setEmail(e.target.value); clearError('email'); }} />
+                    </Campo>
+
+                    <div className="full-width">
+                      <AvisoFormulario datos={t('reservas.avisoDatos')} finalidad={t('reservas.avisoFinalidad')} />
+                      {errorEnvio && <p className="form-error-envio" role="alert">{errorEnvio}</p>}
+                      <AvisoEspera activo={enviando} />
+                      <button type="submit" className="btn-submit-event" disabled={enviando} style={{ marginTop: 12 }}>
+                        {enviando ? t('formularios.enviando') : t('reservas.confirmar')}
+                      </button>
+                    </div>
+                  </form>
+                </>
+              )}
+            </div>
+          )}
+
+          {step === 3 && (
+            <div className="res-step active res-exito">
+              <h2>{t('reservas.exito')}</h2>
+              <p>
+                {nombreCorto} · {formatoFechaLarga(fecha, idioma)} · {formatoHora(hora, idioma)}
+                <br />
+                {t('reservas.cambiarAlgo')} <a href={elegida?.telefonoLink || TELEFONO_LINK}>{elegida?.telefono || TELEFONO}</a>.
+              </p>
+              <button type="button" className="btn-submit-event" onClick={handleClose}>{t('comun.cerrar')}</button>
+            </div>
+          )}
         </div>
       </aside>
     </>
