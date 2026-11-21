@@ -75,7 +75,8 @@ async function calcular(c) {
   });
   if (!lineas.length && !motivos.length) motivos.push('Tu pedido está vacío.');
   const subtotal = lineas.reduce((s, l) => s + l.importe, 0);
-  const pr = c.propina || { tipo: 'porcentaje', valor: 0 };
+  // Propina solo a domicilio (BACKEND.md §7.3): para recoger se ignora aunque llegue
+  const pr = (c.tipo === 'domicilio' && c.propina) || { tipo: 'porcentaje', valor: 0 };
   const propina = pr.tipo === 'monto' ? Math.min(Math.max(0, Math.round(Number(pr.valor) || 0)), subtotal) : Math.round(subtotal * (CONFIG.propinas.includes(Number(pr.valor)) ? Number(pr.valor) : 0) / 100);
   return { sucursal, distanciaKm, lineas, subtotal, envio, propina, total: subtotal + envio + propina, motivos };
 }

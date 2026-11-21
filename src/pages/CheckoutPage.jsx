@@ -55,38 +55,58 @@ export default function CheckoutPage() {
   const [propina, setPropina] = useState({ tipo: 'porcentaje', valor: 0 });
   const [terminos, setTerminos] = useState(false);
   const [errores, setErrores] = useState({});
+  // Cada cotización (o su error) guarda la `clave` de lo que se cotizó: solo vale si coincide con lo que hay ahora
   const [cot, setCot] = useState(null);
+  const [falloCot, setFalloCot] = useState(null);
+  const [reintentoCot, setReintentoCot] = useState(0);
   const [cotizando, setCotizando] = useState(false);
   const [enviando, setEnviando] = useState(false);
   const [errorEnvio, setErrorEnvio] = useState('');
   const [turnstile, setTurnstile] = useState('');
   const intento = useRef(nuevoIdIntento());
+  // Identidad de la dirección elegida (cambia con cada búsqueda, texto nuevo o "Usar mi ubicación"; no al afinar el pin)
+  const lugarPrevio = useRef(c.entrega?.lugar ?? 0);
 
   // Al cambiar la entrega (otra sucursal), el carrito ajusta las promos que aplican
   const alCambiarEntrega = e => {
     setEntrega(e);
     if (e && (e.tipo !== c.entrega?.tipo || e.sucursal !== c.entrega?.sucursal || e.ubicacion !== c.entrega?.ubicacion)) c.iniciar(e);
-    if (e?.calle || e?.colonia) setDir(d => ({ ...d, calle: d.calle || e.calle || '', colonia: d.colonia || e.colonia || '' }));
+    if (e?.tipo !== 'domicilio') return;
+    if ((e.lugar ?? 0) !== lugarPrevio.current) {
+      // Dirección nueva: calle y colonia salen de ella y se borra lo que era de la anterior,
+      // para que lo escrito y el pin del mapa sean siempre la misma dirección.
+      lugarPrevio.current = e.lugar ?? 0;
+      setDir({ calle: e.calle || e.direccionTexto || '', interior: '', colonia: e.colonia || '', referencias: '' });
+      setErrores(x => ({ ...x, calle: '', colonia: '' }));
+    } else if (e.calle || e.colonia) {
+      setDir(d => ({ ...d, calle: d.calle || e.calle || '', colonia: d.colonia || e.colonia || '' }));
+    }
   };
 
   const items = c.lineas.map(l => (l.tipo === 'promo'
     ? { promoId: l.id, cantidad: l.cantidad, ...(l.nota ? { nota: l.nota } : {}) }
     : { id: l.id, cantidad: l.cantidad, ...(l.nota ? { nota: l.nota } : {}) }));
-  const claveCot = JSON.stringify({ e: entrega && [entrega.tipo, entrega.sucursal, entrega.ubicacion], items, propina });
+  // Propina solo a domicilio (BACKEND.md §7.3). La elección se conserva por si vuelve a domicilio, pero no se manda.
+  const propinaEnvio = entrega?.tipo === 'domicilio' ? propina : null;
+  const claveCot = JSON.stringify({ e: entrega && [entrega.tipo, entrega.sucursal, entrega.ubicacion], items, propina: propinaEnvio });
 
   // Cotización oficial del backend (con una pausa corta para no pedirla en cada tecla)
   useEffect(() => {
-    if (!entrega || !items.length) { setCot(null); return; }
+    if (!entrega || !items.length) { setCotizando(false); return; }
     let vivo = true;
+    const clave = claveCot;
     setCotizando(true);
     const id = setTimeout(() => {
-      cotizarPedido({ tipo: entrega.tipo, sucursal: entrega.sucursal, ...(entrega.ubicacion ? { ubicacion: entrega.ubicacion } : {}), items, propina })
-        .then(r => vivo && setCot(r))
-        .catch(() => vivo && setCot(null))
+      cotizarPedido({
+        tipo: entrega.tipo, sucursal: entrega.sucursal, ...(entrega.ubicacion ? { ubicacion: entrega.ubicacion } : {}),
+        items, ...(propinaEnvio ? { propina: propinaEnvio } : {}),
+      })
+        .then(r => { if (vivo) { setCot({ ...r, clave }); setFalloCot(null); } })
+        .catch(err => { if (vivo) setFalloCot({ clave, err }); })
         .finally(() => vivo && setCotizando(false));
     }, 400);
     return () => { vivo = false; clearTimeout(id); };
-  }, [claveCot]); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [claveCot, reintentoCot]); // eslint-disable-line react-hooks/exhaustive-deps
 
   // Un intento nuevo (Idempotency-Key) cada vez que cambia lo que se va a mandar
   useEffect(() => { intento.current = nuevoIdIntento(); }, [claveCot, metodo, cuando, hora]);
@@ -94,7 +114,11 @@ export default function CheckoutPage() {
   const ventana = config && entrega ? ventanaPara(config, entrega.sucursal) : null;
   const metodos = config?.metodos || [];
   const propinas = config?.propinas || [0, 10, 15];
-  const total = cot?.total ?? null;
+  // Solo vale la cotización de lo que hay en pantalla AHORA: mientras se recalcula no hay total ni se puede confirmar
+  const cotVigente = cot && cot.clave === claveCot ? cot : null;
+  const falloVigente = !cotizando && falloCot && falloCot.clave === claveCot ? falloCot.err : null;
+  const total = cotVigente?.total ?? null;
+  const telSucursal = SUCURSALES.find(s => s.id === entrega?.sucursal)?.telefono || TELEFONO;
 
   if (!c.activo) return null;
 
@@ -134,7 +158,7 @@ export default function CheckoutPage() {
 
   const enviar = async ev => {
     ev.preventDefault();
-    if (enviando) return;
+    if (enviando || !cotVigente) return;
     const e = validar();
     setErrores(e);
     setErrorEnvio('');
@@ -159,7 +183,7 @@ export default function CheckoutPage() {
         },
       } : {}),
       items,
-      propina,
+      ...(propinaEnvio ? { propina: propinaEnvio } : {}),
       metodoPago: metodo,
       ...(metodo === 'efectivo' && pagaCon ? { pagaCon: Number(pagaCon) } : {}),
       factura,
@@ -174,14 +198,16 @@ export default function CheckoutPage() {
       if (pago && !pago.startsWith('/')) { window.location.assign(pago); return; }
       navigate(pago || `/delivery/seguimiento/${r.token}`);
     } catch (err) {
-      const suc = SUCURSALES.find(s => s.id === entrega.sucursal);
-      setErrorEnvio(mensajeError(err, t, idioma, { telefono: suc?.telefono || TELEFONO }));
+      setErrorEnvio(mensajeError(err, t, idioma, { telefono: telSucursal }));
       setEnviando(false);
     }
   };
 
-  const etiquetaBoton = total == null ? t('pedido.cotizando') : t(metodo === 'tarjeta' ? 'pedido.pagar' : 'pedido.confirmar', { total: dinero(total, idioma) });
-  const noDisponible = cot && cot.disponible === false;
+  const etiquetaBoton = !entrega ? t('pedido.faltaEntrega')
+    : falloVigente ? t('pedido.sinTotal')
+    : total == null ? t('pedido.cotizando')
+    : t(metodo === 'tarjeta' ? 'pedido.pagar' : 'pedido.confirmar', { total: dinero(total, idioma) });
+  const noDisponible = cotVigente?.disponible === false;
 
   return (
     <main className="container">
@@ -324,12 +350,19 @@ export default function CheckoutPage() {
               <div className="checkout-error" role="alert">
                 <strong>{t('pedido.errorTitulo')}</strong>
                 {errorEnvio && <p>{errorEnvio}</p>}
-                {!errorEnvio && cot.motivos.map(m => <p key={m}>{m}</p>)}
+                {!errorEnvio && cotVigente.motivos.map(m => <p key={m}>{m}</p>)}
+              </div>
+            )}
+            {falloVigente && !errorEnvio && (
+              <div className="checkout-error" role="alert">
+                <strong>{t('pedido.errorCotTitulo')}</strong>
+                <p>{mensajeError(falloVigente, t, idioma, { telefono: telSucursal })}</p>
+                <button type="button" className="ev-enlace" onClick={() => setReintentoCot(n => n + 1)}>{t('pedido.reintentar')}</button>
               </div>
             )}
             <AvisoEspera activo={enviando} />
             <div className="form-abierto-acciones">
-              <button type="submit" className="btn-principal" disabled={enviando || estado !== 'abierto' || total == null || noDisponible}>
+              <button type="submit" className="btn-principal" disabled={enviando || estado !== 'abierto' || !cotVigente || noDisponible}>
                 {enviando ? t('pedido.enviando') : etiquetaBoton}
               </button>
               <Link className="ev-enlace" to="/menu">{t('pedido.volverCarta')}</Link>
@@ -353,10 +386,10 @@ export default function CheckoutPage() {
               ))}
             </ul>
             <dl className="pedido-totales" aria-live="polite" aria-busy={cotizando}>
-              <div><dt>{t('pedido.subtotal')}</dt><dd>{dinero(cot?.subtotal ?? c.subtotal, idioma)}</dd></div>
-              {entrega?.tipo === 'domicilio' && <div><dt>{t('pedido.envio')}</dt><dd>{dinero(cot?.envio ?? entrega.envio, idioma)}</dd></div>}
-              {cot?.propina > 0 && <div><dt>{t('pedido.propina')}</dt><dd>{dinero(cot.propina, idioma)}</dd></div>}
-              <div className="pedido-total"><dt>{t('pedido.total')}</dt><dd>{total != null ? dinero(total, idioma) : t('pedido.cotizando')}</dd></div>
+              <div><dt>{t('pedido.subtotal')}</dt><dd>{dinero(cotVigente?.subtotal ?? c.subtotal, idioma)}</dd></div>
+              {entrega?.tipo === 'domicilio' && <div><dt>{t('pedido.envio')}</dt><dd>{dinero(cotVigente?.envio ?? entrega.envio, idioma)}</dd></div>}
+              {cotVigente?.propina > 0 && <div><dt>{t('pedido.propina')}</dt><dd>{dinero(cotVigente.propina, idioma)}</dd></div>}
+              <div className="pedido-total"><dt>{t('pedido.total')}</dt><dd>{total != null ? dinero(total, idioma) : falloVigente ? t('pedido.sinTotal') : t('pedido.cotizando')}</dd></div>
             </dl>
           </details>
         </aside>
