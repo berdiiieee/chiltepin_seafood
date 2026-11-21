@@ -167,6 +167,7 @@ const es = {
     desdeDonde: '¿Desde dónde?',
     texto: 'Elige la sucursal que te quede más cerca y pide en tu app de siempre. Te llega con el mismo sazón de la casa.',
     fotoAlt: 'Chicharrón de pescado con cebolla morada y cilantro',
+    pronto: 'Muy pronto, nuestro propio envío a domicilio.',
   },
   historia: {
     eyebrow: 'Desde 2022',

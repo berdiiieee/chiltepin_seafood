@@ -45,6 +45,13 @@ const SoloApps = ({ t }) => (
           </li>
         ))}
       </ul>
+      {/* Aviso del servicio propio mientras los pedidos siguen en desarrollo (VITE_PEDIDOS apagado) */}
+      <p className="delivery-pronto">
+        <svg viewBox="0 0 32 32" width="22" height="22" aria-hidden="true">
+          <path d="M21 8c4 2 6 7 3 12-3 5-9 7-16 6 7-1 11-5 12-10 .5-3-.5-5-3-6M21 8c0-2 1-3 3-4" {...trazo} />
+        </svg>
+        {t('domicilio.pronto')}
+      </p>
     </div>
     <div className="delivery-foto reveal reveal-up delay-2">
       <img src="/img/menu/img_menu.jpg" alt={t('domicilio.fotoAlt')} />

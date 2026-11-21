@@ -199,6 +199,7 @@ const en = {
     desdeDonde: 'From where?',
     texto: 'Pick the location closest to you and order on your usual app. It arrives with the same house flavor.',
     fotoAlt: 'Fish chicharrón with red onion and cilantro',
+    pronto: 'Coming soon: our own delivery service.',
   },
   historia: {
     eyebrow: 'Since 2022',
