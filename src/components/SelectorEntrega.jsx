@@ -24,6 +24,9 @@ export default function SelectorEntrega({ config, inicial, onCambio, idBase = 'e
   const [aviso, setAviso] = useState('');
   const [buscando, setBuscando] = useState(false);
   const datosLugar = useRef({ calle: inicial?.calle || '', colonia: inicial?.colonia || '' });
+  // `lugar` cambia cada vez que la dirección es OTRA (texto nuevo, búsqueda o "Usar mi ubicación"), no al afinar el pin.
+  // El checkout lo usa para reemplazar calle y colonia en vez de quedarse con las de la dirección anterior.
+  const [lugar, setLugar] = useState(inicial?.lugar ?? 0);
 
   const sucursalesConfig = config?.sucursales || [];
   const zona = tipo === 'domicilio' && ubicacion ? sucursalParaUbicacion(ubicacion, sucursalesConfig) : null;
@@ -39,10 +42,10 @@ export default function SelectorEntrega({ config, inicial, onCambio, idBase = 'e
     let entrega = null;
     if (tipo === 'recoger' && recoger) entrega = { tipo, sucursal: recoger, envio: 0 };
     if (tipo === 'domicilio' && zona) {
-      entrega = { tipo, sucursal: zona.sucursal, envio: zona.envio, distanciaKm: zona.distanciaKm, ubicacion, direccionTexto: texto, ...datosLugar.current };
+      entrega = { tipo, sucursal: zona.sucursal, envio: zona.envio, distanciaKm: zona.distanciaKm, ubicacion, direccionTexto: texto, lugar, ...datosLugar.current };
     }
     onCambioRef.current(entrega);
-  }, [tipo, recoger, zona?.sucursal, zona?.envio, ubicacion, texto]); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [tipo, recoger, zona?.sucursal, zona?.envio, ubicacion, texto, lugar]); // eslint-disable-line react-hooks/exhaustive-deps
 
   // ---- Mapa (solo con llave de Google) ----
   const mapaEl = useRef(null);
@@ -70,7 +73,9 @@ export default function SelectorEntrega({ config, inicial, onCambio, idBase = 'e
     return () => { vivo = false; };
   }, [tipo]); // eslint-disable-line react-hooks/exhaustive-deps
 
+  // Ubicación de una dirección nueva (búsqueda, sugerencia o GPS). Arrastrar el mapa NO pasa por aquí.
   const irA = (u, zoom = 17) => {
+    setLugar(n => n + 1);
     setUbicacion(u);
     if (mapa.current) { mapa.current.panTo(u); mapa.current.setZoom(zoom); }
   };
@@ -109,7 +114,12 @@ export default function SelectorEntrega({ config, inicial, onCambio, idBase = 'e
     if (!navigator.geolocation) { setAviso(t('pedido.ubicacionError')); return; }
     setBuscando(true);
     navigator.geolocation.getCurrentPosition(
-      p => { setBuscando(false); setAviso(''); irA({ lat: p.coords.latitude, lng: p.coords.longitude }); },
+      // El texto escrito antes ya no describe este punto: se borra para que pidan calle y colonia de aquí
+      p => {
+        setBuscando(false); setAviso('');
+        setTexto(''); setLista([]); datosLugar.current = { calle: '', colonia: '' };
+        irA({ lat: p.coords.latitude, lng: p.coords.longitude });
+      },
       () => { setBuscando(false); setAviso(t('pedido.ubicacionError')); },
       { enableHighAccuracy: true, timeout: 10000, maximumAge: 60000 },
     );
@@ -139,7 +149,8 @@ export default function SelectorEntrega({ config, inicial, onCambio, idBase = 'e
               <input
                 id={`${idBase}-dir`} type="text" autoComplete="street-address" maxLength={200}
                 placeholder={t('pedido.direccionPh')} value={texto}
-                onChange={e => { setTexto(e.target.value); datosLugar.current = { calle: '', colonia: '' }; }}
+                // Escribir otra dirección invalida el pin anterior: hay que buscarla (o mover el mapa) para seguir
+                onChange={e => { setTexto(e.target.value); datosLugar.current = { calle: '', colonia: '' }; setUbicacion(null); setLugar(n => n + 1); }}
                 onKeyDown={e => { if (e.key === 'Enter') buscarSinGoogle(e); if (e.key === 'Escape') setLista([]); }}
                 aria-autocomplete="list" aria-controls={`${idBase}-sug`} aria-expanded={lista.length > 0}
               />
