@@ -34,6 +34,31 @@ const Footer = ({ onJobClick }) => {
   const wa = whatsappLink();
   const oscuro = tema !== 'claro';
 
+  // Preferencias (idioma y tema): discretas; en escritorio al final de la línea legal, en celular junto al logo
+  const prefs = (
+    <span className="pie-prefs">
+      <span className="pie-idioma" role="group" aria-label={t('pie.idiomaAria')}>
+        <button type="button" lang="es" aria-pressed={idioma === 'es'} onClick={() => setIdioma('es')}>ES</button>
+        <span aria-hidden="true">·</span>
+        <button type="button" lang="en" aria-pressed={idioma === 'en'} onClick={() => setIdioma('en')}>EN</button>
+      </span>
+      <button
+        type="button"
+        className="pie-tema"
+        onClick={e => {
+          // El círculo del cambio de tema nace del centro de este botón
+          const r = e.currentTarget.getBoundingClientRect();
+          setTema(oscuro ? 'claro' : 'oscuro', { x: r.left + r.width / 2, y: r.top + r.height / 2 });
+        }}
+        aria-label={oscuro ? t('pie.modoClaro') : t('pie.modoOscuro')}
+        title={oscuro ? t('pie.modoClaro') : t('pie.modoOscuro')}
+      >
+        {/* key: al cambiar, el icono nuevo entra girando */}
+        <span key={tema} className="pie-tema-icono">{oscuro ? <IconoSol /> : <IconoLuna />}</span>
+      </button>
+    </span>
+  );
+
   return (
     <footer className="pie">
       <div className="pie-fila">
@@ -61,7 +86,7 @@ const Footer = ({ onJobClick }) => {
           </div>
         ))}
 
-        <div className="pie-sucursal">
+        <div className="pie-sucursal pie-horario">
           <p className="pie-titulo">{t('comun.horario')}</p>
           <p>{t('comun.diasServicio')}<br />{t('comun.rangoHoras', { abre: formatoHora(HORARIO.abre, idioma), cierra: formatoHora(HORARIO.cierra, idioma) })}</p>
           <p><a href={`mailto:${CORREO_CONTACTO}`} className="pie-correo">{CORREO_CONTACTO}</a></p>
@@ -77,29 +102,27 @@ const Footer = ({ onJobClick }) => {
           <span>© {new Date().getFullYear()} Chiltepin Seafood</span>
           <a href="#" onClick={e => { e.preventDefault(); onJobClick?.(t('pie.bolsaMensaje')); }}>{t('pie.bolsa')}</a>
           <Link to={AVISO_PRIVACIDAD_RUTA}>{t('pie.privacidad')}</Link>
-          {/* Preferencias: discretas, al final de la línea legal */}
-          <span className="pie-prefs">
-            <span className="pie-idioma" role="group" aria-label={t('pie.idiomaAria')}>
-              <button type="button" lang="es" aria-pressed={idioma === 'es'} onClick={() => setIdioma('es')}>ES</button>
-              <span aria-hidden="true">·</span>
-              <button type="button" lang="en" aria-pressed={idioma === 'en'} onClick={() => setIdioma('en')}>EN</button>
-            </span>
-            <button
-              type="button"
-              className="pie-tema"
-              onClick={e => {
-                // El círculo del cambio de tema nace del centro de este botón
-                const r = e.currentTarget.getBoundingClientRect();
-                setTema(oscuro ? 'claro' : 'oscuro', { x: r.left + r.width / 2, y: r.top + r.height / 2 });
-              }}
-              aria-label={oscuro ? t('pie.modoClaro') : t('pie.modoOscuro')}
-              title={oscuro ? t('pie.modoClaro') : t('pie.modoOscuro')}
-            >
-              {/* key: al cambiar, el icono nuevo entra girando */}
-              <span key={tema} className="pie-tema-icono">{oscuro ? <IconoSol /> : <IconoLuna />}</span>
-            </button>
-          </span>
+          {prefs}
         </span>
+      </div>
+
+      {/* Celular: una sola pieza de dos renglones (logo | idioma y tema; redes, legal y ©).
+          Los teléfonos ya están en el menú y en cada sucursal. */}
+      <div className="pie-movil">
+        <div className="pie-movil-fila">
+          <Link to="/" aria-label={t('pie.inicioAria')}>
+            <img src="/img/logos/logo_chilte.png" alt="Chiltepin Seafood" className="pie-logo" />
+          </Link>
+          {prefs}
+        </div>
+        <p className="pie-movil-enlaces">
+          <a href={INSTAGRAM.url} target="_blank" rel="noopener noreferrer">Instagram</a>
+          <a href={FACEBOOK.url} target="_blank" rel="noopener noreferrer">Facebook</a>
+          {wa && <a href={wa} target="_blank" rel="noopener noreferrer">WhatsApp</a>}
+          <Link to={AVISO_PRIVACIDAD_RUTA}>{t('pie.privacidad')}</Link>
+          <a href="#" onClick={e => { e.preventDefault(); onJobClick?.(t('pie.bolsaMensaje')); }}>{t('pie.bolsa')}</a>
+          <span>© {new Date().getFullYear()}</span>
+        </p>
       </div>
     </footer>
   );

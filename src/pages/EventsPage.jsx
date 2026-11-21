@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import CabeceraPagina from '../components/CabeceraPagina';
+import BandaFoto from '../components/BandaFoto';
 import Campo from '../components/Campo';
 import AvisoFormulario from '../components/AvisoFormulario';
 import AvisoEspera from '../components/AvisoEspera';
@@ -187,11 +188,25 @@ const EventsPage = ({ initialTipo, onReservationClick }) => {
   const ev = armarEvento(tipo, t);
   const otro = tipo === 'privados' ? 'catering' : 'privados';
 
+  // "Cotizar ahora ↑": la barra de arriba reaparece al subir, así que se deja su alto más un respiro.
+  // En escritorio queda a la vista el bloque completo (texto | formulario); en celular, el formulario
+  // es más alto que la pantalla y se llega directo a su primer campo.
+  const irACotizar = () => {
+    const bloque = document.getElementById('cotizar');
+    if (!bloque) return;
+    const movil = window.innerWidth <= 700;
+    const objetivo = movil ? bloque.querySelector('form') || bloque : bloque.querySelector('.nosotros-texto') || bloque;
+    const barra = parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--header-h')) || 80;
+    const y = objetivo.getBoundingClientRect().top + window.scrollY - barra - (movil ? 20 : 36);
+    window.scrollTo({ top: Math.max(0, y), behavior: 'smooth' });
+  };
+
   // Al cambiar de tipo (flecha o menú) la página se monta de nuevo: empezar arriba
   useEffect(() => { window.scrollTo({ top: 0 }); }, []);
 
   return (
-    <main className="container">
+    <main>
+     <div className="container">
       <CabeceraPagina
         eyebrow={t('eventos.eyebrow')}
         titulo={ev.titulo}
@@ -237,14 +252,27 @@ const EventsPage = ({ initialTipo, onReservationClick }) => {
             ))}
           </ul>
         </section>
+      </div>
+     </div>
 
+      {/* Franja a sangre con video: el platillo llegando a la mesa (sin sonido, en loop) */}
+      <BandaFoto
+        className="banda-servicio"
+        src="/video/eventos-servicio.jpg"
+        video="/video/eventos-servicio.mp4"
+        frase={t('eventos.bandaFrase')}
+        alt={t('eventos.bandaAlt')}
+      />
+
+     <div className="container">
+      <div className="ev-contenido">
         <section className="home-seccion suc-bloque ev-zigzag ev-zigzag-inv" aria-label={t('eventos.comoFunciona')}>
           <div className="seccion-cabecera suc-cabecera reveal reveal-up">
             <div>
               <p className="eyebrow">{t('eventos.pasoAPaso')}</p>
               <h2 className="titulo-seccion">{t('eventos.comoLeHacemos')}</h2>
             </div>
-            <a href="#cotizar" className="link-flecha" onClick={(e) => { e.preventDefault(); document.getElementById('cotizar')?.scrollIntoView({ behavior: 'smooth' }); }}>{t('eventos.cotizarAhora')} <span aria-hidden="true">↑</span></a>
+            <a href="#cotizar" className="link-flecha" onClick={(e) => { e.preventDefault(); irACotizar(); }}>{t('eventos.cotizarAhora')} <span aria-hidden="true">↑</span></a>
           </div>
           <ol className="ev-pasos reveal">
             {pasos(ev, t).map((p, i) => (
@@ -256,6 +284,7 @@ const EventsPage = ({ initialTipo, onReservationClick }) => {
           </ol>
         </section>
       </div>
+     </div>
     </main>
   );
 };

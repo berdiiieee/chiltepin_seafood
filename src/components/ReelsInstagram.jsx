@@ -1,7 +1,8 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { INSTAGRAM } from '../config/negocio';
 import { POSTS_INSTAGRAM } from '../data/instagram';
 import { useT } from '../context/Preferencias';
+import { useEsMovil } from '../hooks/useEsMovil';
 
 // Elige n al azar sin repetir
 const alAzar = (lista, n) => [...lista].sort(() => Math.random() - 0.5).slice(0, n);
@@ -13,6 +14,28 @@ const ReelsInstagram = () => {
   const { t } = useT();
   const [precarga, setPrecarga] = useState(document.readyState === 'complete');
   const [listos, setListos] = useState({});
+  // Celular: una sola publicación (las otras dos no se ven, así que tampoco se cargan)
+  const esMovil = useEsMovil();
+  const visibles = esMovil ? posts.slice(0, 1) : posts;
+
+  // Instagram avisa la altura real de cada publicación (mensaje "MEASURE"); en celular el marco
+  // toma esa altura para no cortar la parte de abajo (likes y "View more on Instagram")
+  const marcos = useRef({});
+  const [alturas, setAlturas] = useState({});
+  useEffect(() => {
+    const onMensaje = e => {
+      if (!/^https:\/\/www\.instagram\.com$/.test(e.origin) || typeof e.data !== 'string') return;
+      let msg;
+      try { msg = JSON.parse(e.data); } catch { return; }
+      const alto = msg?.type === 'MEASURE' ? Number(msg.details?.height) : 0;
+      if (!alto) return;
+      const codigo = Object.keys(marcos.current).find(c => marcos.current[c]?.contentWindow === e.source);
+      if (codigo) setAlturas(a => (a[codigo] === alto ? a : { ...a, [codigo]: alto }));
+    };
+    window.addEventListener('message', onMensaje);
+    return () => window.removeEventListener('message', onMensaje);
+  }, []);
+
   useEffect(() => {
     if (precarga) return;
     const ir = () => setPrecarga(true);
@@ -29,9 +52,14 @@ const ReelsInstagram = () => {
         <a className="link-flecha" href={INSTAGRAM.url} target="_blank" rel="noopener noreferrer">{INSTAGRAM.usuario}</a>
       </div>
       <div className="reels-fila">
-        {posts.map(r => (
-          <div className={`reel${listos[r.codigo] ? ' listo' : ''}`} key={r.codigo}>
+        {visibles.map(r => (
+          <div
+            className={`reel${listos[r.codigo] ? ' listo' : ''}`}
+            key={r.codigo}
+            style={esMovil && alturas[r.codigo] ? { height: alturas[r.codigo] } : undefined}
+          >
             {precarga && <iframe
+              ref={el => { marcos.current[r.codigo] = el; }}
               onLoad={() => setListos(l => ({ ...l, [r.codigo]: true }))}
               src={`https://www.instagram.com/${r.tipo}/${r.codigo}/embed`}
               title={t('instagram.iframe')}

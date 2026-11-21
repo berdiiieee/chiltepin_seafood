@@ -5,7 +5,12 @@ import CabeceraPagina from '../components/CabeceraPagina';
 import BloqueReserva from '../components/BloqueReserva';
 import { useMenu } from '../hooks/useMenu';
 import { useT } from '../context/Preferencias';
-import { traductorMenu } from '../i18n/menu';
+import { traductorMenu, indiceDia } from '../i18n/menu';
+import { indiceHoy } from '../utils/horario';
+import { useEsMovil } from '../hooks/useEsMovil';
+import { useCarrito } from '../context/Carrito';
+import { sePuedePedir, clavePlatillo, clavePromo } from '../data/pedido';
+import BarraModoPedido from '../components/BarraModoPedido';
 
 // El contenido (secciones, platillos, precios y promos) viene del panel: ver src/hooks/useMenu.js.
 // Aquí solo vive el diseño: iconos por sección y cómo se pinta cada parte.
@@ -32,12 +37,46 @@ const Icono = ({ id, className, size }) => (
 
 const precio = n => (n > 0 ? `$${n}` : '');
 
+// + / − 1 + de una promo del día (mismo control que los platillos)
+const PromoCtl = ({ pedido, nombre, t }) => (
+  <span className="pedido-ctl">
+    {pedido.cantidad > 0 ? (
+      <>
+        <button type="button" onClick={() => pedido.onCambiar(-1)} aria-label={t('pedido.quitarUno', { nombre })}>−</button>
+        <span className="pedido-cant" aria-live="polite">{pedido.cantidad}</span>
+        <button type="button" onClick={() => pedido.onCambiar(1)} aria-label={t('pedido.sumarUno', { nombre })}>+</button>
+      </>
+    ) : (
+      <button type="button" className="pedido-agregar" onClick={() => pedido.onCambiar(1)} aria-label={t('pedido.agregar', { nombre })}>+</button>
+    )}
+  </span>
+);
+
 const MenuPage = ({ onReservationClick }) => {
   const { secciones, promos, estado, actualizado } = useMenu();
   const { t, idioma } = useT();
   const tr = traductorMenu(idioma);
-  const comida = secciones.filter(s => s.id !== 'bebidas');
-  const bebidas = secciones.find(s => s.id === 'bebidas');
+  const esMovil = useEsMovil();
+  const hoy = indiceHoy(); // para resaltar la promo del día
+  // Modo pedido (desde A domicilio): solo lo que sale a domicilio (sin alcohol ni `domicilio:false`), con su +.
+  // Fuera del modo pedido la carta es exactamente la de siempre.
+  const carrito = useCarrito();
+  const enPedido = carrito.modoPedido;
+  const vista = enPedido
+    ? secciones
+      .map(s => ({
+        ...s,
+        items: s.items.filter(it => sePuedePedir(it, s.id)),
+        subgrupos: s.subgrupos ? s.subgrupos.map(g => ({ ...g, items: g.items.filter(it => sePuedePedir(it, s.id)) })).filter(g => g.items.length) : null,
+      }))
+      .filter(s => s.items.length)
+    : secciones;
+  const pedidoDe = k => (enPedido && carrito.catalogo.has(k) ? {
+    cantidad: carrito.cantidadDe(k), nota: carrito.notaDe(k), maxNota: carrito.maxNota,
+    onCambiar: d => carrito.cambiar(k, d), onNota: x => carrito.ponerNota(k, x),
+  } : undefined);
+  const comida = vista.filter(s => s.id !== 'bebidas');
+  const bebidas = vista.find(s => s.id === 'bebidas');
 
   // Chips en el orden en que se pintan: comida, bebidas, promociones
   const chips = [
@@ -75,6 +114,16 @@ const MenuPage = ({ onReservationClick }) => {
       document.fonts?.removeEventListener?.('loadingdone', medir);
     };
   }, [activeCategory, idsClave, idioma]);
+
+  // En celular la fila de categorías se desliza: la categoría activa se lleva al centro de la fila
+  // (solo se mueve la fila, nunca la página)
+  useEffect(() => {
+    const lista = barraRef.current?.querySelector('.menu-nav');
+    const a = lista?.querySelector('a.active');
+    if (!lista || !a || lista.scrollWidth <= lista.clientWidth) return;
+    const rl = lista.getBoundingClientRect(), ra = a.getBoundingClientRect();
+    lista.scrollTo({ left: lista.scrollLeft + ra.left - rl.left - (rl.width - ra.width) / 2, behavior: 'smooth' });
+  }, [activeCategory]);
 
   // Resalta la categoría que se está leyendo: la última sección cuyo borde superior ya pasó
   // por debajo de la barra fija (header + chips).
@@ -117,6 +166,7 @@ const MenuPage = ({ onReservationClick }) => {
   return (
     <>
       <CabeceraPagina eyebrow={t('menu.eyebrow')} titulo={t('menu.titulo')} intro={t('menu.intro')} />
+      {enPedido && <BarraModoPedido />}
 
       <div className={`menu-nav-wrapper${linea ? ' con-linea' : ''}`} ref={barraRef}>
         {linea && <span className="menu-nav-linea" aria-hidden="true" style={{ width: linea.w, transform: `translate(${linea.x}px, ${linea.y}px)` }} />}
@@ -144,7 +194,8 @@ const MenuPage = ({ onReservationClick }) => {
         {comida.map(section => (
           <MenuSection key={section.id} id={section.id} title={tr.seccion(section)} icono={icono(section.id)}>
             {section.items.map(item => (
-              <MenuItem key={item.id ?? item.nombre} name={item.nombre} price={precio(item.precio)} desc={tr.descripcion(item) || undefined} />
+              <MenuItem key={item.id ?? item.nombre} name={item.nombre} price={precio(item.precio)} desc={tr.descripcion(item) || undefined}
+                pedido={pedidoDe(clavePlatillo(item.id))} idPedido={item.id} />
             ))}
           </MenuSection>
         ))}
@@ -155,17 +206,34 @@ const MenuPage = ({ onReservationClick }) => {
               <Icono id="bebidas" className="seccion-ico" size="30" />
               {tr.seccion(bebidas)}
             </h2>
+            {enPedido && <p className="pedido-aviso-menu">{t('pedido.sinAlcohol')}</p>}
             <div className="bebidas-cols">
-              {bebidas.subgrupos.map(sub => (
-                <div key={sub.titulo} className="bebida-sub">
-                  <h3 className="bebida-titulo">{tr.subgrupo(sub)}</h3>
+              {bebidas.subgrupos.map(sub => {
+                const lista = (
                   <div className="menu-grid">
                     {sub.items.map(item => (
-                      <MenuItem key={item.id ?? item.nombre} name={item.nombre} price={precio(item.precio)} desc={tr.descripcion(item) || undefined} />
+                      <MenuItem key={item.id ?? item.nombre} name={item.nombre} price={precio(item.precio)} desc={tr.descripcion(item) || undefined}
+                        pedido={pedidoDe(clavePlatillo(item.id))} idPedido={item.id} />
                     ))}
                   </div>
-                </div>
-              ))}
+                );
+                // Celular: cada subgrupo se abre al tocarlo (la lista completa era larguísima)
+                return esMovil ? (
+                  <details key={sub.titulo} className="bebida-sub bebida-plegable">
+                    <summary className="bebida-titulo">
+                      <span>{tr.subgrupo(sub)}</span>
+                      <span className="bebida-cuenta">{sub.items.length}</span>
+                      <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><path d="M6 9l6 6 6-6" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" /></svg>
+                    </summary>
+                    {lista}
+                  </details>
+                ) : (
+                  <div key={sub.titulo} className="bebida-sub">
+                    <h3 className="bebida-titulo">{tr.subgrupo(sub)}</h3>
+                    {lista}
+                  </div>
+                );
+              })}
             </div>
           </section>
         )}
@@ -180,13 +248,21 @@ const MenuPage = ({ onReservationClick }) => {
               {promos.map(col => (
                 <div className="promo-col" key={col.location}>
                   <h3 className="promo-loc-title">{col.location}</h3>
-                  {col.rows.map(r => (
-                    <div className="promo-row" key={r.day + r.desc}>
-                      <span className="promo-day">{tr.dia(r.day)}</span>
+                  {col.rows.map(r => {
+                    const esHoy = indiceDia(r.day) === hoy;
+                    const pedido = r.id != null ? pedidoDe(clavePromo(r.id)) : undefined;
+                    return (
+                    <div className={`promo-row${esHoy ? ' es-hoy' : ''}${pedido ? ' con-pedido' : ''}`} key={r.day + r.desc}>
+                      <span className="promo-day">
+                        {tr.dia(r.day)}
+                        {esHoy && <span className="promo-hoy">{t('comun.hoy')}</span>}
+                      </span>
                       <span className="promo-desc">{tr.promo(r)}</span>
                       <span className="promo-price">{precio(r.price)}</span>
+                      {pedido && <PromoCtl pedido={pedido} nombre={tr.promo(r)} t={t} />}
                     </div>
-                  ))}
+                    );
+                  })}
                 </div>
               ))}
             </div>
@@ -194,12 +270,12 @@ const MenuPage = ({ onReservationClick }) => {
         )}
       </main>
 
-      <BloqueReserva
+      {!enPedido && <BloqueReserva
         onReservationClick={onReservationClick}
         titulo={t('menu.antojoTitulo')}
         texto={t('menu.antojoTexto')}
         secundario={{ pregunta: t('menu.salirPregunta'), texto: t('menu.salirTexto'), to: '/delivery' }}
-      />
+      />}
     </>
   );
 };

@@ -900,27 +900,6 @@ footer {
     display: block;
 }
 
-#splash {
-    position: fixed;
-    inset: 0;
-    z-index: 99999;
-    background-color: #000;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    opacity: 1;
-    transition: opacity 0.5s ease;
-}
-#splash.fade-out { opacity: 0; }
-#splash img {
-    max-width: 220px;
-    height: auto;
-    animation: splashLogo 0.8s ease forwards;
-}
-@keyframes splashLogo {
-    0% { opacity: 0; transform: scale(0.85); }
-    100% { opacity: 1; transform: scale(1); }
-}
 @keyframes fadeSlideIn {
   from { opacity: 0; transform: translateY(12px); }
   to { opacity: 1; transform: translateY(0); }
@@ -1060,8 +1039,6 @@ footer {
     .section-title, .section-heading, .page-title { font-size: 2rem !important; }
     .location-title { font-size: 2rem !important; }
     .page-header { min-height: 250px !important; padding: 80px 16px 60px !important; }
-    .res-header { padding: 20px !important; }
-    .res-body { padding: 15px 20px 30px !important; }
     .modal-box { padding: 24px 16px !important; max-width: 90vw !important; }
     .carousel-section { height: 55vh; min-height: 280px !important; }
     .carousel-arrow { width: 28px; height: 28px; font-size: 1rem; }
@@ -1075,7 +1052,6 @@ footer {
 }
 @media (prefers-reduced-motion: reduce) {
     *:not(.cx-dot-fill), *::before, *::after { animation-duration: 0.01ms !important; animation-iteration-count: 1 !important; transition-duration: 0.01ms !important; scroll-behavior: auto !important; }
-    #splash { display: none !important; }
     .carousel-track { transition: none !important; }
     .carousel-slide, .loc-card-slide { background-attachment: scroll !important; }
 }

@@ -10,8 +10,9 @@ const NotFoundPage = () => {
       <h1>{t('noEncontrada.titulo')}</h1>
       <p>{t('noEncontrada.texto')}</p>
       <div className="notfound-actions">
-        <Link to="/" className="btn-submit-event">{t('noEncontrada.irInicio')}</Link>
-        <Link to="/menu" className="btn-location">{t('comun.verMenu')}</Link>
+        {/* Enlaces con flecha, como en el resto del sitio (el botón rojo relleno es solo para reservar) */}
+        <Link to="/" className="link-flecha">{t('noEncontrada.irInicio')} <span aria-hidden="true">→</span></Link>
+        <Link to="/menu" className="link-flecha">{t('comun.verMenu')} <span aria-hidden="true">→</span></Link>
       </div>
     </section>
   </main>

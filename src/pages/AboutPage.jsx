@@ -19,8 +19,8 @@ const AboutPage = () => {
             <p className="intro-text"><Negritas texto={t('historia.c1P1')} /></p>
             <p className="intro-text"><Negritas texto={t('historia.c1P2')} /></p>
           </div>
-          <div className="foto-recta hist-foto-neon reveal reveal-up delay-2">
-            <img src="/img/ubicaciones/450/3.jpeg" alt={t('historia.neonAlt')} loading="lazy" decoding="async" />
+          <div className="foto-recta hist-foto reveal reveal-up delay-2">
+            <img src="/img/sucursales/plaza-real/cuadros.jpg" alt={t('historia.cuadrosAlt')} loading="lazy" decoding="async" />
           </div>
         </section>
       </div>

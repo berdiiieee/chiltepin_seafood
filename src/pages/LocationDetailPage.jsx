@@ -7,9 +7,8 @@ import { SUCURSALES } from '../config/negocio';
 import { useT } from '../context/Preferencias';
 import { traductorMenu, indiceDia } from '../i18n/menu';
 import { useMenu } from '../hooks/useMenu';
-import { ahoraEnDurango, textoHorario } from '../utils/horario';
+import { indiceHoy, textoHorario } from '../utils/horario';
 
-const indiceHoy = () => new Date(`${ahoraEnDurango().fecha}T12:00:00`).getDay();
 
 // Mismo trazo que los sellos de "Del mar a tu mesa" en el Inicio.
 const trazo = { fill: 'none', stroke: 'currentColor', strokeWidth: 1.5, strokeLinecap: 'round', strokeLinejoin: 'round' };
@@ -20,12 +19,14 @@ const IconoBolsa = () => (<svg viewBox="0 0 32 32" width="30" height="30" aria-h
 const Flecha = () => <span aria-hidden="true">→</span>;
 
 const LocationDetailPage = ({ sucursal: s, onReservationClick }) => {
-  const fotos = useImagenes(s.seccionImagenes, s.imagenes).slice(0, 3);
+  const fotos = useImagenes(s.seccionImagenes, s.imagenes);
+  // Galería de 3: la selección de la sucursal (puede abrir con un video); si no hay, sus primeras fotos
+  const medios = (s.galeria || fotos).slice(0, 3);
   // Promos del panel (mismo pedido que el Menú); respaldo local si el servidor no responde
   const promos = useMenu().promos.find(p => p.location === s.nombreCorto)?.rows ?? [];
   const otra = SUCURSALES.find(x => x.id !== s.id);
   const esPrimera = SUCURSALES[0].id === s.id;
-  const hoy = indiceHoy();
+  const hoy = indiceHoy(); // día de la semana en Durango (Dom = 0)
   const { t, idioma } = useT();
   const tr = traductorMenu(idioma);
   // El mapa aparece con un fundido cuando termina de cargar (o a los 4 s, por si no avisa)
@@ -78,8 +79,9 @@ const LocationDetailPage = ({ sucursal: s, onReservationClick }) => {
           </div>
         </div>
 
-        <div className="reveal reveal-up delay-2">
-          <Galeria fotos={fotos} etiqueta={t('comun.fotosDe', { nombre: s.nombre })} altBase={t('comun.fotoN', { nombre: s.nombre, n: '' }).trim()} />
+        {/* En celular las fotos van primero (antes de "Ven a vernos") */}
+        <div className="suc-fotos reveal reveal-up delay-2">
+          <Galeria fotos={medios} etiqueta={t('comun.fotosDe', { nombre: s.nombre })} altBase={t('comun.fotoN', { nombre: s.nombre, n: '' }).trim()} />
         </div>
       </section>
 
@@ -93,6 +95,8 @@ const LocationDetailPage = ({ sucursal: s, onReservationClick }) => {
         </div>
         <div className={`suc-mapa-ancho${mapaListo ? ' listo' : ''}`}>
           <iframe onLoad={() => setMapaListo(true)} src={s.mapaEmbed} loading="lazy" allowFullScreen referrerPolicy="no-referrer-when-downgrade" title={t('sucursales.mapaDe', { nombre: s.nombre })}></iframe>
+          {/* Celular: el mapa no atrapa el dedo; al tocarlo se abre Google Maps (en escritorio no se muestra) */}
+          <a className="suc-mapa-toque" href={s.comoLlegar} target="_blank" rel="noopener noreferrer" aria-label={t('sucursales.abrirMaps')} tabIndex={-1} />
         </div>
       </section>
 

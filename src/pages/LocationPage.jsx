@@ -12,7 +12,8 @@ const Sucursal = ({ s, i }) => {
   return (
     <article className={`suc-ubica reveal reveal-up${i ? ' delay-2' : ''}`}>
       <Link to={`/horarios/${s.id}`} className="suc-ubica-foto" aria-label={t('comun.verDetallesDe', { nombre: s.nombre })}>
-        <img src={fotos[0]} alt={t('comun.fachadaDe', { nombre: s.nombre })} decoding="async" />
+        {/* Portada: el local completo por fuera (los interiores van en el detalle) */}
+        <img src={s.portada || fotos[0]} alt={t('comun.fachadaDe', { nombre: s.nombre })} decoding="async" />
       </Link>
       <h2 className="suc-ubica-nombre">{s.nombre}</h2>
       <p className="suc-ubica-dir">{s.direccion[0]}<br />{s.direccion[1]}</p>

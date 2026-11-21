@@ -30,6 +30,7 @@ npm install
 npm run dev        # http://localhost:5173 (en desarrollo /api se reenvía al backend, sin CORS)
 npm run build      # compila a dist/
 npm run preview    # sirve dist/ para probar la versión de producción
+npm run dev:pedidos # igual que dev, con los pedidos a domicilio en modo DEMO (ver docs/PEDIDOS.md)
 ```
 
 **Variables de entorno** (copiar `.env.example` a `.env`):
@@ -38,6 +39,8 @@ npm run preview    # sirve dist/ para probar la versión de producción
 |---|---|
 | `VITE_API_URL` | URL del backend, sin `/` al final. Por defecto `https://backend-chiltepin.onrender.com` |
 | `VITE_HERO_DESDE_PANEL` | `true` para que el carrusel del Inicio use las fotos del panel (sección `carrusel`). Por defecto usa las fotos locales |
+| `VITE_PEDIDOS` | Pedidos a domicilio propios: `off` (por defecto), `demo` (simulado) u `on` (backend real). **En producción se queda en `off`** hasta que el servicio esté listo |
+| `VITE_GOOGLE_MAPS_KEY` · `VITE_TURNSTILE_SITE_KEY` | Llaves públicas para los pedidos (mapa de la dirección y antibots). Opcionales en la demo |
 
 `npm start` levanta `server.js`, la API Express antigua de referencia. El sitio actual no la usa.
 
@@ -45,7 +48,8 @@ npm run preview    # sirve dist/ para probar la versión de producción
 
 - **Build:** `npm run build`. **Salida:** `dist/`.
 - `vercel.json` manda todas las rutas a `index.html` (SPA) y define caché larga para `/assets` e imágenes.
-- **Variable en Vercel:** `VITE_API_URL`.
+- **Variable en Vercel:** `VITE_API_URL`. **No** pongas `VITE_PEDIDOS` en producción hasta que los pedidos estén listos.
+- `vercel.json` también manda cabeceras de seguridad; la Content-Security-Policy está en modo *Report-Only* (ver `docs/BACKEND.md` §7.10).
 - **CORS:** el backend debe permitir el dominio del sitio, porque en producción el navegador lo llama directo.
 
 ---
@@ -58,7 +62,7 @@ npm run preview    # sirve dist/ para probar la versión de producción
 | `/menu` | Carta completa (viene del panel) con categorías fijas y promociones de la semana |
 | `/horarios` | Sucursales (resumen) |
 | `/horarios/plaza-real`, `/horarios/plaza-450` | Detalle: datos, fotos, mapa y promociones de la sucursal |
-| `/delivery` | A domicilio (Rappi / DiDi Food por sucursal) |
+| `/delivery` | A domicilio (Rappi / DiDi Food por sucursal). Con `VITE_PEDIDOS` encendido: pedidos propios, más `/delivery/pedido`, `/delivery/seguimiento/:token` y `/terminos-de-venta` |
 | `/eventos?tipo=privados` · `/eventos?tipo=catering` | Eventos privados y catering, con formulario de cotización |
 | `/acerca` | Nuestra historia |
 | `/contacto` | Contacto, con formulario |
@@ -143,6 +147,7 @@ locales. Lo usan las fotos de cada sucursal.
 ### Movimiento
 Hay una sola curva de animación para todo el sitio (`--curva`). Animaciones que existen hoy:
 
+- **Splash de bienvenida** (`src/components/Splash.jsx`): solo la primera vez que se abre el sitio en la pestaña, en cualquier página. El chiltepín se dibuja, el logo se escribe y la pantalla sube como cortina. Se salta con un clic o una tecla.
 - **Cambio de página:** View Transition, en `App.jsx#irA`.
 - **Cambio de tema:** un círculo que crece desde el botón del pie.
 - **Cambio de idioma:** fundido cruzado.
@@ -162,10 +167,14 @@ Todo respeta *"reducir movimiento"* del sistema.
 - **Backend:** CORS para el dominio final, validar en el servidor las reglas de reservación (lunes a viernes,
   horario) y aceptar `idioma` en los formularios (ver `docs/BACKEND.md`).
 
+- **Pedidos a domicilio propios:** en desarrollo, solo en modo demo. Front: diseño fino y pendientes en
+  [`docs/PEDIDOS.md`](docs/PEDIDOS.md). Backend: contrato completo en [`docs/BACKEND.md`](docs/BACKEND.md) §7.
+
 ## Historial
 
 | Versión | Cambios |
 |---|---|
+| **v5.1** | Ajustes de la versión móvil. Pedidos a domicilio propios en **modo demo** (apagados en producción): Menú en modo pedido, checkout, seguimiento, términos de venta y contrato para el backend. Cabeceras de seguridad en `vercel.json`. |
 | **v5.0** | Rediseño completo de escritorio. Rutas reales (`react-router-dom`). Menú 100 % desde el panel, con respaldo y aviso de precios. Formularios conectados al backend con validaciones iguales a las del servidor. Inglés y modo claro. Transiciones entre páginas, tema e idioma. Barra que se esconde al bajar. Carruseles con trackpad y arrastre. |
 | **v4.0** | Migración a React SPA (Vite). Componentes y hooks; sin manipulación directa del DOM. |
 | **v3.1** | Menú hamburguesa, responsive móvil, swipe en carruseles, `prefers-reduced-motion`. |

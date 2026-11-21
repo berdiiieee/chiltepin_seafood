@@ -195,3 +195,216 @@ La imagen con `orden` N reemplaza a la foto N del sitio; las que falten se queda
 - **Eventos:** separar `Evento Privado` y `Catering y Banquetes`; ordenar por `fechaEvento`.
 - **Boletín:** exportar a CSV y permitir dar de baja.
 - Avisar por correo o WhatsApp a la sucursal cuando entra una reservación o una solicitud de evento.
+
+---
+
+## 7. Pedidos a domicilio y para recoger
+
+El sitio ya tiene todo el flujo hecho: el cliente elige **a domicilio** (dirección + pin en el mapa) o **paso a
+recoger**, arma su pedido en el Menú (con un + junto a cada precio), confirma en `/delivery/pedido` y sigue su
+pedido en `/delivery/seguimiento/:token`. Falta el backend que se describe aquí.
+
+**Interruptor del sitio:** `VITE_PEDIDOS` en `.env` (ver `.env.example`).
+- `off` (por defecto): A domicilio se ve como siempre, con Rappi y DiDi. El sitio no llama a nada de esta sección.
+- `demo`: el flujo completo con un backend simulado en el navegador (`src/api/pedidosDemo.js`). **Ese archivo es
+  la referencia ejecutable de este contrato:** valida y calcula como debe hacerlo el backend real.
+- `on`: usa los endpoints de abajo.
+
+### 7.1 Reglas de seguridad (no negociables)
+
+1. **El backend es la única fuente de verdad.** El sitio solo manda `id` + `cantidad` + `nota`. Precios, nombres,
+   disponibilidad, alcohol, zona, costo de envío, horario, propina, topes y total se **recalculan** en el servidor
+   con los datos del panel. Si alguien cambia la petición a mano, no debe poder cambiar ningún precio.
+2. **Dinero en centavos enteros** en la base de datos y en los cálculos (en la API puede ir en pesos).
+3. **El token de seguimiento** es aleatorio, de al menos 128 bits (p. ej. 32 caracteres hex de `crypto.randomBytes(16)`),
+   y **nunca** es el id ni el folio. Quien tiene el enlace ve el pedido: muestra solo lo mínimo (nombre de pila,
+   calle y colonia, nada de teléfono).
+4. **Idempotencia:** `POST /api/pedidos` trae la cabecera `Idempotency-Key` (un UUID por intento). Si llega otra vez la
+   misma llave, responde **el mismo pedido** sin crear otro (doble clic, red lenta, reintentos).
+5. **Antibots:** si el sitio tiene `VITE_TURNSTILE_SITE_KEY`, manda la cabecera `CF-Turnstile-Token`. Valídala con la
+   llave secreta en `https://challenges.cloudflare.com/turnstile/v0/siteverify` antes de crear el pedido.
+6. **Límites:** por IP y por teléfono (p. ej. 5 pedidos por hora por teléfono). Responde `429` al pasarse.
+7. **Tope de primeros pedidos:** con pago al recibir (efectivo o terminal), en los primeros `topeNuevos.pedidos`
+   pedidos entregados de un teléfono, el total no puede pasar de `topeNuevos.monto`. Lista de teléfonos bloqueados
+   en el panel (no recibieron, pedidos falsos).
+8. **CORS** solo para el dominio del sitio. **Logs sin datos personales.** Respaldos de la base de datos.
+9. **Render de pago** antes de lanzar: con el plan gratis, el servidor tarda ~50 s en despertar y el cliente piensa
+   que no funcionó (y lo manda dos veces) o se va.
+
+### 7.2 `GET /api/domicilio/config`
+
+Reglas del servicio. El sitio la pide una vez por visita.
+
+```json
+{
+  "activo": true,
+  "metodos": ["efectivo", "terminal"],
+  "propinas": [0, 10, 15],
+  "topeNuevos": { "pedidos": 2, "monto": 800 },
+  "ultimoAntesDeCerrarMin": 30,
+  "sucursales": [
+    {
+      "id": "plaza-real",
+      "ubicacion": { "lat": 24.00465, "lng": -104.65695 },
+      "radioKm": 6,
+      "tarifas": [{ "hastaKm": 3, "costo": 30 }, { "hastaKm": 6, "costo": 45 }],
+      "tiempoEstimadoMin": 45,
+      "pausada": false,
+      "recoger": true
+    }
+  ]
+}
+```
+
+| Campo | Para qué |
+|---|---|
+| `activo` | `false` = el sitio dice "por ahora no podemos tomar pedidos" y muestra los teléfonos |
+| `metodos` | Formas de pago que se ofrecen. Al lanzar: `["efectivo", "terminal"]`. Con `"tarjeta"` aparece el pago en línea (7.6) |
+| `propinas` | Porcentajes que se ofrecen (además de "Otra" con monto libre) |
+| `topeNuevos` | Ver 7.1, punto 7 |
+| `ultimoAntesDeCerrarMin` | Último pedido X minutos antes de cerrar (el horario está en el sitio: 11:30 a 19:30) |
+| `sucursales[].id` | `plaza-real` o `plaza-450` |
+| `ubicacion`, `radioKm`, `tarifas` | Zona de entrega y costo por distancia. **Valores de ejemplo: el negocio aún no los define** |
+| `tiempoEstimadoMin` | Tiempo estimado de entrega; lo más pronto que se puede programar es ahora + este tiempo |
+| `pausada` | Interruptor del panel "pausar pedidos" (sucursal saturada). Si todas están en pausa, no se puede pedir |
+| `recoger` | Si acepta pedidos para recoger |
+
+### 7.3 `POST /api/domicilio/cotizar`
+
+El total oficial que el cliente ve antes de confirmar. Se pide cada vez que cambia algo.
+
+```json
+{
+  "tipo": "domicilio",
+  "sucursal": "plaza-real",
+  "ubicacion": { "lat": 24.02, "lng": -104.66 },
+  "items": [{ "id": 2, "cantidad": 2, "nota": "Sin cebolla" }, { "promoId": 1, "cantidad": 1 }],
+  "propina": { "tipo": "porcentaje", "valor": 10 }
+}
+```
+Respuesta:
+```json
+{
+  "disponible": true,
+  "sucursal": "plaza-real",
+  "distanciaKm": 2.4,
+  "lineas": [{ "nombre": "Guacamole", "cantidad": 2, "precio": 65, "importe": 130 }],
+  "subtotal": 195, "envio": 30, "propina": 20, "total": 245,
+  "motivos": []
+}
+```
+- Con `tipo: "domicilio"`, la **sucursal la asigna el backend**: la más cercana que cubre la ubicación y no está en
+  pausa (la que manda el sitio es solo una sugerencia).
+- Con `tipo: "recoger"`, `sucursal` es obligatoria y no hay envío ni propina.
+- `motivos`: textos en español para el cliente cuando `disponible` es `false` (fuera de zona, platillo agotado…).
+- La propina con `"tipo": "porcentaje"` solo acepta los valores de `propinas`. Con `"tipo": "monto"` va en pesos y
+  no puede pasar del subtotal.
+
+### 7.4 `POST /api/pedidos`
+
+Cabeceras: `Idempotency-Key` (siempre) y `CF-Turnstile-Token` (si hay Turnstile).
+
+```json
+{
+  "tipo": "domicilio",
+  "sucursal": "plaza-real",
+  "cuando": { "tipo": "programado", "hora": "15:30" },
+  "cliente": { "nombre": "Ana López", "telefono": "6181234567", "email": "ana@correo.com" },
+  "direccion": {
+    "calle": "Negrete 100", "interior": "B", "colonia": "Centro", "referencias": "Portón negro",
+    "ubicacion": { "lat": 24.02, "lng": -104.66 }
+  },
+  "items": [{ "id": 2, "cantidad": 2, "nota": "Sin cebolla" }, { "promoId": 1, "cantidad": 1 }],
+  "propina": { "tipo": "porcentaje", "valor": 10 },
+  "metodoPago": "efectivo",
+  "pagaCon": 500,
+  "factura": false,
+  "aceptaTerminos": true
+}
+```
+Respuesta (`201`): `{ "token": "…", "folio": "1042", "estado": "recibido", "total": 245 }`. Con tarjeta, además
+`"pagoUrl"` (7.6).
+
+| Campo | Reglas (validar en el backend) |
+|---|---|
+| `tipo` | `domicilio` o `recoger` |
+| `cuando` | `{ "tipo": "asap" }` o `{ "tipo": "programado", "hora": "HH:MM" }`. **Solo para hoy**, en hora de Durango (`America/Monterrey`), entre ahora + `tiempoEstimadoMin` y la hora de cierre. Fuera de horario no se aceptan pedidos (ni para mañana) |
+| `cliente.nombre` | 3–100, letras, espacios y `. ' -` (igual que reservas) |
+| `cliente.telefono` | Exactamente 10 dígitos |
+| `cliente.email` | Opcional, válido, ≤ 255 |
+| `direccion` | Solo con `domicilio`. `calle` 3–120, `colonia` 2–80, `interior` ≤ 30, `referencias` ≤ 160, `ubicacion` obligatoria y dentro de la zona |
+| `items` | 1–30 líneas, `cantidad` 1–20, `nota` ≤ 120. `id` = platillo del menú; `promoId` = promo de **hoy** de **esa sucursal**. Rechazar alcohol y lo que tenga `domicilio: false` |
+| `propina` | Ver 7.3. Solo en `domicilio` |
+| `metodoPago` | Uno de `config.metodos`: `efectivo`, `terminal` o `tarjeta` |
+| `pagaCon` | Opcional, solo con `efectivo`, ≥ total |
+| `factura` | Si es `true`, el panel lo marca para pedir los datos fiscales después |
+| `aceptaTerminos` | Debe ser `true` |
+
+Errores: como los demás formularios (sección 2). `400` con `message` en español para el cliente, `429` por límites.
+
+### 7.5 Seguimiento
+
+- `GET /api/pedidos/:token` →
+  ```json
+  {
+    "token": "…", "folio": "1042", "estado": "en_cocina", "tipo": "domicilio", "sucursal": "plaza-real",
+    "cuando": { "tipo": "asap" }, "metodoPago": "efectivo", "cliente": { "nombre": "Ana" },
+    "direccion": { "calle": "Negrete 100", "colonia": "Centro" },
+    "lineas": [{ "nombre": "Guacamole", "cantidad": 2, "importe": 130 }],
+    "subtotal": 195, "envio": 30, "propina": 20, "total": 245,
+    "puedeCancelar": false, "etaMin": 30
+  }
+  ```
+  `404` si no existe. El sitio lo consulta cada 15 s hasta un estado final.
+- `POST /api/pedidos/:token/cancelar` → el pedido actualizado. Solo si `puedeCancelar` (estado `recibido` o
+  `pendiente_pago`); si no, `409` con mensaje. Si estaba pagado en línea, reembolso automático (7.6).
+
+**Estados:** `pendiente_pago` → `recibido` → `en_cocina` → `en_camino` (domicilio) o `listo_recoger` (recoger) →
+`entregado`. Finales: `entregado`, `cancelado`, `rechazado` (la sucursal no pudo tomarlo), `pago_fallido`, `reembolsado`.
+
+### 7.6 Pago en línea con Mercado Pago (fase 2, apagado al lanzar)
+
+El sitio ya lo tiene listo; se enciende agregando `"tarjeta"` a `config.metodos`.
+- Usar **Checkout Pro**: al crear un pedido con `metodoPago: "tarjeta"`, el backend crea una *preferencia* con los
+  importes **calculados por el backend**, `external_reference` = id interno del pedido y `back_urls` a
+  `https://<dominio>/delivery/seguimiento/<token>`. Devuelve su `init_point` como `pagoUrl`. El pedido queda en
+  `pendiente_pago` y **no** se manda a cocina.
+- El sitio solo redirige a `pagoUrl` si es `https://…mercadopago.com(.mx)`.
+- **El pago se confirma solo por webhook** (`POST /api/pagos/webhook`): verificar la firma `x-signature` con la llave
+  secreta del webhook, consultar el pago por su id en la API de Mercado Pago y comparar monto y `external_reference`.
+  Aprobado → `recibido` (entra a cocina). Rechazado → `pago_fallido`. **Nunca** confiar en el `?status=approved` de
+  la URL de regreso.
+- Webhook idempotente (Mercado Pago lo reintenta). Reembolsos con la API de reembolsos al cancelar.
+- La llave secreta (access token) vive solo en el backend. Al sitio no le hace falta ninguna llave de Mercado Pago.
+
+### 7.7 Campos nuevos en `GET /api/menu`
+
+| Dónde | Campo | Para qué |
+|---|---|---|
+| platillo y bebida | `domicilio` (bool, por defecto `true`) | `false` = no sale a domicilio (casilla del panel) |
+| bebida | `alcohol` (bool) | Las que tienen alcohol no se venden a domicilio. Si no viene, el sitio usa los subgrupos de bebidas y trata como alcohol todo lo que no esté en "Bebidas sin Alcohol" |
+| promo | `id` (ya viene) y `domicilio` (bool) | Las promos con `price: 0` (p. ej. "3x2") no se pueden pedir en línea hasta definir cómo se cobran |
+
+### 7.8 Panel (lo que necesita la operación)
+
+- **Pedidos nuevos con alerta sonora** por sucursal, botones *Aceptar* / *Rechazar* y marca **"Cliente nuevo"** (la
+  sucursal puede llamar para confirmar antes de cocinar).
+- Cambiar estado: en cocina → en camino / listo para recoger → entregado.
+- **Vista de repartidor en celular:** sus pedidos, dirección con enlace a Google Maps, teléfono, cuánto cobrar y con
+  cuánto paga el cliente; marca *En camino* y *Entregado* (con foto o confirmación de entrega, sirve ante contracargos).
+- **Corte de caja** por repartidor: efectivo y terminal.
+- **Interruptor "pausar pedidos"** por sucursal, tope de primeros pedidos y lista de teléfonos bloqueados.
+- Casilla "disponible a domicilio" por platillo y "alcohol" por bebida.
+- Roles por sucursal, contraseñas fuertes con 2FA y bitácora de cambios.
+
+### 7.9 Fase 3 (en pausa): WhatsApp
+
+Verificación del teléfono con código y avisos de estado por WhatsApp (API oficial de Meta). Está pendiente de
+decidir; el sitio funciona sin esto.
+
+### 7.10 Cabeceras de seguridad del sitio
+
+`vercel.json` ya manda `nosniff`, `Referrer-Policy`, `Permissions-Policy`, HSTS y `X-Frame-Options`. La
+**Content-Security-Policy** está en modo *Report-Only*: revisar la consola en una vista previa de Vercel y, si no
+hay avisos, cambiar la clave a `Content-Security-Policy`. Si se cambia el script en línea de `index.html`, hay que
+actualizar su hash `sha256-…` en la política.

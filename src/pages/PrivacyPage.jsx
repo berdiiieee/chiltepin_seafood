@@ -6,6 +6,8 @@ import {
   nombreResponsable,
 } from '../config/negocio';
 import { useT } from '../context/Preferencias';
+import CabeceraPagina from '../components/CabeceraPagina';
+import { PEDIDOS_ACTIVOS } from '../config/api';
 
 // Aviso de privacidad integral (LFPDPPP, art. 15).
 // TODO: confirmar con el responsable legal (nombre, correo y fecha) antes de publicar.
@@ -16,14 +18,13 @@ const PrivacyPage = () => {
 
   return (
     <>
-      <div className="container">
-        <div className="page-header" style={{ backgroundImage: "linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.7)), url('/img/galeria/galeria1.jpeg')" }}>
-          <div>
-            <h1 className="page-title">Aviso de privacidad</h1>
-            <p className="page-subtitle">Última actualización: {AVISO_PRIVACIDAD_FECHA}</p>
-          </div>
-        </div>
-      </div>
+      {/* Misma cabecera que las demás subpáginas */}
+      <CabeceraPagina
+        eyebrow={t('privacidad.eyebrow')}
+        titulo={t('privacidad.titulo')}
+        intro={t('privacidad.actualizado', { fecha: AVISO_PRIVACIDAD_FECHA })}
+        divisor
+      />
       <div className="container aviso-page">
         {/* El aviso legal va en español (LFPDPPP); en inglés solo se explica por qué */}
         {idioma === 'en' && (
@@ -46,6 +47,10 @@ const PrivacyPage = () => {
           <li><strong>Eventos privados y catering:</strong> nombre, teléfono, correo, fecha del evento, número de invitados, tipo de evento y los detalles que nos escribas.</li>
           <li><strong>Contacto:</strong> nombre, correo, teléfono (opcional), tipo de mensaje y tu mensaje.</li>
           <li><strong>Boletín:</strong> correo y, si quieres, nombre y teléfono.</li>
+          {/* TODO (dueño): revisar este texto antes de encender los pedidos a domicilio */}
+          {PEDIDOS_ACTIVOS && (
+            <li><strong>Pedidos a domicilio o para recoger:</strong> nombre, teléfono, correo (opcional), dirección de entrega, su ubicación en el mapa, referencias, lo que pides, tus notas para cocina, la forma de pago y si necesitas factura. <strong>No recibimos ni guardamos los datos de tu tarjeta:</strong> si pagas en línea, los captura directamente Mercado Pago.</li>
+          )}
         </ul>
         <p>
           <strong>Datos sensibles:</strong> no te los pedimos. El único caso posible es que decidas contarnos sobre
@@ -61,6 +66,7 @@ const PrivacyPage = () => {
           <li>Registrar, confirmar y administrar tu reservación, y avisarte si hay algún cambio.</li>
           <li>Cotizar y organizar tu evento privado o servicio de catering.</li>
           <li>Responder tus mensajes, preguntas, quejas o sugerencias.</li>
+          {PEDIDOS_ACTIVOS && <li>Preparar, entregar y darte seguimiento a tu pedido, avisarte de su estado, cobrarlo y, si la pides, emitir tu factura. También para prevenir pedidos falsos (por ejemplo, limitar pedidos repetidos desde un mismo teléfono).</li>}
         </ul>
         <p>
           Finalidad que depende de tu consentimiento: <strong>enviarte el boletín</strong> con promociones y
@@ -76,6 +82,14 @@ const PrivacyPage = () => {
           servicios de alojamiento y base de datos que contratamos, que solo los resguardan por nuestra cuenta y
           pueden tener sus servidores fuera de México. Solo los entregaríamos a una autoridad si la ley nos obliga.
         </p>
+        {PEDIDOS_ACTIVOS && (
+          <p>
+            En los pedidos usamos además: <strong>Mercado Pago</strong>, que procesa los pagos en línea con tarjeta
+            (recibe tu nombre, el monto y los datos de pago que le das directamente); <strong>Google Maps</strong>,
+            para ubicar tu dirección en el mapa, y <strong>Cloudflare Turnstile</strong>, para comprobar que quien
+            pide es una persona. Cada uno trata esos datos conforme a su propia política de privacidad.
+          </p>
+        )}
       </section>
 
       <section className="aviso-seccion">
@@ -115,6 +129,13 @@ const PrivacyPage = () => {
           horarios muestra un mapa de Google Maps y el sitio usa tipografías de Google Fonts, por lo que Google
           puede recibir datos técnicos como tu dirección IP, conforme a su propia política de privacidad. La página de inicio muestra publicaciones incrustadas de Instagram; al abrirla, Instagram (Meta) puede recibir datos técnicos de tu visita, como tu dirección IP, y usar sus propias cookies, conforme a su política de privacidad.
         </p>
+        {PEDIDOS_ACTIVOS && (
+          <p>
+            Si pides a domicilio, tu navegador guarda lo que llevas en el carrito (sin datos personales) y, solo
+            mientras la pestaña esté abierta, la dirección de entrega. Si marcas “Recordar mis datos”, tu nombre,
+            teléfono y correo se guardan únicamente en tu dispositivo; puedes borrarlos desmarcando la casilla.
+          </p>
+        )}
       </section>
 
       <section className="aviso-seccion">

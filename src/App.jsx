@@ -15,12 +15,18 @@ import NewsletterPage from './pages/NewsletterPage';
 import PrivacyPage from './pages/PrivacyPage';
 import NotFoundPage from './pages/NotFoundPage';
 import DeliveryPage from './pages/DeliveryPage';
+import CheckoutPage from './pages/CheckoutPage';
+import SeguimientoPage from './pages/SeguimientoPage';
+import TerminosPage from './pages/TerminosPage';
+import { BarraPedido, PanelPedido } from './components/PedidoFlotante';
+import { PEDIDOS_ACTIVOS } from './config/api';
 import { useIntersectionObserver } from './hooks/useIntersectionObserver';
 import { buscarSucursal } from './config/negocio';
 import { toPath } from './routes';
 import { useT } from './context/Preferencias';
 import { conTransicion, hayTransiciones } from './utils/transicion';
 import { precargarMenu } from './hooks/useMenu';
+import Splash, { debeMostrarSplash } from './components/Splash';
 
 const EventsRoute = ({ onReservationClick }) => {
   const [params] = useSearchParams();
@@ -51,6 +57,8 @@ const App = () => {
   const [modalData, setModalData] = useState(null);
   const [pasadoHero, setPasadoHero] = useState(false);
   const [verSubir, setVerSubir] = useState(false);
+  const [splash, setSplash] = useState(debeMostrarSplash);
+  const cerrarSplash = useCallback(() => setSplash(false), []);
   const routerNavigate = useNavigate();
   const { pathname, search } = useLocation();
   const { t } = useT();
@@ -73,6 +81,27 @@ const App = () => {
     const ir = () => precargarMenu();
     if (document.readyState === 'complete') ir(); else window.addEventListener('load', ir, { once: true });
     return () => window.removeEventListener('load', ir);
+  }, []);
+
+  // Barra móvil: se quita mientras escribes en un formulario (el teclado la subiría encima del campo)
+  const [escribiendo, setEscribiendo] = useState(false);
+  useEffect(() => {
+    const esCampo = el => el?.matches?.('input:not([type=radio]):not([type=checkbox]), textarea, select');
+    const entra = e => { if (esCampo(e.target)) setEscribiendo(true); };
+    const sale = e => { if (esCampo(e.target)) setEscribiendo(false); };
+    document.addEventListener('focusin', entra);
+    document.addEventListener('focusout', sale);
+    return () => { document.removeEventListener('focusin', entra); document.removeEventListener('focusout', sale); };
+  }, []);
+
+  // La barra móvil se retira al llegar al pie, para no tapar sus teléfonos ni los botones de idioma y tema
+  const [pieVisible, setPieVisible] = useState(false);
+  useEffect(() => {
+    const pie = document.querySelector('footer.pie');
+    if (!pie || typeof IntersectionObserver === 'undefined') return;
+    const io = new IntersectionObserver(([e]) => setPieVisible(e.isIntersecting));
+    io.observe(pie);
+    return () => io.disconnect();
   }, []);
 
   // En el inicio, la barra móvil aparece al pasar el hero (que ya trae sus propios botones)
@@ -142,6 +171,7 @@ const App = () => {
 
   return (
     <div className={pageLoaded ? 'page-loaded' : ''}>
+      {splash && <Splash onFin={cerrarSplash} />}
       <a className="skip-link" href="#contenido">{t('comun.saltarContenido')}</a>
       <Header onReservationClick={() => openReservation(null)} onNavigate={navigate} />
 
@@ -152,6 +182,9 @@ const App = () => {
           <Route path="/horarios" element={<LocationRoute onReservationClick={openReservation} />} />
           <Route path="/horarios/:id" element={<LocationDetailRoute onReservationClick={openReservation} />} />
           <Route path="/delivery" element={<DeliveryPage />} />
+          {PEDIDOS_ACTIVOS && <Route path="/delivery/pedido" element={<CheckoutPage />} />}
+          {PEDIDOS_ACTIVOS && <Route path="/delivery/seguimiento/:token" element={<SeguimientoPage />} />}
+          {PEDIDOS_ACTIVOS && <Route path="/terminos-de-venta" element={<TerminosPage />} />}
           <Route path="/eventos" element={<EventsRoute onReservationClick={openReservation} />} />
           <Route path="/acerca" element={<AboutPage onNavigate={navigate} onNavigateLocal={navigate} />} />
           <Route path="/contacto" element={<ContactPage onNavigate={navigate} onNavigateLocal={navigate} />} />
@@ -176,7 +209,7 @@ const App = () => {
 
       <button
         type="button"
-        className={`scroll-top${verSubir ? ' visible' : ''}`}
+        className={`scroll-top${verSubir ? ' visible' : ''}${pieVisible ? ' en-pie' : ''}`}
         onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
         aria-label={t('comun.volverArriba')}
         tabIndex={verSubir ? 0 : -1}
@@ -186,10 +219,14 @@ const App = () => {
         </svg>
       </button>
 
-      <div className={`barra-movil${pathname === '/' && !pasadoHero ? ' oculta' : ''}`} role="group" aria-label={t('comun.accesosRapidos')}>
+      {/* Sin barra en el hero del inicio (trae sus botones), en el Menú (ya estás ahí y cierra con su franja roja) ni al escribir */}
+      <div className={`barra-movil${(pathname === '/' && !pasadoHero) || pathname === '/menu' || pathname.startsWith('/delivery/') || escribiendo || pieVisible ? ' oculta' : ''}`} role="group" aria-label={t('comun.accesosRapidos')}>
         <button type="button" className="barra-movil-reservar" onClick={() => openReservation(null)}>{t('comun.reservarMesa')}</button>
         <Link to="/menu" className="barra-movil-menu">{t('comun.verMenuCorto')}</Link>
       </div>
+
+      {PEDIDOS_ACTIVOS && <BarraPedido />}
+      {PEDIDOS_ACTIVOS && <PanelPedido />}
 
       <ReservationSidebar
         isOpen={isReservationOpen}

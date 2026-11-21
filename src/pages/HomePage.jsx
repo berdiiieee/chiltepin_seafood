@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo } from 'react';
 import { Link } from 'react-router-dom';
 import Carousel from '../components/Carousel';
 import Galeria from '../components/Galeria';
@@ -49,24 +49,9 @@ const SucursalCard = ({ s, desfase }) => {
 const HomePage = ({ onReservationClick }) => {
   const { t } = useT();
   const sellos = t('inicio.sellos');
-  const [showSplash, setShowSplash] = useState(() => !sessionStorage.getItem('splashShown'));
-  const [fadeOut, setFadeOut] = useState(false);
   const heroDelPanel = useImagenes('carrusel', HERO_IMAGES);
   // El hero usa las fotos locales; para administrarlas desde el panel: VITE_HERO_DESDE_PANEL=true
   const heroFotos = import.meta.env.VITE_HERO_DESDE_PANEL === 'true' ? heroDelPanel : HERO_IMAGES;
-
-  useEffect(() => {
-    if (!showSplash) return;
-    const fadeTimer = setTimeout(() => setFadeOut(true), 2400);
-    const removeTimer = setTimeout(() => {
-      setShowSplash(false);
-      sessionStorage.setItem('splashShown', 'true');
-    }, 2900);
-    return () => {
-      clearTimeout(fadeTimer);
-      clearTimeout(removeTimer);
-    };
-  }, [showSplash]);
 
   useEffect(() => {
     const counters = document.querySelectorAll('.counter-value');
@@ -93,12 +78,6 @@ const HomePage = ({ onReservationClick }) => {
 
   return (
     <>
-      {showSplash && (
-        <div id="splash" className={fadeOut ? 'fade-out' : ''} aria-hidden="true">
-          <img src="/img/logos/logo_chilte.png" alt="" />
-        </div>
-      )}
-
       <section className="hero" aria-label={t('inicio.bienvenida')}>
         <Carousel
           className="cx-hero"
@@ -140,7 +119,7 @@ const HomePage = ({ onReservationClick }) => {
         </section>
       </div>
 
-      <BandaFoto src="/img/hero/carousel2.jpg" frase={t('inicio.bandaFrase')} alt={t('inicio.bandaAlt')} />
+      <BandaFoto className="banda-cocina" src="/video/cocina.jpg" video="/video/cocina.mp4" frase={t('inicio.bandaFrase')} alt={t('inicio.bandaAlt')} />
 
       <div className="container home-body">
         <section id="about" className="home-seccion home-nosotros">

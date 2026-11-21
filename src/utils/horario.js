@@ -81,3 +81,27 @@ export function formatoFechaLarga(fechaIso, idioma = 'es') {
     new Date(y, m - 1, d),
   );
 }
+
+// Día de la semana de hoy en Durango (Dom = 0 … Sáb = 6); lo usan las promociones del día
+export function indiceHoy(fecha = new Date()) {
+  return new Date(`${ahoraEnDurango(fecha).fecha}T12:00:00`).getDay();
+}
+
+/**
+ * Pedidos a domicilio: solo para HOY. ¿Se puede pedir ahora y para qué horas?
+ * - `ultimoAntesDeCerrarMin`: último pedido X minutos antes de cerrar (lo manda el backend en su config).
+ * - `tiempoEstimadoMin`: lo más pronto que se puede programar es ahora + este tiempo.
+ * Devuelve { abierto, antesDeAbrir, horas: ['13:15', …] } en hora de Durango. El backend lo vuelve a validar.
+ */
+export function ventanaDePedidos({ ultimoAntesDeCerrarMin = 30, tiempoEstimadoMin = 45, intervaloMin = 15 } = {}, fecha = new Date()) {
+  const { minutos } = ahoraEnDurango(fecha);
+  const abre = aMinutos(HORARIO.abre);
+  const ultimo = aMinutos(HORARIO.cierra) - ultimoAntesDeCerrarMin;
+  const abierto = minutos >= abre && minutos <= ultimo;
+  const horas = [];
+  if (abierto) {
+    const desde = Math.ceil((minutos + tiempoEstimadoMin) / intervaloMin) * intervaloMin;
+    for (let m = desde; m <= aMinutos(HORARIO.cierra); m += intervaloMin) horas.push(deMinutos(m));
+  }
+  return { abierto, antesDeAbrir: minutos < abre, horas };
+}

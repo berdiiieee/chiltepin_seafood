@@ -5,6 +5,7 @@
   "description": "Chiltepin Seafood website with admin panel",
   "scripts": {
     "dev": "vite",
+    "dev:pedidos": "vite --mode pedidos",
     "build": "vite build",
     "preview": "vite preview",
     "start": "node server.js"

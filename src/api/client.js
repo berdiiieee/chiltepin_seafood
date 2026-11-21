@@ -63,7 +63,7 @@ export function get(endpoint, signal) {
   return request(endpoint, { method: 'GET', signal });
 }
 
-/** @param {string} endpoint @param {unknown} data */
-export function post(endpoint, data) {
-  return request(endpoint, { method: 'POST', body: JSON.stringify(data) });
+/** @param {string} endpoint @param {unknown} data @param {Record<string, string>} [headers] */
+export function post(endpoint, data, headers) {
+  return request(endpoint, { method: 'POST', body: JSON.stringify(data), headers });
 }

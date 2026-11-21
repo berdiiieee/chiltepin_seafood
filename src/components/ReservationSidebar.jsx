@@ -6,10 +6,28 @@ import Campo from './Campo';
 import AvisoFormulario from './AvisoFormulario';
 import AvisoEspera from './AvisoEspera';
 import { SUCURSALES, RESERVACIONES, TELEFONO, TELEFONO_LINK, CORREO_CONTACTO, buscarSucursal } from '../config/negocio';
-import { ahoraEnDurango, aMinutos, formatoHora, formatoFechaLarga, horasDeReservacion, hoyLocal } from '../utils/horario';
+import { ahoraEnDurango, aMinutos, formatoHora, formatoFechaLarga, horasDeReservacion } from '../utils/horario';
 import { useT } from '../context/Preferencias';
 
-const PERSONAS = [1, 2, 3, 4, 5, 6];
+const PERSONAS = Array.from({ length: RESERVACIONES.maxPersonasEnLinea }, (_, i) => String(i + 1));
+const MAS = `${RESERVACIONES.maxPersonasEnLinea + 1}+`;
+const trazo = { fill: 'none', stroke: 'currentColor', strokeWidth: 1.5, strokeLinecap: 'round', strokeLinejoin: 'round' };
+
+const isoLocal = (d) => `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+
+// Próximos días hábiles (los que se pueden reservar); hoy solo si aún queda una hora disponible
+function diasDisponibles(ahora, ultimaHora, cuantos = 5) {
+  const base = new Date(`${ahora.fecha}T12:00:00`);
+  const dias = [];
+  for (let i = 0; dias.length < cuantos && i < 14; i++) {
+    const d = new Date(base);
+    d.setDate(base.getDate() + i);
+    if (!RESERVACIONES.dias.includes(d.getDay())) continue;
+    if (i === 0 && ahora.minutos >= ultimaHora) continue;
+    dias.push({ iso: isoLocal(d), desde: i, d });
+  }
+  return dias;
+}
 
 const ReservationSidebar = ({ isOpen, onClose, initialData }) => {
   const [step, setStep] = useState(1);
@@ -23,18 +41,23 @@ const ReservationSidebar = ({ isOpen, onClose, initialData }) => {
   const [errors, setErrors] = useState({});
   const [enviando, setEnviando] = useState(false);
   const [errorEnvio, setErrorEnvio] = useState('');
+  const [otraFecha, setOtraFecha] = useState(false);
+  const fechaRef = useRef(null);
   const panelRef = useRef(null);
   const focoPrevio = useRef(null);
   const { t, idioma } = useT();
 
-  const grupoGrande = personas === '7+';
+  const grupoGrande = personas === MAS;
   const horas = useMemo(() => horasDeReservacion(), []);
   const ahora = ahoraEnDurango();
+  const ultimaHora = aMinutos(horas[horas.length - 1]);
+  const dias = diasDisponibles(ahora, ultimaHora);
 
   // Al abrir: precarga sucursal, guarda el foco previo y lo devuelve al cerrar
   useEffect(() => {
     if (!isOpen) return;
-    if (initialData?.location) setSucursal(initialData.location);
+    // Si abren desde otra sucursal distinta a la del borrador, se empieza de nuevo con esa
+    if (initialData?.location && initialData.location !== sucursal) { setSucursal(initialData.location); setStep(1); }
     focoPrevio.current = document.activeElement;
     document.body.style.overflow = 'hidden';
     const espera = setTimeout(() => panelRef.current?.querySelector('button, input')?.focus(), 50);
@@ -80,6 +103,11 @@ const ReservationSidebar = ({ isOpen, onClose, initialData }) => {
     clearError('fecha');
     if (value && !esDiaValido(value)) {
       setError('fecha', t('reservas.finDeSemana'));
+      setFecha('');
+      return;
+    }
+    if (value === ahora.fecha && ahora.minutos >= ultimaHora) {
+      setError('fecha', t('reservas.sinHorasHoy'));
       setFecha('');
       return;
     }
@@ -132,7 +160,14 @@ const ReservationSidebar = ({ isOpen, onClose, initialData }) => {
     }
   };
 
+  // Si se cierra por accidente a medias, los datos se conservan; solo se limpian tras confirmar
   const handleClose = () => {
+    if (step === 3) reiniciar();
+    if (onClose) onClose();
+  };
+
+  const reiniciar = () => {
+    setOtraFecha(false);
     setStep(1);
     setSucursal('');
     setPersonas('');
@@ -143,13 +178,25 @@ const ReservationSidebar = ({ isOpen, onClose, initialData }) => {
     setEmail('');
     setErrors({});
     setErrorEnvio('');
-    if (onClose) onClose();
   };
 
   const elegida = buscarSucursal(sucursal);
   const nombreCorto = elegida?.nombreCorto || sucursal;
   // Teléfono de la sucursal elegida; si aún no eligen, los dos con su nombre
   const telefonos = elegida ? [elegida] : SUCURSALES;
+
+  const diaCorto = (d) => new Intl.DateTimeFormat(idioma === 'en' ? 'en-US' : 'es-MX', { weekday: 'short' }).format(d).replace('.', '');
+  const resumen = `${personas} ${personas === '1' ? t('reservas.persona1') : t('reservas.personasN')} · ${fecha ? formatoFechaLarga(fecha, idioma) : ''} · ${hora ? formatoHora(hora, idioma).replace(/ /g, '\u00A0') : ''}`;
+  const mostrarOtra = otraFecha || (fecha && !dias.some(d => d.iso === fecha));
+
+  const abrirOtraFecha = () => {
+    setOtraFecha(true);
+    setTimeout(() => { fechaRef.current?.focus(); try { fechaRef.current?.showPicker?.(); } catch { /* sin selector */ } }, 30);
+  };
+
+  const Err = ({ id }) => (
+    <p id={`res-err-${id}`} className={`field-error${errors[id] ? ' visible' : ''}`} role={errors[id] ? 'alert' : undefined}>{errors[id] || ''}</p>
+  );
 
   return (
     <>
@@ -169,16 +216,14 @@ const ReservationSidebar = ({ isOpen, onClose, initialData }) => {
         <div className="res-body">
           {step === 1 && (
             <div className="res-step active">
-              <p className="res-regla">{t('reservas.regla')}</p>
-
-              <div className="res-field">
-                <label>{t('reservas.sucursal')}</label>
-                <div className="res-location-pills" role="group" aria-label={t('reservas.sucursal')}>
+              <fieldset className="res-grupo" aria-describedby={errors.sucursal ? 'res-err-sucursal' : undefined}>
+                <legend>{t('reservas.sucursal')}</legend>
+                <div className="res-ops">
                   {SUCURSALES.map(s => (
                     <button
                       type="button"
                       key={s.id}
-                      className={`loc-pill${sucursal === s.nombre ? ' selected' : ''}`}
+                      className="res-op"
                       aria-pressed={sucursal === s.nombre}
                       onClick={() => { setSucursal(s.nombre); clearError('sucursal'); }}
                     >
@@ -186,71 +231,83 @@ const ReservationSidebar = ({ isOpen, onClose, initialData }) => {
                     </button>
                   ))}
                 </div>
-                <span className={`field-error${errors.sucursal ? ' visible' : ''}`}>{errors.sucursal || ''}</span>
-              </div>
+                <Err id="sucursal" />
+              </fieldset>
 
-              <div className="res-field">
-                <label>{t('reservas.personas')}</label>
-                <div className="guest-pills" role="group" aria-label={t('reservas.personasAria')}>
-                  {[...PERSONAS.map(String), '7+'].map(g => (
+              <fieldset className="res-grupo" aria-describedby={errors.personas ? 'res-err-personas' : undefined}>
+                <legend>{t('reservas.personas')}</legend>
+                <div className="res-ops" role="group" aria-label={t('reservas.personasAria')}>
+                  {[...PERSONAS, MAS].map(g => (
                     <button
                       type="button"
                       key={g}
-                      className={`guest-pill${personas === g ? ' selected' : ''}`}
+                      className="res-op"
                       aria-pressed={personas === g}
-                      aria-label={g === '7+' ? t('reservas.sieteOMas') : `${g} ${g === '1' ? t('reservas.persona1') : t('reservas.personasN')}`}
+                      aria-label={g === MAS ? t('reservas.sieteOMas') : `${g} ${g === '1' ? t('reservas.persona1') : t('reservas.personasN')}`}
                       onClick={() => { setPersonas(g); clearError('personas'); }}
                     >
                       {g}
                     </button>
                   ))}
                 </div>
-                <span className={`field-error${errors.personas ? ' visible' : ''}`}>{errors.personas || ''}</span>
-              </div>
+                <Err id="personas" />
+              </fieldset>
 
               {!grupoGrande && (
                 <>
-                  <div className="res-field">
-                    <label htmlFor="resDate">{t('reservas.fecha')}</label>
-                    <input
-                      type="date"
-                      id="resDate"
-                      min={hoyLocal()}
-                      value={fecha}
-                      onChange={e => onFecha(e.target.value)}
-                    />
-                    <span className={`field-error${errors.fecha ? ' visible' : ''}`}>{errors.fecha || ''}</span>
-                  </div>
+                  <fieldset className="res-grupo" aria-describedby={errors.fecha ? 'res-err-fecha' : undefined}>
+                    <legend>{t('reservas.fecha')}</legend>
+                    <div className="res-ops res-dias">
+                      {dias.map(({ iso, desde, d }) => (
+                        <button
+                          type="button"
+                          key={iso}
+                          className="res-op res-dia"
+                          aria-pressed={fecha === iso}
+                          aria-label={formatoFechaLarga(iso, idioma)}
+                          onClick={() => onFecha(iso)}
+                        >
+                          <span className="res-dia-sem">{desde === 0 ? t('reservas.hoy') : desde === 1 ? t('reservas.manana') : diaCorto(d)}</span>
+                          <span className="res-dia-num">{d.getDate()}</span>
+                        </button>
+                      ))}
+                    </div>
+                    {mostrarOtra ? (
+                      <input
+                        ref={fechaRef}
+                        type="date"
+                        className="res-fecha-otra"
+                        aria-label={t('reservas.fecha')}
+                        min={ahora.fecha}
+                        value={fecha}
+                        onChange={e => onFecha(e.target.value)}
+                      />
+                    ) : (
+                      <button type="button" className="link-flecha res-otra" onClick={abrirOtraFecha}>{t('reservas.otraFecha')} <span aria-hidden="true">→</span></button>
+                    )}
+                    <Err id="fecha" />
+                    <p className="res-regla">{t('reservas.regla')}</p>
+                  </fieldset>
 
-                  <div className="res-field">
-                    <label>{t('reservas.hora')}</label>
-                    <div className="res-times-pills" role="group" aria-label={t('reservas.hora')}>
-                      {horas.map(h => (
+                  <fieldset className="res-grupo" aria-describedby={errors.hora ? 'res-err-hora' : undefined}>
+                    <legend>{t('reservas.hora')}</legend>
+                    <div className="res-ops res-horas">
+                      {horas.filter(horaDisponible).map(h => (
                         <button
                           type="button"
                           key={h}
-                          className={`time-pill${hora === h ? ' selected' : ''}`}
+                          className="res-op"
                           aria-pressed={hora === h}
-                          disabled={!horaDisponible(h)}
                           onClick={() => { setHora(h); clearError('hora'); }}
                         >
                           {formatoHora(h, idioma)}
                         </button>
                       ))}
                     </div>
-                    <span className={`field-error${errors.hora ? ' visible' : ''}`}>{errors.hora || ''}</span>
-                  </div>
+                    <Err id="hora" />
+                  </fieldset>
                 </>
               )}
-
-              <button
-                type="button"
-                className={`btn-submit-event${grupoGrande ? ' btn-contact' : ''}`}
-                onClick={continuar}
-                style={{ marginTop: 20 }}
-              >
-                {grupoGrande ? t('reservas.verComo') : t('reservas.continuar')}
-              </button>
             </div>
           )}
 
@@ -269,16 +326,15 @@ const ReservationSidebar = ({ isOpen, onClose, initialData }) => {
                     </p>
                   ))}
                   <p className="contact-email"><a href={`mailto:${CORREO_CONTACTO}`}>{CORREO_CONTACTO}</a></p>
-                  <button type="button" className="btn-submit-event" onClick={handleClose} style={{ marginTop: 20 }}>{t('comun.cerrar')}</button>
                 </div>
               ) : (
                 <>
                   <div className="res-summary">
                     <p>{nombreCorto}</p>
-                    <span>{personas} {personas === '1' ? t('reservas.persona1') : t('reservas.personasN')} • {formatoFechaLarga(fecha, idioma)} • {formatoHora(hora, idioma)}</span>
+                    <span>{resumen}</span>
                   </div>
 
-                  <form className="event-form" onSubmit={enviar} noValidate>
+                  <form id="res-form" className="event-form" onSubmit={enviar} noValidate>
                     <Campo id="res-nombre" label={t('formularios.nombreCompleto')} completo error={errors.nombre}>
                       <input type="text" maxLength={100} autoComplete="name" placeholder={t('reservas.placeholderNombre')} value={nombre}
                         onChange={e => { setNombre(e.target.value); clearError('nombre'); }} />
@@ -291,14 +347,8 @@ const ReservationSidebar = ({ isOpen, onClose, initialData }) => {
                       <input type="email" maxLength={255} autoComplete="email" placeholder={t('reservas.placeholderCorreo')} value={email}
                         onChange={e => { setEmail(e.target.value); clearError('email'); }} />
                     </Campo>
-
                     <div className="full-width">
                       <AvisoFormulario datos={t('reservas.avisoDatos')} finalidad={t('reservas.avisoFinalidad')} />
-                      {errorEnvio && <p className="form-error-envio" role="alert">{errorEnvio}</p>}
-                      <AvisoEspera activo={enviando} />
-                      <button type="submit" className="btn-submit-event" disabled={enviando} style={{ marginTop: 12 }}>
-                        {enviando ? t('formularios.enviando') : t('reservas.confirmar')}
-                      </button>
                     </div>
                   </form>
                 </>
@@ -307,15 +357,39 @@ const ReservationSidebar = ({ isOpen, onClose, initialData }) => {
           )}
 
           {step === 3 && (
-            <div className="res-step active res-exito">
-              <h2>{t('reservas.exito')}</h2>
-              <p>
-                {nombreCorto} · {formatoFechaLarga(fecha, idioma)} · {formatoHora(hora, idioma)}
-                <br />
-                {t('reservas.cambiarAlgo')} <a href={elegida?.telefonoLink || TELEFONO_LINK}>{elegida?.telefono || TELEFONO}</a>.
-              </p>
-              <button type="button" className="btn-submit-event" onClick={handleClose}>{t('comun.cerrar')}</button>
+            <div className="res-step active">
+              <div className="form-ok" role="status">
+                <svg className="form-ok-check" viewBox="0 0 52 52" width="64" height="64" aria-hidden="true">
+                  <circle cx="26" cy="26" r="24" {...trazo} />
+                  <path d="M15 27l7 7 15-15" {...trazo} strokeWidth="2" />
+                </svg>
+                <h3 className="form-ok-titulo">{t('reservas.exito')}</h3>
+                <p>
+                  {nombreCorto} · {formatoFechaLarga(fecha, idioma)} · {formatoHora(hora, idioma)}
+                  <br />
+                  {t('reservas.cambiarAlgo')} <a href={elegida?.telefonoLink || TELEFONO_LINK}>{elegida?.telefono || TELEFONO}</a>.
+                </p>
+              </div>
             </div>
+          )}
+        </div>
+
+        {/* Acción principal fija al fondo: siempre a la vista, aunque el teclado o la pantalla sean chicos */}
+        <div className="res-pie">
+          {step === 2 && !grupoGrande && errorEnvio && <p className="form-error-envio" role="alert">{errorEnvio}</p>}
+          {step === 2 && !grupoGrande && <AvisoEspera activo={enviando} />}
+          {step === 1 && (
+            <button type="button" className="btn-principal" onClick={continuar}>
+              {grupoGrande ? t('reservas.verComo') : t('reservas.continuar')}
+            </button>
+          )}
+          {step === 2 && !grupoGrande && (
+            <button type="submit" form="res-form" className="btn-principal" disabled={enviando}>
+              {enviando ? t('formularios.enviando') : t('reservas.confirmar')}
+            </button>
+          )}
+          {(step === 3 || (step === 2 && grupoGrande)) && (
+            <button type="button" className="btn-principal" onClick={handleClose}>{t('comun.cerrar')}</button>
           )}
         </div>
       </aside>

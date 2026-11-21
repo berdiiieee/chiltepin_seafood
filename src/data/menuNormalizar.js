@@ -35,6 +35,10 @@ const normalizarItem = item => ({
   descripcion_en: texto(item.descripcion_en ?? item.desc_en),
   subcategoria: texto(item.subcategoria),
   subcategoria_en: texto(item.subcategoria_en),
+  // Pedidos a domicilio: `domicilio:false` = no sale a domicilio; `alcohol` true/false si el panel lo dice
+  // (si no viene, se deduce del subgrupo de bebidas: ver src/data/pedido.js).
+  domicilio: item.domicilio !== false,
+  alcohol: typeof item.alcohol === 'boolean' ? item.alcohol : null,
 });
 
 // Bebidas en subgrupos: primero `subcategoria` del panel; si no, el mapa local; si no, "Otras".
@@ -91,6 +95,8 @@ export function normalizarPromos(promos) {
     const location = texto(p.location);
     if (!grupos.has(location)) grupos.set(location, []);
     grupos.get(location).push({
+      id: p.id,
+      domicilio: p.domicilio !== false,
       day: texto(p.day),
       desc: texto(p.desc ?? p.descripcion),
       desc_en: texto(p.desc_en ?? p.descripcion_en),

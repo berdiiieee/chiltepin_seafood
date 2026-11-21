@@ -56,10 +56,26 @@ export const SUCURSALES = [
       { app: 'DiDi Food', url: 'https://www.didi-food.com/es-MX/food/store/5764607524473670170' },
     ],
     seccionImagenes: 'sucursal-plaza-real',
+    // Fotos nuevas (nov 2026, 1400 px, sin datos del teléfono). La primera es la portada en Sucursales.
+    // Selección y orden del dueño (20 nov 2026): IMG_7940, 7945, 7952, 7957, 7960, 7935, 7997, 7965
     imagenes: [
-      '/img/ubicaciones/plaza-real/fachada.jpeg',
-      '/img/ubicaciones/plaza-real/interior2doP.jpg',
-      '/img/ubicaciones/plaza-real/escaleras.jpg',
+      '/img/sucursales/plaza-real/letrero.jpg',
+      '/img/sucursales/plaza-real/escaleras.jpg',
+      '/img/sucursales/plaza-real/comedor.jpg',
+      '/img/sucursales/plaza-real/mural-pulpo.jpg',
+      '/img/sucursales/plaza-real/cuadros.jpg',
+      '/img/sucursales/plaza-real/fachada.jpg',
+      '/img/sucursales/plaza-real/murales-peces.jpg',
+      '/img/sucursales/plaza-real/barra.jpg',
+    ],
+    // Portada en la página de Sucursales: el local completo, por fuera
+    portada: '/img/sucursales/plaza-real/fachada.jpg',
+    // Galería del detalle: ya adentro, los interiores (3 piezas en columnas altas):
+    // el piso de abajo (escaleras) y dos del piso de arriba. (Galeria también acepta { video, poster }.)
+    galeria: [
+      '/img/sucursales/plaza-real/escaleras.jpg',
+      '/img/sucursales/plaza-real/comedor.jpg',
+      '/img/sucursales/plaza-real/mural-pulpo.jpg',
     ],
   },
   {
@@ -77,12 +93,19 @@ export const SUCURSALES = [
       { app: 'DiDi Food', url: 'https://www.didi-food.com/es-MX/food/store/5764610193128950278' },
     ],
     seccionImagenes: 'sucursal-plaza-450',
+    // Carrusel del Inicio: empieza con el exterior (terraza con el letrero, caras difuminadas) y sigue con los interiores
     imagenes: [
-      '/img/ubicaciones/450/fachada.jpeg',
-      '/img/ubicaciones/450/1.jpeg',
-      '/img/ubicaciones/450/2.jpeg',
-      '/img/ubicaciones/450/3.jpeg',
-      '/img/ubicaciones/450/4.jpeg',
+      '/img/sucursales/plaza-450/terraza.jpg',
+      '/img/sucursales/plaza-450/pulpo.jpg',
+      '/img/sucursales/plaza-450/barra-noche.jpg',
+      '/img/sucursales/plaza-450/mesa-neon.jpg',
+      '/img/sucursales/plaza-450/barra.jpg',
+    ],
+    portada: '/img/sucursales/plaza-450/terraza.jpg',
+    galeria: [
+      '/img/sucursales/plaza-450/barra-noche.jpg',
+      '/img/sucursales/plaza-450/pulpo.jpg',
+      '/img/sucursales/plaza-450/mesa-neon.jpg',
     ],
   },
 ];

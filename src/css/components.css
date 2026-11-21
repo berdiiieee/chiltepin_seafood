@@ -279,10 +279,6 @@ a.logo-link { display: block; }
 /* --- Reservaciones --- */
 .res-regla { color: var(--text-muted); font-size: 0.9rem; margin-bottom: 18px; }
 .time-pill:disabled { opacity: 0.3; cursor: not-allowed; text-decoration: line-through; }
-.res-exito { text-align: center; margin-top: 50px; }
-.res-exito h2 { font-family: var(--font-logo); font-size: 2.6rem; color: var(--accent-color); margin-bottom: 20px; }
-.res-exito p { color: var(--text-muted); margin-bottom: 30px; line-height: 1.7; }
-.res-exito a { color: var(--text-color); }
 .res-contact a { color: inherit; }
 
 /* --- Menú --- */
@@ -721,7 +717,7 @@ footer.pie { margin-top: 56px; padding: 0 0 28px; border-top: 1px solid var(--g-
 .hero-title { font-size: clamp(2.3rem, 4.8vw, 4.3rem); line-height: 1.3; max-width: 18ch; margin-bottom: 14px; }
 .seccion-cabecera .eyebrow { margin: 0 0 10px; width: auto; }
 .titulo-seccion { line-height: 1.2; }
-.barra-movil.oculta { display: none !important; }
+.barra-movil.oculta { transform: translateY(110%); visibility: hidden; pointer-events: none; }
 
 /* ======================================================================
    RONDA 4 — aire en el hero, barra de progreso en el carrusel, galería con
@@ -1197,9 +1193,8 @@ main > .cabecera-pagina, main > .container > .cabecera-pagina { padding-left: 0;
 .foto-recta:hover img { transform: scale(1.03); }
 /* Cita larga en 3 renglones: un poco más chica que la banda del Inicio */
 .banda-cita .banda-frase { font-size: clamp(2rem, 4.4vw, 4.2rem); line-height: 1.05; }
-/* Foto del capítulo 1: acercar al letrero de neón "Chiltepin" para que sea el protagonista */
-.hist-foto-neon img { object-position: 50% 0%; transform: scale(1.6); transform-origin: 60% 30%; }
-.hist-foto-neon:hover img { transform: scale(1.64); }
+/* Foto del capítulo 1: los cuadros de peces con traje (el concepto "distinto a lo de siempre") */
+.hist-foto img { object-position: 50% 45%; }
 
 /* /contacto y /boletin — mismo bloque que "Cotiza tu evento": texto + sellos | formulario abierto */
 .form-bloque .suc-datos a { color: var(--text-color); }
@@ -1410,3 +1405,724 @@ html.vt-pagina::view-transition-group(cabecera-sitio) { animation-duration: 0.45
 @keyframes puntoLate { 50% { opacity: 0.3; } }
 /* Aviso cuando un envío tarda (el backend está despertando) */
 .aviso-espera { margin: 10px 0 0; color: var(--text-muted); font-size: 0.88rem; animation: errorEntra 0.45s var(--curva) both; }
+
+/* === Splash (src/components/Splash.jsx): "Chiltepin" se escribe a mano de la C a la n (una máscara de
+   trazos gruesos va descubriendo el logo en orden de escritura), aparece el chiltepín sobre la i, se dibuja
+   el ornamento, sale el lema y la pantalla sube como cortina con filo rojo. Sin brillo de fondo.
+   Los tiempos dependen de --fin (s en que termina la palabra), que calcula Splash.jsx. === */
+html.con-splash { overflow: hidden; }
+.splash {
+  --fin: 2.6s;
+  position: fixed; inset: 0; z-index: 99999; display: grid; place-items: center; overflow: hidden;
+  background: var(--bg-color); border-bottom: 3px solid var(--accent-color); cursor: pointer;
+  transition: transform 0.9s cubic-bezier(0.76, 0, 0.24, 1);
+}
+.splash.saliendo { transform: translateY(calc(-100% - 3px)); }
+.splash-centro { position: relative; display: flex; flex-direction: column; align-items: center; gap: 22px; transition: opacity 0.45s ease, transform 0.9s cubic-bezier(0.76, 0, 0.24, 1); }
+.splash.saliendo .splash-centro { opacity: 0; transform: translateY(-48px); }
+.splash-logo { display: block; width: clamp(240px, 24vw, 320px); height: auto; overflow: visible; }
+/* La pluma: cada trazo se dibuja a su turno (--ini) y a velocidad pareja (--dur proporcional a su largo) */
+.splash-trazo { stroke-dasharray: 1 2; stroke-dashoffset: 1.01; animation: splashPluma var(--dur, 0.2s) cubic-bezier(0.37, 0, 0.63, 1) var(--ini, 0s) forwards; }
+.splash-chile { opacity: 0; transform-box: fill-box; transform-origin: 50% 80%; transform: scale(0.3); animation: splashBrota 0.55s cubic-bezier(0.34, 1.56, 0.64, 1) var(--fin) forwards; }
+.splash-limpia { opacity: 0; animation: splashAparece 0.35s ease calc(var(--fin) + 0.15s) forwards; }
+.splash-orn { display: flex; align-items: center; gap: 16px; width: clamp(260px, 30vw, 420px); color: var(--accent-color); }
+.splash-orn svg { flex: none; animation: splashChile 0.7s var(--curva) calc(var(--fin) - 0.35s) both; }
+.splash-orn path { stroke-dasharray: 1; stroke-dashoffset: 1; animation: splashTrazo 0.8s ease-in-out calc(var(--fin) - 0.25s) forwards; }
+.splash-linea { flex: 1; height: 1px; background: currentColor; transform: scaleX(0); animation: splashLinea 0.8s var(--curva) calc(var(--fin) + 0.05s) forwards; }
+.splash-linea:first-child { transform-origin: right; }
+.splash-linea:last-child { transform-origin: left; }
+.splash-lema { margin: 0; font-family: var(--font-headings); font-size: 0.8rem; letter-spacing: 0.32em; text-transform: uppercase; color: var(--text-muted); opacity: 0; animation: errorEntra 0.7s var(--curva) calc(var(--fin) + 0.3s) forwards; }
+@keyframes splashPluma { to { stroke-dashoffset: 0; } }
+@keyframes splashBrota { to { opacity: 1; transform: none; } }
+@keyframes splashAparece { to { opacity: 1; } }
+@keyframes splashTrazo { to { stroke-dashoffset: 0; } }
+@keyframes splashChile { from { opacity: 0; transform: scale(0.6) rotate(-20deg); } to { opacity: 1; transform: none; } }
+@keyframes splashLinea { to { transform: scaleX(1); } }
+
+/* ======================================================================
+   MÓVIL — FASE 1: base común (navbar, menú a pantalla completa, barra inferior, pie)
+   ====================================================================== */
+/* En escritorio no existen la flecha de submenú ni los teléfonos del menú móvil */
+@media (min-width: 1101px) {
+  .dropfila { display: contents; }
+  .dropflecha, .nav-movil-tels { display: none; }
+}
+
+@media (max-width: 1100px) {
+  /* Barra delgada: logo 118 px (≈52 px de alto) en 72 px; sin desenfoque (el menú se fija a la pantalla) */
+  :root { --header-h: 72px; }
+  header { height: var(--header-h); padding-top: 0; padding-bottom: 0; backdrop-filter: none; -webkit-backdrop-filter: none; }
+  header .logo-img { max-width: 118px; }
+  body.mobile-menu-open { padding-top: var(--header-h); }
+  body.mobile-menu-open header { background: var(--bg-color); }
+  body.mobile-menu-open .logo-link { padding: 0; }
+
+  /* Hamburguesa: tres líneas finas que se cruzan en una X */
+  .hamburger { display: grid; place-items: center; width: 44px; height: 44px; margin-right: -10px; font-size: 0; color: var(--text-color); }
+  .hamburger:hover { color: var(--text-color); }
+  .hamburger-lineas { position: relative; display: block; width: 24px; height: 14px; }
+  .hamburger-lineas span { position: absolute; left: 0; width: 100%; height: 1.6px; border-radius: 1px; background: currentColor; transition: transform 0.45s var(--curva), top 0.45s var(--curva), opacity 0.2s; }
+  .hamburger-lineas span:nth-child(1) { top: 0; }
+  .hamburger-lineas span:nth-child(2) { top: 6.2px; }
+  .hamburger-lineas span:nth-child(3) { top: 12.4px; }
+  .hamburger.abierta .hamburger-lineas span:nth-child(1) { top: 6.2px; transform: rotate(45deg); }
+  .hamburger.abierta .hamburger-lineas span:nth-child(2) { opacity: 0; }
+  .hamburger.abierta .hamburger-lineas span:nth-child(3) { top: 6.2px; transform: rotate(-45deg); }
+
+  /* Menú a pantalla completa, fondo sólido (sin vidrio) */
+  header nav, header nav.open {
+    position: fixed; top: var(--header-h); left: 0; right: 0; bottom: 0; width: auto; height: auto;
+    display: flex; flex-direction: column; align-items: stretch !important; gap: 0;
+    padding: 6px var(--gutter) calc(28px + env(safe-area-inset-bottom));
+    background: var(--bg-color); backdrop-filter: none; -webkit-backdrop-filter: none; box-shadow: none;
+    overflow-y: auto; overscroll-behavior: contain;
+    opacity: 0; visibility: hidden; transform: translateY(-10px);
+    transition: opacity 0.35s var(--curva), transform 0.45s var(--curva), visibility 0s linear 0.45s;
+  }
+  header nav.open { opacity: 1; visibility: visible; transform: none; transition-delay: 0s; }
+
+  /* Renglones: nombre de la sección (lleva a su página) | flecha (abre el submenú) */
+  header nav > a, header nav .dropdown { border-bottom: 1px solid var(--g-2a2a2a); }
+  header nav > a, header nav .dropbtn {
+    display: flex; align-items: center; min-height: 58px; padding: 0; width: 100%;
+    font-family: var(--font-nav); font-size: 1.35rem; font-weight: 400; letter-spacing: 0.02em; text-transform: none;
+    color: var(--text-color); text-align: left;
+  }
+  header nav .dropbtn::after { content: none; }
+  .dropfila { display: flex; align-items: center; }
+  .dropfila .dropbtn { flex: 1; }
+  .dropflecha {
+    display: grid; place-items: center; flex: none; width: 48px; height: 48px; margin-right: -12px;
+    background: none; border: 0; color: var(--text-muted); cursor: pointer; transition: color 0.3s;
+  }
+  .dropflecha svg { transition: transform 0.4s var(--curva); }
+  header nav .dropdown.open .dropflecha { color: var(--accent-color); }
+  header nav .dropdown.open .dropflecha svg { transform: rotate(180deg); }
+  header nav .dropdown-content { padding: 0; }
+  header nav .dropdown.open .dropdown-content { padding-bottom: 12px; }
+  header nav .dropdown-content a {
+    min-height: 44px; padding: 0 0 0 18px; border-left: 1px solid var(--g-333);
+    font-family: var(--font-body); font-size: 1rem; font-weight: 400; letter-spacing: 0; text-transform: none;
+    color: var(--g-cfcfcf); opacity: 1;
+  }
+
+  /* Reservar: el único botón relleno, igual que .btn-principal */
+  header nav .btn-reservations {
+    flex: none; justify-content: center; min-height: 54px; margin-top: 28px; padding: 0 20px;
+    background: var(--accent-color); color: #fff; border-radius: 2px;
+    font-family: var(--font-nav); font-size: 1.05rem; letter-spacing: 0.04em; text-transform: none;
+  }
+
+  /* Teléfonos de las dos sucursales, listos para tocar */
+  .nav-movil-tels { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 22px; }
+  header nav .nav-movil-tel {
+    display: flex; flex-direction: column; align-items: flex-start; gap: 3px; min-height: 0; padding: 6px 0; border: 0;
+    font-family: var(--font-headings); font-size: 1.1rem; letter-spacing: 0.02em; text-transform: none; color: var(--text-color);
+  }
+  .nav-movil-tel span { font-size: 0.72rem; letter-spacing: 0.22em; text-transform: uppercase; color: var(--text-muted); }
+
+  /* Pie en tablet: dos columnas; el correo largo puede partirse */
+  .pie-fila { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .pie-correo { overflow-wrap: anywhere; }
+}
+@media (max-width: 1100px) and (prefers-reduced-motion: reduce) {
+  header nav, header nav.open { transform: none; }
+}
+
+/* Pie en celular: una sola pieza de dos renglones (Footer.jsx → .pie-movil) */
+.pie-movil { display: none; }
+@media (max-width: 700px) {
+  .pie-fila, .pie-legal { display: none; }
+  .pie-movil { display: block; padding: 26px 0 0; }
+  .pie-movil-fila { display: flex; align-items: center; justify-content: space-between; gap: 16px; }
+  .pie-movil .pie-logo { width: 92px; margin: 0; }
+  .pie-movil .pie-prefs { padding-left: 0; border-left: 0; gap: 16px; }
+  .pie-movil .pie-prefs button { min-width: 36px; min-height: 40px; font-size: 0.85rem; }
+  .pie-movil-enlaces { display: flex; flex-wrap: wrap; gap: 0 18px; margin: 14px 0 0; color: var(--g-7d7d7d); font-size: 0.85rem; }
+  .pie-movil-enlaces a { display: inline-flex; align-items: center; min-height: 36px; color: var(--g-bdbdbd); text-decoration: none; }
+  .pie-movil-enlaces span { display: inline-flex; align-items: center; min-height: 36px; }
+}
+
+/* --- MÓVIL — Fase 1b: errores que reportó el dueño desde su celular --- */
+@media (max-width: 1100px) {
+  /* Red de seguridad: nada puede ensanchar la página (en iPhone eso la "estira" y la aleja) */
+  html, body { overflow-x: clip; }
+  /* Categorías del Menú: la fila empieza en "Entradas" (centrada se cortaba el principio y no se alcanzaba)
+     y la línea roja no puede salirse de la pantalla */
+  .menu-nav { justify-content: flex-start; scrollbar-width: none; }
+  .menu-nav::-webkit-scrollbar { display: none; }
+  .menu-nav-wrapper { overflow-x: clip; }
+}
+@media (max-width: 700px) {
+  /* Más aire a los lados en todo el sitio */
+  :root { --gutter: 22px; }
+  /* Hero: los controles del carrusel bajan a su propio renglón, alineados con el texto */
+  .hero-content { padding-bottom: 96px; }
+  .cx-hero .cx-controls { left: var(--gutter); right: auto; bottom: 30px; padding-left: 0; background: none; }
+  /* La barra inferior entra y sale deslizándose; el pie ya no necesita hueco extra porque la barra se retira al llegar */
+  .barra-movil { transition: transform 0.4s var(--curva), visibility 0s linear 0s; }
+  .barra-movil.oculta { transition: transform 0.4s var(--curva), visibility 0s linear 0.4s; }
+  footer.pie { padding-bottom: calc(22px + env(safe-area-inset-bottom)); }
+}
+
+/* --- MÓVIL — Fase 1c: ronda 2 del dueño (categorías del Menú en texto, formularios en una columna, aire generoso) --- */
+@media (max-width: 1100px) {
+  /* Mosaico de "Del mar a tu mesa": en una sola columna ya no hay texto que le dé altura → vuelven sus proporciones */
+  .home-nosotros .mosaico { height: auto; align-items: start; }
+  .home-nosotros .mosaico-foto { flex: none; }
+  .home-nosotros .mosaico-foto.alta { aspect-ratio: 4 / 5; }
+  .home-nosotros .mosaico-foto.media { aspect-ratio: 3 / 4; }
+  .home-nosotros .mosaico-foto.ancha { aspect-ratio: 4 / 3; }
+  .home-nosotros .mosaico-foto.cuadrada { aspect-ratio: 1 / 1; }
+}
+
+@media (max-width: 700px) {
+  /* Menú: una fila delgada de palabras, sin iconos; la activa en blanco con su línea roja.
+     Los bordes se desvanecen para que se note que hay más a los lados. */
+  .menu-nav-wrapper { padding: 0; margin-bottom: 22px; }
+  .menu-nav {
+    gap: 0; padding: 0 var(--gutter);
+    -webkit-mask-image: linear-gradient(90deg, transparent, #000 18px, #000 calc(100% - 18px), transparent);
+    mask-image: linear-gradient(90deg, transparent, #000 18px, #000 calc(100% - 18px), transparent);
+  }
+  .menu-nav-wrapper .menu-nav a { flex-direction: row; gap: 0; padding: 15px 13px 14px; font-size: 1.02rem; letter-spacing: 0.02em; color: var(--text-muted); }
+  .menu-nav li:first-child a { padding-left: 0; }
+  .menu-nav-wrapper .menu-nav a.active, .menu-nav-wrapper .menu-nav a.active span { color: var(--text-color); }
+  .menu-nav-ico { display: none; }
+  .menu-estado { margin: 0 auto 30px; }
+
+  /* Formularios en una sola columna; arriba título y texto, luego el formulario, y los datos/sellos al final */
+  .form-abierto { grid-template-columns: 1fr; gap: 28px; }
+  .form-abierto > * { grid-column: 1 / -1; }
+  .form-bloque, .ev-intro { row-gap: 0; }
+  .form-bloque > .nosotros-texto, .ev-intro > .nosotros-texto { display: contents; }
+  .form-bloque > .nosotros-texto > *, .ev-intro > .nosotros-texto > * { order: 1; }
+  .form-bloque > :not(.nosotros-texto), .ev-intro > :not(.nosotros-texto) { order: 2; margin-top: 8px; }
+  .form-bloque .sellos, .form-bloque .sellos ~ *, .ev-intro .sellos, .ev-intro .sellos ~ * { order: 3; }
+  .form-bloque .sellos, .ev-intro .sellos { margin-top: 56px; }
+  /* (sin caja propia, el texto no recibe la clase "visible": los sellos se muestran ya) */
+  .form-bloque .ev-sellos li, .ev-intro .ev-sellos li { opacity: 1; transform: none; }
+  .tipo-mensaje-opciones { gap: 0 24px; }
+  .form-abierto-acciones { margin-top: 8px; }
+  .form-abierto-acciones .btn-principal { width: 100%; min-height: 54px; }
+
+  /* Aire generoso */
+  .home-seccion { padding: 72px 0; }
+  .home-instagram { padding: 72px 0; }
+  .seccion-cabecera { gap: 20px; margin-bottom: 36px; }
+  .seccion-cabecera .eyebrow { margin-bottom: 14px; }
+  .home-nosotros { gap: 52px; }
+  .nosotros-texto .eyebrow { margin-bottom: 16px; }
+  .nosotros-texto .titulo-seccion { margin-bottom: 22px; }
+  .intro-text { line-height: 1.75; }
+  .sellos li { padding: 18px 0; gap: 20px; }
+  .suc-tiles, .suc-resumenes, .suc-ubicaciones { gap: 64px; }
+  .cabecera-pagina { padding-top: 40px; padding-bottom: 30px; }
+  .cabecera-orn { margin: 16px auto 14px; }
+  .cabecera-intro { padding: 0 6px; line-height: 1.6; }
+  .hero-acciones { gap: 18px 28px; margin-bottom: 30px; }
+
+  /* Instagram: en celular, un solo reel a buen tamaño (tres quedaban diminutos) */
+  .reels-fila { grid-template-columns: 1fr; }
+  .reels-fila > :nth-child(n + 2) { display: none; }
+  .reel { height: 600px; }
+}
+@media (max-width: 700px) {
+  /* Una columna real (la rejilla estiraba los renglones al reordenar) */
+  .form-bloque, .ev-intro { display: flex; flex-direction: column; align-items: stretch; gap: 0; }
+  .form-bloque .intro-text, .ev-intro .intro-text { margin-bottom: 32px; }
+  /* Categorías: la línea roja mide exactamente la palabra */
+  .menu-nav-wrapper .menu-nav a { padding: 15px 0 14px; }
+  .menu-nav li + li { margin-left: 26px; }
+}
+@media (max-width: 700px) {
+  /* Eventos: ocasiones como lista (icono + nombre), igual que los sellos */
+  .ev-ocasiones { grid-template-columns: 1fr; border-bottom: 0; }
+  .ev-ocasiones li { flex-direction: row; gap: 20px; padding: 16px 0; text-align: left; font-size: 1.15rem; border-bottom: 1px solid var(--g-333); }
+  .ev-ocasiones li + li { border-left: 0; }
+  .ev-ocasiones svg { width: 30px; height: 30px; flex: none; }
+  /* Pasos en vertical: la línea roja baja de un paso al siguiente */
+  .ev-pasos { grid-template-columns: 1fr; row-gap: 30px; }
+  .ev-pasos::before { left: 22px; top: 22px; width: 1px; height: calc(100% - 80px); transform: scaleY(0); transform-origin: top; }
+  .ev-pasos.visible::before { transform: scaleY(1); }
+  .ev-pasos li { flex-direction: row; gap: 20px; padding-right: 0; }
+  .ev-pasos li > span:last-child { padding-top: 8px; }
+}
+
+/* Inicio en celular: galería como tira deslizable (Galeria.jsx → .tira). Fotos 4:5 al 80 % del ancho,
+   la siguiente asoma a la derecha; abajo, línea roja de progreso y contador. */
+.tira-pista {
+  display: flex; gap: 12px; overflow-x: auto; overscroll-behavior-x: contain;
+  scroll-snap-type: x mandatory; scroll-padding-left: var(--gutter); scrollbar-width: none;
+  margin: 0 calc(-1 * var(--gutter)); padding: 0 var(--gutter);
+}
+.tira-pista::-webkit-scrollbar { display: none; }
+.tira-pista::after { content: ''; flex: 0 0 calc(var(--gutter) - 12px); } /* aire al final (Safari ignora el padding derecho) */
+.tira-foto { flex: 0 0 80%; aspect-ratio: 4 / 5; padding: 0; border: 0; border-radius: 2px; overflow: hidden; background: var(--g-222); scroll-snap-align: start; cursor: zoom-in; }
+.tira-foto img { display: block; width: 100%; height: 100%; object-fit: cover; }
+.tira-foto:focus-visible { outline: 2px solid var(--accent-color); outline-offset: -2px; }
+.tira-pie { display: flex; align-items: center; gap: 18px; margin-top: 18px; }
+.tira-barra { position: relative; flex: 1; height: 1px; overflow: hidden; background: var(--g-333); }
+.tira-barra span { position: absolute; inset: 0; background: var(--accent-color); transform-origin: left; transition: transform 0.45s var(--curva); }
+.tira-cuenta { font-family: var(--font-nav); font-size: 0.85rem; letter-spacing: 0.12em; color: var(--text-muted); font-variant-numeric: tabular-nums; }
+
+/* Inicio en celular: la parte de abajo más compacta (galería → Instagram → pie) */
+@media (max-width: 700px) {
+  .home-nosotros:has(.tira) { row-gap: 40px; padding-bottom: 40px; }
+  .home-instagram { padding: 44px 0 0; }
+  .reels .seccion-cabecera { gap: 14px; margin-bottom: 26px; }
+  .reel { height: 641px; } /* altura típica a este ancho; luego toma la que avisa Instagram */
+  .reels-nota { margin-top: 14px; font-size: 0.8rem; line-height: 1.55; }
+  footer.pie { margin-top: 44px; }
+  /* Al llegar al pie, la flecha de volver arriba se quita para no tapar idioma y tema */
+  .scroll-top.en-pie { opacity: 0; pointer-events: none; }
+}
+
+/* ======================================================================
+   MÓVIL — AUDITORÍA, FASE A: lo que se veía roto (19 nov 2026)
+   ====================================================================== */
+@media (max-width: 1100px) {
+  /* Nuestra historia, capítulo 2: una sola columna (seguía en 7fr | 5fr y el título se cortaba); el texto va primero */
+  .home-nosotros.hist-invertido { grid-template-columns: 1fr; }
+  .hist-invertido > .nosotros-texto { order: -1; }
+}
+@media (max-width: 700px) {
+  /* Franja roja: botón blanco rectangular a todo lo ancho (sin píldora ni halo), alineado con el texto */
+  .bloque-reserva-acciones { width: 100%; align-items: stretch; }
+  .bloque-reserva .btn-blanco { width: 100%; min-height: 54px; border-radius: 2px; animation: none; }
+  .bloque-reserva-extra { text-align: left; }
+
+  /* Boletín: alineado a la izquierda como los demás bloques */
+  .form-bloque.boletin-bloque { align-items: stretch; }
+
+  /* 404: dos enlaces con flecha, uno debajo del otro */
+  .notfound-actions { flex-direction: column; align-items: center; gap: 22px; margin-top: 36px; }
+
+  /* Promociones del Menú: misma orilla que el resto de la carta */
+  .promos-section .promo-col { padding: 0; }
+
+  /* Áreas para el dedo: los enlaces chicos crecen hacia afuera sin mover nada (≈44 px) */
+  .link-flecha, .suc-dato-enlace, .ev-enlace, .sellos a, .bloque-reserva-extra a { position: relative; }
+  .link-flecha::after, .suc-dato-enlace::after, .ev-enlace::after, .sellos a::after, .bloque-reserva-extra a::after {
+    content: ''; position: absolute; inset: -12px -6px;
+  }
+  .cx-playpause { width: 40px; height: 40px; }
+  .cx-dot::after { inset: -18px -4px; }
+
+  /* Textos mínimos de 13 px */
+  .eyebrow { font-size: 0.82rem; }
+  .promo-hoy { font-size: 0.82rem; }
+  .reels-nota { font-size: 0.85rem; }
+}
+
+/* ======================================================================
+   MÓVIL — AUDITORÍA, FASE B: rediseños aprobados (19 nov 2026)
+   ====================================================================== */
+.suc-mapa-toque { display: none; }
+@media (max-width: 800px) {
+  /* Flecha entre sucursales / tipos de evento: en celular no hay "hover", así que el nombre se ve siempre
+     ("Plaza 450 →") y queda pegada al título, sin hueco */
+  .cabecera-siguiente, .cabecera-siguiente.izq { flex-direction: row; gap: 8px; margin: 6px auto 0; font-family: var(--font-nav); color: var(--g-cfcfcf); }
+  .cabecera-siguiente svg { width: 22px; height: 22px; }
+  .cabecera-siguiente-nombre { opacity: 1; transform: none; font-size: 0.95rem; }
+  .cabecera-siguiente:not(.izq) .cabecera-siguiente-nombre { order: -1; }
+  .cabecera-titulo-fila { display: flex; flex-direction: column; align-items: center; }
+}
+@media (max-width: 700px) {
+  /* Detalle de sucursal: promociones en un renglón por día (día | promo | precio), como en el Menú */
+  .suc-promos .suc-semana { grid-template-columns: 1fr !important; }
+  .suc-promos .suc-dia { display: grid; grid-template-columns: 92px minmax(0, 1fr) auto; column-gap: 12px; align-items: baseline; padding: 14px 0; }
+  .suc-promos .suc-dia + .suc-dia { border-left: 0; border-top: 1px solid var(--g-2f2f2f); }
+  .suc-promos .suc-dia-nombre { font-size: 1.15rem; gap: 6px; }
+  .suc-promos .suc-dia-platillo { font-size: 1rem; line-height: 1.45; }
+  .suc-promos .suc-dia-precio { margin: 0; padding: 0; font-size: 1.05rem; }
+  .suc-promos .suc-dia.es-hoy { box-shadow: inset 0 2px 0 var(--accent-color); }
+  .suc-promos .promo-hoy { font-size: 0.72rem; padding: 3px 6px; }
+
+  /* Mapa bajo y quieto: no atrapa el dedo; tocarlo abre Google Maps */
+  .suc-mapa-ancho { position: relative; height: 220px; }
+  .suc-mapa-ancho iframe { pointer-events: none; }
+  .suc-mapa-toque { display: block; position: absolute; inset: 0; z-index: 1; }
+
+  /* Inicio, tarjetas de sucursales: un solo renglón de estado (el horario ya va en "Abrimos… a las…") */
+  .suc-tile-horario > span { display: none; }
+
+  /* Menú, bebidas plegables (<details>): un renglón por subgrupo con cuántas opciones tiene */
+  .carta .bebidas-cols { gap: 0; }
+  .bebida-plegable { border-bottom: 1px solid var(--g-2f2f2f); }
+  .bebida-plegable > summary { display: flex; align-items: center; gap: 12px; min-height: 56px; margin: 0 !important; cursor: pointer; list-style: none; }
+  .bebida-plegable > summary::-webkit-details-marker { display: none; }
+  .bebida-plegable > summary span:first-child { flex: 1; }
+  .bebida-cuenta { font-family: var(--font-nav); font-size: 0.85rem; color: var(--text-muted); font-variant-numeric: tabular-nums; }
+  .bebida-plegable > summary svg { flex: none; color: var(--text-muted); transition: transform 0.4s var(--curva); }
+  .bebida-plegable[open] > summary svg { transform: rotate(180deg); color: var(--accent-color); }
+  .bebida-plegable > .menu-grid { padding: 4px 0 22px; row-gap: 16px; }
+
+  /* Bandas con frase sobre foto: velo parejo para que el texto se lea en todo el ancho */
+  .banda-foto::after { background: linear-gradient(180deg, rgba(10,10,10,0.55), rgba(10,10,10,0.78)); }
+
+  /* A domicilio: sin hueco entre la foto y el pie */
+  .home-seccion.delivery-bloque { padding-bottom: 8px; }
+}
+
+/* Detalle de sucursal en celular: las fotos van primero, antes de "Ven a vernos" */
+@media (max-width: 1100px) {
+  .suc-principal > .suc-fotos { order: -1; transition-delay: 0s; }
+}
+
+/* Promo del día: línea roja gruesa a la izquierda, etiqueta "HOY" y texto blanco en negritas.
+   Los demás días NO se apagan (alguien puede buscar la promo de otro día). */
+.es-hoy .promo-hoy { font-size: 0.78rem; padding: 4px 8px; text-transform: uppercase; letter-spacing: 0.12em; }
+/* Menú (escritorio y celular) */
+.carta .promo-row.es-hoy { flex-wrap: wrap; row-gap: 4px; padding: 12px 0 12px 14px; box-shadow: inset 3px 0 0 var(--accent-color); }
+.carta .promo-row.es-hoy .promo-day { flex-basis: 100%; display: flex; align-items: center; gap: 10px; }
+.carta .promo-row.es-hoy .promo-desc { color: var(--text-color); font-weight: 600; }
+/* Detalle de sucursal (celular): el día y "HOY" arriba; la promo y su precio debajo */
+@media (max-width: 700px) {
+  .suc-promos .suc-dia.es-hoy { box-shadow: inset 3px 0 0 var(--accent-color); padding-left: 14px; row-gap: 6px; }
+  .suc-promos .suc-dia.es-hoy .suc-dia-nombre { grid-column: 1 / -1; gap: 10px; }
+  .suc-promos .suc-dia.es-hoy .suc-dia-platillo { grid-column: 1 / 3; color: var(--text-color); font-weight: 600; }
+  .suc-promos .suc-dia.es-hoy .suc-dia-precio { grid-column: 3; }
+  .suc-promos .es-hoy .promo-hoy { font-size: 0.78rem; padding: 4px 8px; }
+}
+
+/* === Fotos y videos nuevos de las sucursales (20 nov 2026) ===
+   Los videos (VideoLoop) se acomodan igual que las fotos en la galería, la tira y la banda. */
+.mosaico-foto video, .tira-foto video { display: block; width: 100%; height: 100%; object-fit: cover; }
+.home-nosotros .mosaico-foto video { width: 100%; height: 100%; object-fit: cover; }
+.banda-foto video { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: 62% 55%; transform: scale(1.14); transition: transform 3.2s cubic-bezier(0.22, 0.61, 0.36, 1); }
+.banda-foto.visible video { transform: scale(1.02); }
+@media (prefers-reduced-motion: reduce) { .banda-foto video { transform: none !important; transition: none !important; } }
+/* Video del neón (Plaza Real): se encuadra arriba (letrero y flores); abajo salen cajas de producto */
+.mosaico-foto video, .tira-foto video { object-position: 50% 0; }
+.mosaico-foto video { object-position: 22% 0; transform: scale(1.42); transform-origin: 18% 0; }
+/* Eventos: franja con el video vertical del platillo llegando a la mesa; se encuadra en el plato */
+.banda-servicio video { object-position: 50% 46%; }
+/* Frases de las bandas: cada renglón se recorta para su animación de entrada; espacio arriba para que los
+   acentos de las mayúsculas (TÚ, CHILTEPÍN) no se corten, sin cambiar el interlineado */
+.banda-frase span { padding-top: 0.16em; margin-top: -0.16em; }
+/* Ajuste del dueño: el video de "Tú celebras" se encuadra más arriba para que el aguachile no se corte */
+.banda-servicio video { object-position: 50% 30%; }
+/* Portadas de Sucursales: la fachada de Plaza Real es vertical; se encuadra desde arriba para que el letrero no se corte */
+.suc-ubica-foto img { object-position: 50% 18%; }
+/* "Tú celebras": el video es vertical; la franja es un poco más alta y el encuadre toma el plato completo mientras lo llevan */
+.banda-servicio { height: clamp(300px, 40vw, 560px); }
+.banda-servicio video { object-position: 50% 32%; }
+/* "Tú celebras" (escritorio): el video se corre a la derecha para que la frase no tape el plato; su orilla
+   izquierda se desvanece en lo oscuro del velo, así no se nota el corte */
+@media (min-width: 701px) {
+  .banda-servicio video {
+    transform: translateX(22%) scale(1.14);
+    -webkit-mask-image: linear-gradient(90deg, transparent 0, #000 22%);
+    mask-image: linear-gradient(90deg, transparent 0, #000 22%);
+  }
+  .banda-servicio.visible video { transform: translateX(22%) scale(1.02); }
+}
+@media (min-width: 701px) and (prefers-reduced-motion: reduce) {
+  .banda-servicio video { transform: translateX(22%) !important; }
+}
+/* Franja del Inicio ("Frescura"): el video se corre a la derecha para que la frase no lo interrumpa */
+.banda-cocina video { object-position: 88% 55%; }
+@media (min-width: 701px) {
+  .banda-cocina video {
+    transform: translateX(13%) scale(1.14);
+    -webkit-mask-image: linear-gradient(90deg, transparent 0, #000 16%);
+    mask-image: linear-gradient(90deg, transparent 0, #000 16%);
+  }
+  .banda-cocina.visible video { transform: translateX(13%) scale(1.02); }
+}
+@media (min-width: 701px) and (prefers-reduced-motion: reduce) { .banda-cocina video { transform: translateX(13%) !important; } }
+
+/* ======================================================================
+   PANEL DE RESERVAS — mismo lenguaje que el resto: palabras con subrayado rojo,
+   sin cajas ni pills, acción principal fija al fondo, cabe en pantallas de 640 px
+   ====================================================================== */
+.res-sidebar { height: 100vh; height: 100dvh; }
+.res-header { padding: 16px 28px 12px; }
+.res-title-bar { font-size: 1.7rem; letter-spacing: 0.02em; }
+.res-close { width: 44px; height: 44px; margin-right: -12px; display: grid; place-items: center; font-size: 1.25rem; }
+.res-body { padding: 6px 28px 18px; overscroll-behavior: contain; }
+.res-pie { padding: 12px 28px calc(14px + env(safe-area-inset-bottom)); border-top: 1px solid var(--g-333); background: var(--g-1a1a1a); transition: background-color 0.3s; }
+.res-pie .btn-principal { width: 100%; min-height: 52px; padding: 0 20px; }
+.res-pie .btn-principal:disabled { opacity: 0.6; cursor: progress; }
+.res-pie .form-error-envio, .res-pie .aviso-espera { margin: 0 0 10px; }
+
+.res-grupo { border: 0; margin: 0; padding: 12px 0 2px; min-width: 0; }
+.res-grupo legend { padding: 0; margin: 0; line-height: 1.2; font-family: var(--font-nav); font-size: 0.95rem; color: var(--g-cfcfcf); }
+.res-ops { display: flex; background: linear-gradient(var(--g-444), var(--g-444)) left bottom / 100% 1px no-repeat; }
+.res-op {
+  flex: 1; position: relative; min-height: 42px; padding: 6px 4px 10px; line-height: 1.2; background: none; border: 0; border-radius: 0;
+  cursor: pointer; text-align: center; color: var(--text-muted);
+  font-family: var(--font-headings); font-size: 1.12rem; letter-spacing: 0.02em; white-space: nowrap;
+  transition: color 0.25s, transform 0.3s var(--curva);
+}
+.res-op::after { content: ''; position: absolute; left: 6px; right: 6px; bottom: 0; height: 2px; background: var(--accent-color); transform: scaleX(0); transform-origin: left; transition: transform 0.45s cubic-bezier(0.22, 0.61, 0.36, 1); }
+.res-op:hover:not(:disabled), .res-op[aria-pressed="true"] { color: var(--text-color); }
+.res-op[aria-pressed="true"]::after { transform: scaleX(1); }
+.res-op:disabled { opacity: 0.3; cursor: not-allowed; text-decoration: line-through; }
+.res-op:active:not(:disabled) { transform: scale(0.97); }
+.res-op:focus-visible { outline: 2px solid var(--accent-color); outline-offset: -2px; }
+
+.res-dia { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 0; padding-top: 4px; }
+.res-dia-sem { font-family: var(--font-nav); font-size: 0.8rem; letter-spacing: 0.02em; text-transform: capitalize; }
+.res-dia-num { font-size: 1.3rem; line-height: 1.2; }
+.res-horas { display: grid; grid-template-columns: repeat(auto-fill, minmax(76px, 1fr)); }
+.res-horas .res-op { font-size: 0.95rem; padding: 6px 0 9px; min-height: 38px; }
+
+.res-otra { background: none; border-top: 0; border-left: 0; border-right: 0; cursor: pointer; margin-top: 10px; font-size: 0.95rem; }
+.res-fecha-otra {
+  display: block; width: 100%; margin-top: 8px; padding: 8px 0 10px; border: 0; border-radius: 0; outline: none; cursor: pointer;
+  background-color: transparent; color: var(--text-color); color-scheme: dark;
+  font-family: var(--font-headings); font-size: 1.05rem; letter-spacing: 0.02em;
+  background-image: linear-gradient(var(--accent-color), var(--accent-color)), linear-gradient(var(--g-444), var(--g-444));
+  background-size: 0% 1px, 100% 1px; background-position: left bottom; background-repeat: no-repeat;
+  transition: background-size 0.5s cubic-bezier(0.22, 0.61, 0.36, 1);
+}
+.res-fecha-otra:focus { background-size: 100% 1px, 100% 1px; }
+:root[data-tema="claro"] .res-fecha-otra { color-scheme: light; }
+.res-grupo .field-error { margin: 6px 0 0; }
+.res-regla { margin: 8px 0 0; font-size: 0.82rem; line-height: 1.4; color: var(--text-muted); }
+
+.res-back { text-transform: none; font-size: 1rem; margin-bottom: 14px; padding: 8px 0; }
+.res-summary { background: none; border-left: 2px solid var(--accent-color); padding: 2px 0 2px 14px; margin-bottom: 22px; }
+.res-summary p { font-family: var(--font-headings); font-weight: 500; font-size: 1.25rem; margin: 0 0 2px; }
+.res-summary span { font-family: var(--font-body); font-size: 0.95rem; text-transform: none; color: var(--text-muted); }
+.res-body .event-form { grid-template-columns: 1fr; gap: 20px; }
+.res-body .event-form .input-group.full-width { grid-column: auto; }
+.res-body .event-form .input-group input { background-color: transparent; border: 0; border-radius: 0; padding: 8px 0 10px; font-size: 1.05rem; color-scheme: dark;
+  background-image: linear-gradient(var(--accent-color), var(--accent-color)), linear-gradient(var(--g-444), var(--g-444));
+  background-size: 0% 1px, 100% 1px; background-position: left bottom; background-repeat: no-repeat; transition: background-size 0.5s cubic-bezier(0.22, 0.61, 0.36, 1); }
+.res-body .event-form .input-group input:focus, .res-body .event-form .input-group [aria-invalid="true"] { background-size: 100% 1px, 100% 1px; }
+:root[data-tema="claro"] .res-body .event-form .input-group input { color-scheme: light; }
+.res-body .form-ok { padding-top: 24px; }
+.res-contact { padding: 10px 0; text-align: left; }
+.res-contact h3 { font-size: 1.6rem; margin-bottom: 12px; }
+.res-contact p { margin-bottom: 14px; font-size: 1rem; }
+
+@media (max-width: 480px) {
+  .res-header { padding: 14px 20px 10px; }
+  .res-body { padding: 4px 20px 14px; }
+  .res-pie { padding-left: 20px; padding-right: 20px; }
+}
+@media (max-height: 640px) {
+  .res-grupo { padding-top: 10px; }
+  .res-op { min-height: 42px; padding-bottom: 10px; }
+}
+
+/* El logo se nota como enlace: mano, un leve respiro al pasar el cursor y al presionar */
+a.logo-link { cursor: pointer; }
+a.logo-link .logo-img { transition: opacity 0.3s, transform 0.45s var(--curva); }
+a.logo-link:hover .logo-img, a.logo-link:focus-visible .logo-img { opacity: 0.82; transform: scale(1.04); }
+a.logo-link:active .logo-img { transform: scale(0.98); transition-duration: 0.1s; }
+
+/* ======================================================================
+   PEDIDOS A DOMICILIO PROPIOS (VITE_PEDIDOS). Solo tokens: el modo claro sale solo.
+   Escritorio y celular se diseñan juntos (excepción acordada con el dueño).
+   ====================================================================== */
+.btn-principal:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+
+/* --- ¿Domicilio o recoger? --- */
+.entrega { display: flex; flex-direction: column; gap: 22px; margin: 8px 0 26px; }
+.entrega-tipos { border: 0; margin: 0; padding: 0; display: grid; grid-template-columns: 1fr 1fr; border-top: 1px solid var(--g-333); border-bottom: 1px solid var(--g-333); }
+.entrega-tipos label { position: relative; display: flex; align-items: center; gap: 14px; padding: 16px 14px 18px 0; cursor: pointer; color: var(--text-muted); transition: color 0.25s; }
+.entrega-tipos label + label { padding-left: 18px; border-left: 1px solid var(--g-333); }
+.entrega-tipos input { position: absolute; opacity: 0; width: 1px; height: 1px; pointer-events: none; }
+.entrega-tipos svg { flex: none; color: var(--g-555); transition: color 0.25s; }
+.entrega-tipos strong { display: block; font-family: var(--font-headings); font-weight: 500; font-size: 1.15rem; color: var(--text-color); letter-spacing: 0.01em; }
+.entrega-tipos span { font-size: 0.95rem; line-height: 1.35; }
+.entrega-tipos label::after { content: ''; position: absolute; left: 0; right: 0; bottom: -1px; height: 2px; background: var(--accent-color); transform: scaleX(0); transform-origin: left; transition: transform 0.45s var(--curva); }
+.entrega-tipos label.activo::after { transform: scaleX(1); }
+.entrega-tipos label.activo svg, .entrega-tipos label:hover svg { color: var(--accent-color); }
+.entrega-tipos label:has(input:focus-visible) { outline: 2px solid var(--accent-color); outline-offset: 2px; }
+
+.entrega-buscar { position: relative; }
+.entrega-buscar label { display: block; font-family: var(--font-nav); font-size: 0.95rem; color: var(--g-cfcfcf); margin-bottom: 4px; }
+.entrega-buscar-fila { display: flex; align-items: flex-end; gap: 18px; }
+.entrega-buscar-fila input {
+  flex: 1; min-width: 0; border: 0; border-radius: 0; padding: 10px 0 12px; font-size: 1.05rem; color: var(--text-color); color-scheme: dark;
+  background: linear-gradient(var(--accent-color), var(--accent-color)) left bottom / 0% 1px no-repeat, linear-gradient(var(--g-444), var(--g-444)) left bottom / 100% 1px no-repeat;
+  transition: background-size 0.5s var(--curva);
+}
+.entrega-buscar-fila input:focus { outline: none; background-size: 100% 1px, 100% 1px; }
+.entrega-buscar-fila .ev-enlace { margin: 0 0 12px; }
+.entrega-sugerencias { list-style: none; margin: 0; padding: 6px 0; position: absolute; z-index: 20; left: 0; right: 0; top: 100%; background: var(--g-1a1a1a); border: 1px solid var(--g-333); }
+.entrega-sugerencias button { display: block; width: 100%; text-align: left; background: none; border: 0; padding: 10px 14px; color: var(--text-color); font: inherit; font-size: 0.98rem; cursor: pointer; }
+.entrega-sugerencias button:hover, .entrega-sugerencias button:focus-visible { background: var(--g-333); }
+.entrega-ubicacion { align-self: flex-start; display: inline-flex; align-items: center; gap: 8px; background: none; border: 0; padding: 0; color: var(--text-muted); font-family: var(--font-nav); font-size: 0.98rem; cursor: pointer; transition: color 0.25s; }
+.entrega-ubicacion:hover { color: var(--accent-color); }
+.entrega-ubicacion svg { color: var(--accent-color); }
+.entrega-mapa { position: relative; height: 260px; border: 1px solid var(--g-333); overflow: hidden; }
+.entrega-mapa-lienzo { position: absolute; inset: 0; }
+/* El pin no es del mapa: queda fijo al centro y el cliente mueve el mapa */
+.entrega-pin { position: absolute; left: 50%; top: 50%; width: 22px; height: 22px; margin: -22px 0 0 -11px; border-radius: 50% 50% 50% 0; background: var(--accent-color); transform: rotate(-45deg); pointer-events: none; z-index: 2; }
+.entrega-pin::after { content: ''; position: absolute; inset: 7px; border-radius: 50%; background: var(--g-1a1a1a); }
+.entrega-mapa-nota { position: absolute; left: 10px; bottom: 10px; margin: 0; padding: 4px 10px; background: color-mix(in srgb, var(--g-1a1a1a) 90%, transparent); font-size: 0.85rem; color: var(--text-muted); z-index: 2; }
+.entrega-resultado { margin: 0; min-height: 1.5em; font-size: 1rem; color: var(--text-muted); }
+.entrega-ok::before { content: '✓'; color: var(--accent-color); margin-right: 8px; }
+.entrega-ok strong { color: var(--text-color); font-weight: 500; }
+.entrega-fuera .ev-enlace { margin-left: 6px; }
+.entrega-sucursales { margin-top: 4px; }
+
+/* --- Portada de A domicilio --- */
+.pedir-bloque .nosotros-texto { max-width: 560px; }
+.pedir-en-curso { margin: 0 0 18px; }
+.pedir-estado { display: block; margin: 12px 0 26px; padding-left: 14px; border-left: 2px solid var(--accent-color); font-size: 1.05rem; line-height: 1.55; color: var(--text-muted); }
+.pedir-telefonos { display: flex; flex-wrap: wrap; gap: 4px 22px; margin-top: 8px; }
+.pedir-telefonos a { color: var(--text-color); }
+.pedir-pasos { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+.pedir-apps { margin: 0 0 var(--space-5, 72px); padding-top: 22px; border-top: 1px solid var(--g-333); display: flex; flex-wrap: wrap; align-items: baseline; gap: 6px 24px; color: var(--text-muted); font-size: 0.95rem; }
+.pedir-apps .suc-dato-enlace { font-size: 0.95rem; }
+.delivery-apps-suc { color: var(--text-muted); font-size: 0.85em; }
+
+/* --- Menú en modo pedido --- */
+.modo-pedido { display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: 6px 24px; max-width: 1200px; margin: 0 auto 6px; padding: 12px var(--gutter, 20px); border-top: 1px solid var(--g-333); border-bottom: 1px solid var(--g-333); }
+.modo-pedido-texto { margin: 0; font-family: var(--font-headings); font-size: 1.1rem; letter-spacing: 0.01em; }
+.modo-pedido-promos { display: block; font-family: var(--font-body); font-size: 0.9rem; color: var(--text-muted); letter-spacing: 0; }
+.modo-pedido-acciones { display: flex; gap: 22px; }
+.modo-pedido-aviso { flex-basis: 100%; margin: 4px 0 0; font-size: 0.92rem; color: var(--accent-color); }
+.pedido-aviso-menu { margin: -10px 0 22px; color: var(--text-muted); font-size: 0.95rem; }
+
+.pedido-ctl { display: inline-flex; align-items: center; gap: 2px; flex: none; }
+.carta .dish-header .pedido-ctl { order: 3; align-self: center; }
+.pedido-ctl button { width: 30px; height: 30px; display: grid; place-items: center; padding: 0; border-radius: 50%; border: 1px solid var(--g-555); background: transparent; color: var(--text-color); font-size: 1.05rem; line-height: 1; cursor: pointer; transition: border-color 0.25s, background 0.25s, color 0.25s, transform 0.2s; }
+.pedido-ctl button:hover { border-color: var(--accent-color); color: var(--accent-color); }
+.pedido-ctl button:active { transform: scale(0.92); }
+.pedido-ctl .pedido-agregar { border-color: var(--accent-color); color: var(--accent-color); }
+.pedido-ctl .pedido-agregar:hover { background: var(--accent-color); color: #fff; }
+.pedido-cant { min-width: 24px; text-align: center; font-family: var(--font-headings); font-size: 1.02rem; }
+.menu-item.en-pedido .dish-name { color: var(--accent-color); }
+.pedido-nota-abrir { align-self: flex-start; margin-top: 6px; background: none; border: 0; padding: 0; color: var(--text-muted); font-family: var(--font-nav); font-size: 0.9rem; cursor: pointer; }
+.pedido-nota-abrir:hover { color: var(--accent-color); }
+.pedido-nota input { width: 100%; margin-top: 6px; border: 0; padding: 6px 0 8px; font-size: 0.95rem; color: var(--text-color); color-scheme: dark; background: linear-gradient(var(--g-444), var(--g-444)) left bottom / 100% 1px no-repeat; }
+.pedido-nota input:focus { outline: none; background-image: linear-gradient(var(--accent-color), var(--accent-color)); }
+.promo-row.con-pedido { align-items: center; }
+.promo-row .pedido-ctl { margin-left: 12px; }
+
+/* --- Barra "3 platillos · $495  Revisar →" --- */
+.pedido-barra { position: fixed; left: 50%; bottom: 22px; transform: translateX(-50%); z-index: 850; width: min(520px, calc(100% - 32px)); animation: paginaEntra 0.5s var(--curva) both; }
+.pedido-barra-btn { width: 100%; display: flex; align-items: center; justify-content: space-between; gap: 16px; padding: 15px 22px; border: 0; border-radius: 3px; background: var(--accent-color); color: #fff; font-family: var(--font-nav); font-size: 1.02rem; cursor: pointer; box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35); transition: background 0.25s, transform 0.25s; }
+.pedido-barra-btn:hover { background: #b32424; transform: translateY(-2px); }
+.pedido-barra-btn strong { font-weight: 600; }
+.pedido-barra-accion { display: inline-flex; gap: 8px; }
+
+/* --- Panel "Tu pedido" (escritorio: lateral; celular: sube desde abajo) --- */
+.pedido-lineas { list-style: none; margin: 0 0 18px; padding: 0; }
+.pedido-lineas li { display: grid; grid-template-columns: 1fr auto auto; align-items: center; gap: 14px; padding: 14px 0; border-bottom: 1px solid var(--g-333); }
+.pedido-linea-nombre { font-family: var(--font-headings); font-size: 1.05rem; line-height: 1.3; }
+.pedido-linea-nombre small { display: block; font-family: var(--font-body); font-size: 0.85rem; color: var(--text-muted); margin-top: 2px; }
+.pedido-linea-importe { font-family: var(--font-headings); color: var(--accent-color); min-width: 64px; text-align: right; }
+.pedido-lineas-chico li { grid-template-columns: 1fr auto; padding: 10px 0; }
+.pedido-lineas-chico .pedido-linea-nombre { font-size: 0.98rem; }
+.pedido-totales { margin: 0; }
+.pedido-totales div { display: flex; justify-content: space-between; padding: 5px 0; color: var(--text-muted); }
+.pedido-totales dd { margin: 0; color: var(--text-color); }
+.pedido-totales .pedido-total { margin-top: 6px; padding-top: 12px; border-top: 1px solid var(--g-444); font-family: var(--font-headings); font-size: 1.25rem; color: var(--text-color); }
+.pedido-nota-total, .pedido-vacio { color: var(--text-muted); font-size: 0.92rem; margin: 10px 0 0; }
+.pedido-panel-acciones { display: flex; flex-direction: column; align-items: flex-start; gap: 16px; margin-top: 26px; }
+.pedido-panel-acciones .btn-principal { width: 100%; justify-content: center; }
+
+/* --- Checkout: bloques a la izquierda, resumen fijo a la derecha --- */
+.checkout { display: grid; grid-template-columns: minmax(0, 1fr) 360px; gap: clamp(36px, 6vw, 90px); align-items: start; }
+.checkout-bloque { border: 0; margin: 0 0 46px; padding: 0; min-width: 0; }
+.checkout-titulo { display: flex; align-items: center; gap: 14px; padding: 0; margin-bottom: 18px; font-family: var(--font-headings); font-size: 1.55rem; letter-spacing: 0.01em; }
+.checkout-titulo span { display: grid; place-items: center; width: 34px; height: 34px; border-radius: 50%; border: 1px solid var(--accent-color); color: var(--accent-color); font-size: 1rem; }
+.checkout-direccion { margin: 6px 0 26px; }
+.checkout-recoges { margin: 0 0 22px; color: var(--text-muted); }
+.checkout-recoges strong { color: var(--text-color); font-weight: 500; }
+.checkout-cuando { margin-top: 6px; }
+.checkout-horas { margin-top: 14px; display: flex; flex-wrap: wrap; gap: 8px; }
+.checkout-casilla { display: flex; align-items: flex-start; gap: 12px; margin-top: 18px; cursor: pointer; color: var(--text-color); }
+.checkout-casilla input { margin-top: 4px; accent-color: var(--accent-color); width: 17px; height: 17px; flex: none; }
+.checkout-casilla small { display: block; color: var(--text-muted); font-size: 0.88rem; margin-top: 2px; }
+.checkout-casilla a { color: var(--text-color); text-decoration-color: var(--accent-color); }
+.checkout-metodos { border: 0; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); border-top: 1px solid var(--g-333); border-bottom: 1px solid var(--g-333); }
+.checkout-metodos legend { padding: 0; margin-bottom: 8px; font-family: var(--font-nav); font-size: 0.95rem; color: var(--g-cfcfcf); }
+.checkout-metodos label { position: relative; padding: 14px 14px 16px 0; cursor: pointer; color: var(--text-muted); font-size: 0.92rem; }
+.checkout-metodos label + label { padding-left: 16px; border-left: 1px solid var(--g-333); }
+.checkout-metodos input { position: absolute; opacity: 0; width: 1px; height: 1px; pointer-events: none; }
+.checkout-metodos strong { display: block; font-family: var(--font-headings); font-weight: 500; font-size: 1.08rem; color: var(--text-color); }
+.checkout-metodos label::after { content: ''; position: absolute; left: 0; right: 0; bottom: -1px; height: 2px; background: var(--accent-color); transform: scaleX(0); transform-origin: left; transition: transform 0.45s var(--curva); }
+.checkout-metodos label.activo::after { transform: scaleX(1); }
+.checkout-metodos label:has(input:focus-visible) { outline: 2px solid var(--accent-color); outline-offset: 2px; }
+.checkout-ayuda { margin: 10px 0 0; color: var(--text-muted); font-size: 0.92rem; }
+.checkout-propina { margin-top: 26px; }
+.checkout-propina-monto { margin-top: 14px; grid-template-columns: minmax(0, 220px); }
+.checkout-error { margin: 22px 0 0; padding-left: 14px; border-left: 2px solid var(--accent-color); }
+.checkout-error p { margin: 4px 0 0; color: var(--text-muted); }
+.checkout-resumen { position: sticky; top: calc(var(--header-h, 82px) + 24px); padding-top: 4px; }
+html.nav-oculta .checkout-resumen { top: 24px; }
+.checkout-resumen-plegable summary { list-style: none; display: flex; justify-content: space-between; align-items: baseline; padding-bottom: 12px; border-bottom: 1px solid var(--g-444); font-family: var(--font-headings); font-size: 1.35rem; cursor: default; pointer-events: none; }
+.checkout-resumen-plegable summary::-webkit-details-marker { display: none; }
+.checkout-vacio { display: flex; flex-direction: column; align-items: flex-start; gap: 18px; }
+.turnstile { margin-top: 18px; }
+
+/* --- Seguimiento --- */
+.seguimiento-pasos { margin-bottom: 56px; }
+.seguimiento-pasos::before { width: calc(75% * var(--avance, 0)); transform: none; background: var(--accent-color); }
+.seguimiento-pasos::after { content: ''; position: absolute; left: 22px; width: 75%; top: 22px; height: 1px; background: var(--g-333); z-index: 0; }
+.seguimiento-pasos::before { z-index: 1; transition: width 1.2s var(--curva); }
+.seguimiento-pasos li strong { color: var(--text-muted); font-size: 1.1rem; }
+.seguimiento-pasos li.hecho strong, .seguimiento-pasos li.actual strong { color: var(--text-color); }
+.seguimiento-pasos li .ev-paso-icono { color: var(--g-555); }
+.seguimiento-pasos li.hecho .ev-paso-icono { color: var(--accent-color); }
+.seguimiento-pasos li.actual .ev-paso-icono { color: #fff; background: var(--accent-color); border-color: var(--accent-color); }
+.seguimiento-cols { display: grid; grid-template-columns: minmax(0, 1fr) 360px; gap: clamp(36px, 6vw, 90px); align-items: start; }
+.seguimiento-datos p { margin: 0 0 10px; color: var(--text-muted); }
+.seguimiento-datos a { color: var(--text-color); }
+.seguimiento-eta { font-family: var(--font-headings); font-size: 1.4rem; color: var(--text-color) !important; }
+.seguimiento-intro { font-size: 0.9rem; }
+.seguimiento-cancelar { margin-top: 18px !important; }
+.seguimiento-datos .link-flecha { margin-top: 18px; }
+.seguimiento-resumen { position: static; }
+
+/* --- Celular --- */
+@media (max-width: 1100px) {
+  .checkout, .seguimiento-cols { grid-template-columns: 1fr; }
+  /* El resumen sube y se puede plegar */
+  .checkout-resumen { position: static; order: -1; }
+  .checkout-resumen-plegable summary { pointer-events: auto; cursor: pointer; }
+  .checkout-resumen-plegable summary::after { content: '▾'; margin-left: 10px; color: var(--accent-color); font-size: 0.9rem; }
+  .checkout-resumen-plegable[open] summary::after { content: '▴'; }
+}
+@media (max-width: 700px) {
+  .entrega-tipos { grid-template-columns: 1fr 1fr; }
+  .entrega-tipos label { flex-direction: column; align-items: flex-start; gap: 8px; }
+  .entrega-mapa { height: 220px; }
+  .pedir-pasos { grid-template-columns: 1fr; gap: 26px; }
+  .pedir-pasos::before { display: none; }
+  .pedir-pasos li { flex-direction: row; align-items: center; }
+  .seguimiento-pasos { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+  .seguimiento-pasos li { padding-right: 6px; gap: 10px; }
+  .seguimiento-pasos li strong { font-size: 0.85rem; }
+  .modo-pedido-acciones { width: 100%; justify-content: space-between; }
+  .pedido-barra { bottom: 0; left: 0; right: 0; width: auto; transform: none; padding: 10px var(--gutter, 16px) calc(10px + env(safe-area-inset-bottom)); background: color-mix(in srgb, var(--g-1a1a1a) 97%, transparent); border-top: 1px solid var(--g-2f2f2f); }
+  .pedido-barra-btn { box-shadow: none; padding: 14px 18px; }
+  .pedido-barra-btn:hover { transform: none; }
+  /* Hoja que sube desde abajo */
+  .res-sidebar.pedido-panel { top: auto; right: 0; left: 0; bottom: 0; max-width: none; height: auto; max-height: 86dvh; border-radius: 12px 12px 0 0; transform: translateY(105%); transition: transform 0.45s var(--curva); }
+  .res-sidebar.pedido-panel.active { transform: none; right: 0; }
+  .pedido-panel .res-body { padding-bottom: calc(20px + env(safe-area-inset-bottom)); }
+  .checkout-metodos { grid-template-columns: 1fr; }
+  .checkout-metodos label + label { padding-left: 0; border-left: 0; border-top: 1px solid var(--g-333); }
+  .checkout-titulo { font-size: 1.35rem; }
+  .carta .dish-header .pedido-ctl button { width: 34px; height: 34px; }
+}
+:root[data-tema="claro"] :is(.entrega-buscar-fila input, .pedido-nota input) { color-scheme: light; }
+:root[data-tema="claro"] .pedido-barra-btn { box-shadow: 0 10px 30px rgba(60, 40, 20, 0.2); }
+a.btn-principal { text-decoration: none; display: inline-flex; align-items: center; justify-content: center; gap: 8px; }
+.pedir-apps a.suc-dato-enlace { color: var(--text-color); text-decoration: none; }
+.pedir-apps a.suc-dato-enlace:hover { color: var(--accent-color); }
+/* Seguimiento en celular: 4 pasos centrados, la línea va de centro a centro y el tiempo estimado va antes del resumen */
+@media (max-width: 1100px) { .seguimiento-resumen { order: 0; } }
+@media (max-width: 700px) {
+  .ev-pasos.seguimiento-pasos { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 0; margin-bottom: 36px; }
+  .ev-pasos.seguimiento-pasos li { flex-direction: column; align-items: center; text-align: center; gap: 8px; padding: 0 2px; }
+  .ev-pasos.seguimiento-pasos li strong { font-size: 0.82rem; line-height: 1.2; margin: 0; }
+  .ev-pasos.seguimiento-pasos::after { display: block; left: 12.5%; width: 75%; }
+  .ev-pasos.seguimiento-pasos::before { display: block; left: 12.5%; width: calc(75% * var(--avance, 0)); }
+}
+@media (max-width: 700px) {
+  .ev-pasos.seguimiento-pasos::before, .ev-pasos.seguimiento-pasos::after { top: 22px; height: 1px; transform: none; }
+  .ev-pasos.seguimiento-pasos li > span:last-child { padding-top: 0; }
+}
+header .dropdown-separador { display: block; padding: 10px 18px 4px; margin-top: 4px; border-top: 1px solid var(--g-333); font-family: var(--font-nav); font-size: 0.78rem; letter-spacing: 0.18em; text-transform: uppercase; color: var(--text-muted); }
